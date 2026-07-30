@@ -1,7 +1,8 @@
-package com.example.workpulse.feature.splash
+package com.example.workpulse.feature.splash.presentation
 
 data class SplashUiState(
     val isLoading : Boolean = true,
+    val loadingMessage: String = "Preparing workspace...",
     val destination: SplashDestination? = null
 )
 

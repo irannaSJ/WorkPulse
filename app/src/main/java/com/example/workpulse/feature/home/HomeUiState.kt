@@ -39,4 +39,5 @@ data class HomeUiState(
     val attendanceResult: AttendanceResult? = null,
 
     val remainingLeaves: Int = 0,
+    val isLogoutSuccessful: Boolean = false,
 )

@@ -40,6 +40,8 @@ import com.example.workpulse.feature.home.presentation.formatWorkingTime
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import com.example.workpulse.core.ui.theme.AppColors
+import com.example.workpulse.core.ui.theme.Dimens
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.Instant
@@ -64,14 +66,14 @@ fun AttendanceCard(
 
         modifier = Modifier.fillMaxWidth(),
 
-        shape = RoundedCornerShape(28.dp),
+        shape = RoundedCornerShape(Dimens.cardCornerRadius),
 
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
+            defaultElevation = Dimens.cardElevation
         ),
 
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surface
         )
 
     ) {
@@ -159,7 +161,7 @@ private fun NotPunchedInContent(
             imageVector = Icons.Outlined.PlayCircle,
             contentDescription = null,
             modifier = Modifier.size(90.dp),
-            tint = Color(0xFF22C55E)
+            tint = MaterialTheme.colorScheme.onSurface
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -168,7 +170,7 @@ private fun NotPunchedInContent(
             text = "Ready to start your day?",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF111827)
+            color = MaterialTheme.colorScheme.onSurface
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -176,7 +178,7 @@ private fun NotPunchedInContent(
         Text(
             text = "Tap below to punch in and begin your work.",
             style = MaterialTheme.typography.bodyMedium,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
 
@@ -189,7 +191,7 @@ private fun NotPunchedInContent(
                 .height(56.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF22C55E)
+                containerColor = AppColors.Success
             )
         ) {
 
@@ -236,7 +238,7 @@ private fun PunchedInContent(
             text = "You're currently working",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF111827)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -245,12 +247,14 @@ private fun PunchedInContent(
             text = formatWorkingTime(workingSeconds),
             style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF2563EB)
+            color = AppColors.Attendance
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        HorizontalDivider()
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.outlineVariant
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -315,7 +319,7 @@ private fun PunchedOutContent(
             text = "Work completed for today!",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF111827)
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -371,14 +375,14 @@ private fun InfoRow(
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
-            color = Color(0xFF6B7280),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Medium
         )
 
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
-            color = Color(0xFF111827),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.Bold
         )
 

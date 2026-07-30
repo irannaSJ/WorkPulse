@@ -1,5 +1,9 @@
 package com.example.workpulse.core.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -11,10 +15,10 @@ import com.example.workpulse.feature.home.presentation.history.AttendanceHistory
 import com.example.workpulse.feature.leave.LeaveSummaryRoute
 import com.example.workpulse.feature.leaveApplication.LeaveApplicationRoute
 //import com.example.workpulse.feature.home.presentation.HomeRoute
-import com.example.workpulse.feature.login.LoginRoute
+import com.example.workpulse.feature.login.presentation.LoginRoute
 import com.example.workpulse.feature.profile.ProfileRoute
 //import com.example.workpulse.feature.profile.ProfileRoute
-import com.example.workpulse.feature.splash.SplashRoute
+import com.example.workpulse.feature.splash.presentation.SplashRoute
 
 @Composable
 fun AppNavHost(
@@ -32,14 +36,14 @@ fun AppNavHost(
 
                 onNavigateToLogin = {
                     navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Splash.route) {
+                        popUpTo(Splash.route) {
                             inclusive = true
                         }
                     }
                 },
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Splash.route) {
+                        popUpTo(Splash.route) {
                             inclusive = true
                         }
 
@@ -49,7 +53,13 @@ fun AppNavHost(
 
         }
 
-        composable(Screen.Login.route) {
+        composable(
+            route = Screen.Login.route,
+            enterTransition = NavTransitions.enter,
+            exitTransition = NavTransitions.exit,
+            popEnterTransition = NavTransitions.enter,
+            popExitTransition = NavTransitions.exit
+            ) {
             LoginRoute(
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
@@ -62,13 +72,30 @@ fun AppNavHost(
             )
         }
 
+
+        //screen upgrading from here we changed the profile navigation here
         composable(Screen.Home.route) {
             HomeRoute(
-                onNavigateToProfile = {
-                    navController.navigate(Screen.Profile.route)
-                },
                 onViewAllClick = {
                     navController.navigate(Screen.LeaveSummary.route)
+                },
+                onProfileClick = {
+                    navController.navigate(Screen.Profile.route)
+                },
+                onLeaveClick = {
+                    navController.navigate(Screen.LeaveApplication.route)
+                },
+                onAttendanceHistoryClick = {
+                    navController.navigate(Screen.AttendanceHistory.route)
+                },
+                onSettingsClick = {},
+                onLogoutSuccess = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(navController.graph.id) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
                 }
             )
         }

@@ -3,6 +3,7 @@ package com.example.workpulse.feature.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.workpulse.data.repository.AttendanceRepository
+import com.example.workpulse.data.repository.AuthRepository
 import com.example.workpulse.data.repository.EmployeeRepository
 import com.example.workpulse.data.repository.LeaveRepository
 import com.example.workpulse.feature.attendance.data.local.entity.AttendanceStatus
@@ -25,7 +26,8 @@ import kotlinx.coroutines.isActive
 class HomeViewModel @Inject constructor(
     private val employeeRepository: EmployeeRepository,
     private val attendanceRepository: AttendanceRepository,
-    private val leaveRepository : LeaveRepository
+    private val leaveRepository : LeaveRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
 
@@ -194,5 +196,22 @@ class HomeViewModel @Inject constructor(
             attendanceResult = null
         )
 
+    }
+
+
+    fun logout(){
+        viewModelScope.launch {
+            try {
+                authRepository.logout()
+
+                _uiState.value = _uiState.value.copy(
+                    isLogoutSuccessful = true
+                )
+            }catch (e: Exception){
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = e.message
+                )
+            }
+        }
     }
 }

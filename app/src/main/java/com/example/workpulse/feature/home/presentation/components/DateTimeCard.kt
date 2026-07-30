@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.workpulse.core.ui.theme.Dimens
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -57,7 +59,7 @@ fun DateTimeCard(
             defaultElevation = 6.dp
         ),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
 
@@ -79,16 +81,17 @@ fun DateTimeCard(
                 Icon(
                     imageVector = Icons.Outlined.CalendarMonth,
                     contentDescription = null,
-                    tint = Color(0xFF2563EB)
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(Dimens.Icon28)
                 )
 
                 Spacer(modifier = Modifier.width(10.dp))
 
                 Text(
                     text = getCurrentDate(),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF4B5563)
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -96,7 +99,7 @@ fun DateTimeCard(
                 modifier = Modifier
                     .height(28.dp)
                     .width(1.dp),
-                color = Color(0xFFE5E7EB)
+                color = MaterialTheme.colorScheme.outlineVariant
             )
 
             Row(
@@ -106,16 +109,17 @@ fun DateTimeCard(
                 Icon(
                     imageVector = Icons.Outlined.AccessTime,
                     contentDescription = null,
-                    tint = Color(0xFF22C55E)
+                    tint = Color(0xFF22C55E),
+                    modifier = Modifier.size(Dimens.Icon28)
                 )
 
                 Spacer(modifier = Modifier.width(10.dp))
 
                 Text(
                     text = currentTime,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
-                    color = Color(0xFF4B5563)
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -136,7 +140,6 @@ private fun getCurrentDate(): String {
 }
 
 private fun getCurrentTime(): String {
-
     return SimpleDateFormat(
         "hh:mm a",
         Locale.getDefault()

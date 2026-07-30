@@ -1,5 +1,6 @@
 package com.example.workpulse.feature.home.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 
 import androidx.compose.foundation.layout.Spacer
@@ -11,8 +12,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.rememberDrawerState
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 
 import androidx.compose.ui.Modifier
 
@@ -25,6 +31,17 @@ import com.example.workpulse.feature.home.presentation.components.HomeTopBar
 import com.example.workpulse.feature.home.presentation.components.AttendanceCard
 import com.example.workpulse.feature.home.presentation.components.LeaveSummaryCard
 
+
+import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import com.example.workpulse.feature.home.presentation.components.LogoutDialog
+import com.example.workpulse.feature.home.presentation.components.NavigationDrawerContent
+import kotlinx.coroutines.launch
+
 enum class AttendanceState {
     NOT_PUNCHED_IN,
     PUNCHED_IN,
@@ -35,21 +52,107 @@ enum class AttendanceState {
 fun HomeScreen(
     uiState: HomeUiState,
     onAttendanceClick: () -> Unit,
-    onNavigateToProfile: () -> Unit,
-    onViewAllClick : () -> Unit
+    onViewAllClick : () -> Unit,
+    onProfileClick : () -> Unit,
+    onLeaveClick : () -> Unit,
+    onAttendanceHistoryClick : () -> Unit,
+    onSettingsClick : () -> Unit,
+    onLogoutClick : () -> Unit
 ) {
+    val drawerState = rememberDrawerState(
+        initialValue = DrawerValue.Closed
+    )
+
+    var showLogoutDialog by remember {
+        mutableStateOf(false)
+    }
+    val scope = rememberCoroutineScope()
+
+
+    ModalNavigationDrawer(
+
+        drawerState = drawerState,
+
+        drawerContent = {
+
+            NavigationDrawerContent(
+
+                employeeName = uiState.employeeName,
+
+                designation = uiState.designation,
+
+                selectedRoute = "home",
+
+                onHomeClick = {
+                    scope.launch {
+                        drawerState.close()
+                    }
+                },
+
+                onProfileClick = {
+                    scope.launch {
+                        drawerState.close()
+                        onProfileClick()
+                    }
+
+                },
+
+                onLeaveClick = {
+                    scope.launch {
+                        drawerState.close()
+                        onLeaveClick()
+                    }
+
+                },
+
+                onAttendanceHistoryClick = {
+                    scope.launch {
+                        drawerState.close()
+                        onAttendanceHistoryClick()
+                    }
+
+                },
+
+                onSettingsClick = {
+                    scope.launch {
+                        drawerState.close()
+                        onSettingsClick()
+                    }
+
+                },
+
+                onLogoutClick = {
+                    scope.launch {
+                        drawerState.close()
+                        showLogoutDialog = true
+                    }
+
+                }
+
+            )
+
+        }
+
+    ) {
+
+        // Your existing HomeScreen UI goes here
 
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .padding(20.dp)
     ) {
 
         HomeTopBar(
             uiState = uiState,
-            onProfileClick = onNavigateToProfile
+            onMenuClick = {
+                scope.launch {
+                    drawerState.open()
+                }
+            }
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -68,14 +171,24 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // LeaveSummaryCard() - We'll add this next.
         LeaveSummaryCard(
-//            totalLeaves = 27,
-//            usedLeaves = 6,
             remainingLeaves = uiState.remainingLeaves,
             onViewAllClick = onViewAllClick
         )
 
+    }
+
+        if (showLogoutDialog){
+            LogoutDialog(
+                onDismiss = {
+                    showLogoutDialog = false
+                },
+                onConfirm = {
+                    showLogoutDialog = false
+                    onLogoutClick()
+                }
+            )
+        }
     }
 
 }

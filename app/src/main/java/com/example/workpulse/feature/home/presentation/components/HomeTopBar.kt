@@ -14,8 +14,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -30,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.workpulse.R
+import com.example.workpulse.core.ui.theme.Dimens
 import com.example.workpulse.feature.home.presentation.HomeUiState
 import java.io.File
 import java.util.Calendar
@@ -37,10 +43,8 @@ import java.util.Calendar
 @Composable
 fun HomeTopBar(
 
-    uiState: HomeUiState,
-
-    onProfileClick: () -> Unit
-
+    uiState : HomeUiState,
+    onMenuClick : () -> Unit
 ) {
 
     val greeting = remember {
@@ -57,137 +61,48 @@ fun HomeTopBar(
 
     }
 
-    Row(
-
-        modifier = Modifier.fillMaxWidth(),
-
-        horizontalArrangement = Arrangement.SpaceBetween,
-
-        verticalAlignment = Alignment.Top
-
-    ) {
-
-        Column {
-
-            Image(
-
-                painter = painterResource(R.drawable.workpulse_logo),
-
-                contentDescription = "Logo",
-
-                modifier = Modifier.height(70.dp)
-
-            )
-
-            Spacer(modifier = Modifier.height(18.dp))
-
-            Text(
-
-                text = "$greeting",
-
-                fontSize = 32.sp,
-
-                fontWeight = FontWeight.Bold,
-
-                color = Color(0xFF111827)
-
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-
-                text = "Let's make today productive!",
-
-                fontSize = 18.sp,
-
-                color = Color(0xFF6B7280)
-
-            )
-
-        }
-
-        ProfileAvatar(
-
-            employeeName = uiState.employeeName,
-            uiState = uiState,
-
-            onClick = onProfileClick
-
-        )
-
-    }
-
-}
-
-@Composable
-private fun ProfileAvatar(
-
-    employeeName: String,
-    uiState: HomeUiState,
-
-    onClick: () -> Unit
-
-) {
-
-    Box {
-
-        Card(
-
-            modifier = Modifier.size(82.dp),
-
-            shape = CircleShape,
-
-            elevation = CardDefaults.cardElevation(8.dp),
-
-            onClick = onClick
-
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
-            if (uiState.profileImage.isNotBlank()) {
-
-                AsyncImage(
-                    model = File(uiState.profileImage),
-                    contentDescription = employeeName,
-                    modifier = Modifier
-                        .size(82.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
+            IconButton(
+                onClick = onMenuClick
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Menu,
+                    contentDescription = "Menu",
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
-
-            } else {
-
-                Image(
-                    painter = painterResource(R.drawable.profile_placeholder),
-                    contentDescription = employeeName,
-                    modifier = Modifier
-                        .size(82.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-
             }
 
+            Spacer(modifier = Modifier.weight(1f))
+
+            Image(
+                painter = painterResource(R.drawable.updated_workpulse_logo),
+                contentDescription = null,
+                modifier = Modifier.height(Dimens.HomeLogoHeight)
+            )
         }
 
-        Box(
+        Spacer(modifier = Modifier.height(Dimens.Space20))
 
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .offset((-2).dp, (-2).dp)
-                .size(18.dp)
-                .background(
-                    Color(0xFF22C55E),
-                    CircleShape
-                )
-                .border(
-                    3.dp,
-                    Color.White,
-                    CircleShape
-                )
+        Text(
+            text = greeting,
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
 
+        Spacer(modifier = Modifier.height(Dimens.Space4))
+
+        Text(
+            text = "Let's make today productive",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
     }
 
 }
+

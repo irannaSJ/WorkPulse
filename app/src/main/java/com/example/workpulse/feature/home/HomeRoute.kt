@@ -21,12 +21,23 @@ import com.example.workpulse.feature.home.domain.model.AttendanceResult
 
 @Composable
 fun HomeRoute(
-    onNavigateToProfile : () -> Unit,
+    onProfileClick : () -> Unit,
     onViewAllClick : () -> Unit,
+    onLeaveClick : () -> Unit,
+    onAttendanceHistoryClick : () -> Unit,
+    onSettingsClick : () -> Unit,
+    onLogoutSuccess : () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ){
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+
+    LaunchedEffect(uiState.isLogoutSuccessful) {
+        if (uiState.isLogoutSuccessful) {
+            onLogoutSuccess()
+        }
+    }
 
     val locationPermissionLauncher =
         rememberLauncherForActivityResult(
@@ -126,8 +137,14 @@ fun HomeRoute(
     HomeScreen(
         uiState = uiState,
         onAttendanceClick = viewModel :: onAttendanceClick,
-        onNavigateToProfile = onNavigateToProfile,
-        onViewAllClick = onViewAllClick
+        onViewAllClick = onViewAllClick,
+        onProfileClick = onProfileClick,
+        onLeaveClick = onLeaveClick,
+        onAttendanceHistoryClick = onAttendanceHistoryClick,
+        onSettingsClick = onSettingsClick,
+        onLogoutClick = {
+            viewModel.logout()
+        }
     )
 
 

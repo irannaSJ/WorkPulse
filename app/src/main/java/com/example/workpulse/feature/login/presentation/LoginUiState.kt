@@ -1,4 +1,4 @@
-package com.example.workpulse.feature.login
+package com.example.workpulse.feature.login.presentation
 
 data class LoginUiState(
     val email : String = "",
