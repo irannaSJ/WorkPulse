@@ -1,4 +1,4 @@
-package com.example.workpulse.feature.home.presentation.components
+package com.example.workpulse.feature.home.presentation.components.drawerRelated
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme

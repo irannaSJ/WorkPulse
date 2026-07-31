@@ -1,4 +1,4 @@
-package com.example.workpulse.feature.home.presentation.components
+package com.example.workpulse.feature.home.presentation.components.drawerRelated
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

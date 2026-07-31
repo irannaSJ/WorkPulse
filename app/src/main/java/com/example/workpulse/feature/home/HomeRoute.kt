@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import com.example.workpulse.feature.home.domain.model.AttendanceResult
+import com.example.workpulse.feature.leave.LeaveSummaryViewModel
 
 
 @Composable
@@ -27,10 +28,14 @@ fun HomeRoute(
     onAttendanceHistoryClick : () -> Unit,
     onSettingsClick : () -> Unit,
     onLogoutSuccess : () -> Unit,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    leaveViewModel : LeaveSummaryViewModel = hiltViewModel()
 ){
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    val leaveUiState by leaveViewModel.uiState.collectAsStateWithLifecycle()
+
 
 
     LaunchedEffect(uiState.isLogoutSuccessful) {
@@ -144,7 +149,8 @@ fun HomeRoute(
         onSettingsClick = onSettingsClick,
         onLogoutClick = {
             viewModel.logout()
-        }
+        },
+        leaveUiState = leaveUiState
     )
 
 

@@ -78,12 +78,6 @@ fun LeaveSummaryScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            LeaveTypeBreakdown(
-                uiState = uiState
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
             LeaveInfoCard()
 
             Spacer(modifier = Modifier.height(24.dp))

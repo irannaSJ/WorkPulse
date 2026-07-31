@@ -1,6 +1,5 @@
-package com.example.workpulse.feature.home.presentation.components
+package com.example.workpulse.feature.home.presentation.components.leaveRelated
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -12,17 +11,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.workpulse.core.ui.theme.Dimens
+import com.example.workpulse.feature.leave.LeaveSummaryUiState
+import com.example.workpulse.feature.leave.components.LeaveTypeBreakdown
 
 @Composable
 fun LeaveSummaryCard(
 
-//    totalLeaves: Int,
-//
-//    usedLeaves: Int,
-
     remainingLeaves: Int,
-
-    onViewAllClick: () -> Unit = {}
+    onViewAllClick: () -> Unit = {},
+    leaveUiState : LeaveSummaryUiState
 
 ) {
 
@@ -33,11 +31,11 @@ fun LeaveSummaryCard(
         shape = RoundedCornerShape(28.dp),
 
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surface
         ),
 
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
+            defaultElevation = Dimens.cardElevation
         )
 
     ) {
@@ -86,30 +84,6 @@ fun LeaveSummaryCard(
 
             }
 
-//            Spacer(modifier = Modifier.height(24.dp))
-
-//            Row(
-//                horizontalArrangement = Arrangement.spacedBy(16.dp)
-//            ) {
-//
-//                LeaveStatCard(
-//                    title = "Total",
-//                    value = totalLeaves.toString(),
-//                    background = Color(0xFFE8F1FF),
-//                    textColor = Color(0xFF2563EB),
-//                    modifier = Modifier.weight(1f)
-//                )
-//
-//                LeaveStatCard(
-//                    title = "Used",
-//                    value = usedLeaves.toString(),
-//                    background = Color(0xFFFFF3E0),
-//                    textColor = Color(0xFFFF9800),
-//                    modifier = Modifier.weight(1f)
-//                )
-//
-//            }
-
             Spacer(modifier = Modifier.height(16.dp))
 
             LeaveStatCard(
@@ -119,6 +93,10 @@ fun LeaveSummaryCard(
                 textColor = Color(0xFF22C55E),
                 modifier = Modifier.fillMaxWidth()
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LeaveTypeBreakdown(uiState =leaveUiState)
 
         }
 

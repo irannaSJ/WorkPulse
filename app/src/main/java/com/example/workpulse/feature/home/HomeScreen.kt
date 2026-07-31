@@ -24,22 +24,21 @@ import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.unit.dp
 
-import com.example.workpulse.feature.home.presentation.components.DateTimeCard
+import com.example.workpulse.feature.home.presentation.components.attendanceRelated.DateTimeCard
 import com.example.workpulse.feature.home.presentation.components.HomeTopBar
 
 
-import com.example.workpulse.feature.home.presentation.components.AttendanceCard
-import com.example.workpulse.feature.home.presentation.components.LeaveSummaryCard
+import com.example.workpulse.feature.home.presentation.components.attendanceRelated.AttendanceCard
+import com.example.workpulse.feature.home.presentation.components.leaveRelated.LeaveSummaryCard
 
 
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import com.example.workpulse.feature.home.presentation.components.LogoutDialog
-import com.example.workpulse.feature.home.presentation.components.NavigationDrawerContent
+import com.example.workpulse.feature.home.presentation.components.drawerRelated.LogoutDialog
+import com.example.workpulse.feature.home.presentation.components.drawerRelated.NavigationDrawerContent
+import com.example.workpulse.feature.leave.LeaveSummaryUiState
 import kotlinx.coroutines.launch
 
 enum class AttendanceState {
@@ -57,7 +56,8 @@ fun HomeScreen(
     onLeaveClick : () -> Unit,
     onAttendanceHistoryClick : () -> Unit,
     onSettingsClick : () -> Unit,
-    onLogoutClick : () -> Unit
+    onLogoutClick : () -> Unit,
+    leaveUiState : LeaveSummaryUiState
 ) {
     val drawerState = rememberDrawerState(
         initialValue = DrawerValue.Closed
@@ -80,6 +80,7 @@ fun HomeScreen(
                 employeeName = uiState.employeeName,
 
                 designation = uiState.designation,
+                company = uiState.company,
 
                 selectedRoute = "home",
 
@@ -173,8 +174,11 @@ fun HomeScreen(
 
         LeaveSummaryCard(
             remainingLeaves = uiState.remainingLeaves,
-            onViewAllClick = onViewAllClick
+            onViewAllClick = onViewAllClick,
+            leaveUiState = leaveUiState
         )
+
+
 
     }
 

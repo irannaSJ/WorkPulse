@@ -1,4 +1,4 @@
-package com.example.workpulse.feature.home.presentation.components
+package com.example.workpulse.feature.home.presentation.components.attendanceRelated
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
