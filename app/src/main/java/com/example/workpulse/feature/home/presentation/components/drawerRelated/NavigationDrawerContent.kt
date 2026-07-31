@@ -104,7 +104,7 @@ fun NavigationDrawerContent(
             )
 
             DrawerMenuItem(
-                title = "Leave Management",
+                title = "Leave Application",
                 icon = Icons.Outlined.Event,
                 selected = selectedRoute == "leave",
                 onClick = onLeaveClick

@@ -1,6 +1,6 @@
-package com.example.workpulse.feature.profile
+package com.example.workpulse.feature.profile.presentation
 
-import androidx.compose.runtime.MutableState
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.workpulse.core.datastore.SessionManager
@@ -55,6 +55,8 @@ class ProfileViewModel @Inject constructor(
                     companyEmail = employee.companyEmail ?: "",
                     personalEmail = employee.personalEmail ?: "",
                     mobileNumber = employee.mobileNumber ?: "",
+                    dateOfJoining = employee.dateOfJoining?: "",
+                    currentAddress = employee.currentAddress?: "",
                     isLoading = false,
                 )
 
@@ -70,6 +72,23 @@ class ProfileViewModel @Inject constructor(
                     app_uid =  uuid
                 )
             }
+        }
+    }
+
+    fun enableEditing(){
+        _uiState.update {
+            it.copy(
+                isEditing = true
+            )
+        }
+        Log.d("Profile","Edit button Enabled")
+    }
+
+    fun disableEditing(){
+        _uiState.update {
+            it.copy(
+                isEditing = false
+            )
         }
     }
 

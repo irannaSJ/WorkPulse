@@ -23,7 +23,6 @@ import com.example.workpulse.feature.leave.LeaveSummaryViewModel
 @Composable
 fun HomeRoute(
     onProfileClick : () -> Unit,
-    onViewAllClick : () -> Unit,
     onLeaveClick : () -> Unit,
     onAttendanceHistoryClick : () -> Unit,
     onSettingsClick : () -> Unit,
@@ -142,7 +141,6 @@ fun HomeRoute(
     HomeScreen(
         uiState = uiState,
         onAttendanceClick = viewModel :: onAttendanceClick,
-        onViewAllClick = onViewAllClick,
         onProfileClick = onProfileClick,
         onLeaveClick = onLeaveClick,
         onAttendanceHistoryClick = onAttendanceHistoryClick,

@@ -51,7 +51,6 @@ enum class AttendanceState {
 fun HomeScreen(
     uiState: HomeUiState,
     onAttendanceClick: () -> Unit,
-    onViewAllClick : () -> Unit,
     onProfileClick : () -> Unit,
     onLeaveClick : () -> Unit,
     onAttendanceHistoryClick : () -> Unit,
@@ -174,7 +173,6 @@ fun HomeScreen(
 
         LeaveSummaryCard(
             remainingLeaves = uiState.remainingLeaves,
-            onViewAllClick = onViewAllClick,
             leaveUiState = leaveUiState
         )
 

@@ -15,11 +15,10 @@ import com.example.workpulse.feature.attendance.data.local.entity.AttendanceEnti
     entities = [
         EmployeeEntity::class,
         AttendanceEntity::class,
-//        LeaveTypeEntity::class,
         LeaveBalanceEntity::class,
         LeaveApplicationEntity::class
     ],
-    version = 6,
+    version = 8,
     exportSchema = true
 )
 abstract class WorkPulseDatabase : RoomDatabase() {
@@ -27,7 +26,6 @@ abstract class WorkPulseDatabase : RoomDatabase() {
     abstract fun employeeDao(): EmployeeDao
     abstract fun attendanceDao() : AttendanceDao
 
-//    abstract fun leaveTypeDao() : LeaveTypeDao
 
     abstract fun leaveBalanceDao() : LeaveBalanceDao
 

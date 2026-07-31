@@ -24,6 +24,8 @@ data class EmployeeEntity(
     val personalEmail: String? = null,
 
     val mobileNumber: String? = null,
+    val dateOfJoining : String? =null,
+    val currentAddress : String? = null,
 
     val profileImage: String? = null,
 
