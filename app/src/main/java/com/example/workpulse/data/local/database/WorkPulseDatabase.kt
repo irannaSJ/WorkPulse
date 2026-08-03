@@ -18,7 +18,7 @@ import com.example.workpulse.feature.attendance.data.local.entity.AttendanceEnti
         LeaveBalanceEntity::class,
         LeaveApplicationEntity::class
     ],
-    version = 8,
+    version = 10,
     exportSchema = true
 )
 abstract class WorkPulseDatabase : RoomDatabase() {

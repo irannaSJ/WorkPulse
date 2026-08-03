@@ -1,17 +1,21 @@
 package com.example.workpulse.data.repository
 
 import com.example.workpulse.core.datastore.SessionManager
+import com.example.workpulse.core.worker.SyncScheduler
 import com.example.workpulse.data.local.dao.EmployeeDao
 import com.example.workpulse.data.local.dao.LeaveApplicationDao
 import com.example.workpulse.data.local.dao.LeaveBalanceDao
 import com.example.workpulse.data.local.entity.LeaveApplicationEntity
 import com.example.workpulse.data.local.entity.LeaveApplicationStatus
 import com.example.workpulse.data.remote.LeaveApi
+import com.example.workpulse.data.remote.dto.request.LeaveApplicationRequest
 import com.example.workpulse.feature.attendance.data.local.entity.SyncStatus
 import com.example.workpulse.feature.leaveApplication.LeaveApplicationResult
 import com.example.workpulse.feature.leaveApplication.LeaveSuggestionUi
 import com.example.workpulse.feature.leaveApplication.LeaveType
 import com.example.workpulse.feature.leaveApplication.LeaveValidationResult
+import java.io.IOException
+import java.util.Calendar
 import javax.inject.Inject
 
 class LeaveApplicationRepository @Inject constructor(
@@ -19,7 +23,8 @@ class LeaveApplicationRepository @Inject constructor(
     private val employeeDao: EmployeeDao,
     private val leaveBalanceDao: LeaveBalanceDao,
     private val sessionManager: SessionManager,
-    private val leaveApplicationDao: LeaveApplicationDao
+    private val leaveApplicationDao: LeaveApplicationDao,
+    private val syncScheduler: SyncScheduler
 ) {
 
     suspend fun getAvailableBalance(leaveType : LeaveType) : Double{
@@ -144,15 +149,35 @@ class LeaveApplicationRepository @Inject constructor(
                 "Please Enter the Reason"
             )
         }
+
+        if(reason.trim().length < 10){
+            return LeaveValidationResult.Error(
+                "The Reason should contain at least 10 characters"
+            )
+        }
+
         if(requestedDays <=0){
             return LeaveValidationResult.Error(
                 "The Requested Days are less then 0"
             )
         }
 
+        if(fromDate > toDate){
+            return LeaveValidationResult.Error(
+                "The From Date cannot be after To Date"
+            )
+        }
+
+        val duplicateValidation = validateDuplicateLeave(fromDate = fromDate, toDate= toDate)
+
+        if(duplicateValidation != LeaveValidationResult.Success){
+            return duplicateValidation
+        }
+
+
         val availableBalance = getAvailableBalance(leaveType)
 
-        if(availableBalance <= requestedDays){
+        if(availableBalance < requestedDays){
             val suggestions = getLeaveSuggestions(
                 selectedLeaveType =leaveType,
                 requestedDays = requestedDays
@@ -161,8 +186,52 @@ class LeaveApplicationRepository @Inject constructor(
             return LeaveValidationResult.InsufficientBalance(availableBalance = availableBalance, suggestions = suggestions)
         }
 
+        val today  = getStartOfToday()
+        if(fromDate < today){
+            return LeaveValidationResult.Error(
+                "From Date cannot be in the past"
+            )
+        }
+        if(toDate < today){
+            return LeaveValidationResult.Error(
+                "To Date cannot be in the Past"
+            )
+        }
+
+        if(requestedDays > 30){
+            return LeaveValidationResult.Error(
+                "Leave Application Cannot exceed 30 days"
+            )
+        }
+
         return LeaveValidationResult.Success
 
+    }
+
+
+    private suspend fun validateDuplicateLeave(
+        fromDate: Long?,
+        toDate: Long?
+    ) : LeaveValidationResult {
+        val employeeId = sessionManager.getEmployeeId()
+            ?: return LeaveValidationResult.Error(
+                "Employee Not Found"
+            )
+
+        val existingLeave = leaveApplicationDao.getOverlappingLeaveApplication(
+            employeeId = employeeId,
+            fromDate = fromDate,
+            toDate = toDate
+        )
+
+        if(existingLeave != null){
+            return LeaveValidationResult.Error(
+                "Leave Application Already Exists for the selected dates."
+            )
+        }
+
+
+        return LeaveValidationResult.Success
     }
 
 
@@ -204,7 +273,7 @@ class LeaveApplicationRepository @Inject constructor(
 
                         employeeId = employee.employeeId,
 
-                        leaveType = leaveType!!.name,
+                        leaveType = leaveType!!.displayName,
 
                         fromDate = fromDate!!,
 
@@ -212,11 +281,12 @@ class LeaveApplicationRepository @Inject constructor(
 
                         requestedDays = requestedDays,
 
-                        reason = reason.trim(),
+                        description = reason.trim(),
 
                         applicationStatus = LeaveApplicationStatus.PENDING,
 
                         syncStatus = SyncStatus.PENDING,
+                        leaveApprover = "Administrator",
 
                         createdAt = currentTime,
 
@@ -227,6 +297,7 @@ class LeaveApplicationRepository @Inject constructor(
                     leaveApplicationDao.insertLeaveApplication(
                         leaveApplication
                     )
+                    syncScheduler.scheduleLeaveSync()
 
                     LeaveApplicationResult.Success
                 }
@@ -249,4 +320,121 @@ class LeaveApplicationRepository @Inject constructor(
         }
 
     }
+
+
+
+
+
+    private fun getStartOfToday(): Long {
+
+        val calendar = Calendar.getInstance()
+
+        calendar.set(
+            Calendar.HOUR_OF_DAY,
+            0
+        )
+
+        calendar.set(
+            Calendar.MINUTE,
+            0
+        )
+
+        calendar.set(
+            Calendar.SECOND,
+            0
+        )
+
+        calendar.set(
+            Calendar.MILLISECOND,
+            0
+        )
+
+        return calendar.timeInMillis
+
+    }
+
+
+
+    suspend fun syncPendingLeaveApplications() {
+
+        val pendingApplications =
+            leaveApplicationDao.getPendingLeaveApplication()
+
+        for (application in pendingApplications) {
+
+            val request = LeaveApplicationRequest(
+
+                employee = application.employeeId,
+
+                leaveType = application.leaveType,
+
+                fromDate = formatDate(application.fromDate),
+
+                toDate = formatDate(application.toDate),
+
+                description = application.description
+
+            )
+
+            try {
+
+                val response =
+                    leaveApi.createLeaveApplication(request)
+
+                if (response.isSuccessful) {
+
+                    leaveApplicationDao.updateSyncStatus(
+
+                        id = application.id,
+
+                        syncStatus = SyncStatus.SYNCED,
+
+                        updatedAt = System.currentTimeMillis()
+
+                    )
+
+                } else {
+
+                    // Keep as PENDING.
+                    // Server rejected the request.
+
+                }
+
+            } catch (exception: IOException) {
+
+                // Network unavailable.
+                throw exception
+
+            } catch (exception: Exception) {
+
+                exception.printStackTrace()
+
+                // Leave remains PENDING.
+
+            }
+
+        }
+
+    }
 }
+
+
+
+
+
+
+
+private fun formatDate(
+    millis: Long
+): String {
+
+    return java.text.SimpleDateFormat(
+        "yyyy-MM-dd",
+        java.util.Locale.getDefault()
+    ).format(java.util.Date(millis))
+
+}
+
+
+
+

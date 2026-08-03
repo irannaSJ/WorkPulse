@@ -24,13 +24,14 @@ data class LeaveApplicationEntity(
     val requestedDays: Int,
 
     // Leave Reason
-    val reason: String,
+    val description: String,
 
     // Application Status
     val applicationStatus: LeaveApplicationStatus,
 
     // Sync Status
     val syncStatus: SyncStatus,
+    val leaveApprover : String = "Administrator",
 
     // Audit Fields
     val createdAt: Long,

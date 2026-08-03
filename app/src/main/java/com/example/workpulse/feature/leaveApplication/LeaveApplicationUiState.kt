@@ -25,6 +25,7 @@ data class LeaveApplicationUiState(
 
     // Validation
     val errorMessage: String? = null,
+    val successMessage : String? = null,
 
     // Dialog
     val showSuggestionDialog: Boolean = false,
@@ -33,7 +34,7 @@ data class LeaveApplicationUiState(
 
 data class LeaveSuggestionUi(
 
-    val leaveType: LeaveType? = null,
+    val leaveType: LeaveType,
 
     val availableDays: Double
 

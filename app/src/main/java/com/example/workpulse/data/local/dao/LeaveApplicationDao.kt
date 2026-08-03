@@ -6,7 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.workpulse.data.local.entity.LeaveApplicationEntity
-import kotlinx.coroutines.flow.Flow
+import com.example.workpulse.feature.attendance.data.local.entity.SyncStatus
 
 @Dao
 interface LeaveApplicationDao {
@@ -25,10 +25,56 @@ interface LeaveApplicationDao {
         SELECT *
         FROM leave_application
         WHERE employeeId = :employeeId
-        ORDER BY fromDate DESC
+        AND applicationStatus != 'REJECTED'
+        AND (
+        fromDate <= :toDate
+        AND toDate >= :fromDate
+        ) LIMIT 1
     """)
-    fun getLeaveApplications(
-        employeeId: String
-    ): Flow<List<LeaveApplicationEntity>>
+    suspend fun getOverlappingLeaveApplication(
+        employeeId: String,
+        fromDate: Long?,
+        toDate: Long?
+    ): LeaveApplicationEntity?
+
+
+    @Query("""
+        SELECT *
+        FROM leave_application
+        WHERE syncStatus = :syncStatus
+    """)
+    suspend fun getPendingLeaveApplication(
+        syncStatus: SyncStatus = SyncStatus.PENDING
+    ): List<LeaveApplicationEntity>
+
+
+    @Query("""
+        UPDATE leave_application
+        SET syncStatus = :syncStatus,
+        updatedAt = :updatedAt
+        WHERE id = :id
+    """)
+    suspend fun updateSyncStatus(
+        id: Long,
+        syncStatus: SyncStatus,
+        updatedAt : Long
+    )
+
+    @Query("""
+        SELECT *
+        FROM leave_application
+        WHERE id = :id
+    """)
+    suspend fun getLeaveApplication(
+        id: Long
+    ) : LeaveApplicationEntity?
+
+
+    @Query("""
+        SELECT * 
+        FROM leave_application
+        ORDER BY createdAt DESC
+    """)
+    suspend fun getLeaveApplications(): List<LeaveApplicationEntity>
 
 }
