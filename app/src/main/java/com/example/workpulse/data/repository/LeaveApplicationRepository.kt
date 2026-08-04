@@ -1,5 +1,6 @@
 package com.example.workpulse.data.repository
 
+import android.util.Log
 import com.example.workpulse.core.datastore.SessionManager
 import com.example.workpulse.core.worker.SyncScheduler
 import com.example.workpulse.data.local.dao.EmployeeDao
@@ -9,13 +10,16 @@ import com.example.workpulse.data.local.entity.LeaveApplicationEntity
 import com.example.workpulse.data.local.entity.LeaveApplicationStatus
 import com.example.workpulse.data.remote.LeaveApi
 import com.example.workpulse.data.remote.dto.request.LeaveApplicationRequest
+import com.example.workpulse.data.remote.dto.response.LeaveApplicationData
 import com.example.workpulse.feature.attendance.data.local.entity.SyncStatus
 import com.example.workpulse.feature.leaveApplication.LeaveApplicationResult
 import com.example.workpulse.feature.leaveApplication.LeaveSuggestionUi
 import com.example.workpulse.feature.leaveApplication.LeaveType
 import com.example.workpulse.feature.leaveApplication.LeaveValidationResult
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 
 class LeaveApplicationRepository @Inject constructor(
@@ -356,7 +360,13 @@ class LeaveApplicationRepository @Inject constructor(
 
 
     suspend fun syncPendingLeaveApplications() {
+        updatePendingLeaveApplications()
+        downloadLatestLeaveApplications()
 
+
+    }
+
+    private suspend fun updatePendingLeaveApplications(){
         val pendingApplications =
             leaveApplicationDao.getPendingLeaveApplication()
 
@@ -372,7 +382,8 @@ class LeaveApplicationRepository @Inject constructor(
 
                 toDate = formatDate(application.toDate),
 
-                description = application.description
+                description = application.description,
+                leaveApprover = application.leaveApprover
 
             )
 
@@ -382,10 +393,12 @@ class LeaveApplicationRepository @Inject constructor(
                     leaveApi.createLeaveApplication(request)
 
                 if (response.isSuccessful) {
+                    val erpNextId = response.body()?.data?.name?:continue
 
-                    leaveApplicationDao.updateSyncStatus(
+                    leaveApplicationDao.updateSyncDetails(
 
                         id = application.id,
+                        erpNextId = erpNextId,
 
                         syncStatus = SyncStatus.SYNCED,
 
@@ -414,8 +427,221 @@ class LeaveApplicationRepository @Inject constructor(
             }
 
         }
+    }
+
+
+
+    private suspend fun downloadLatestLeaveApplications() {
+
+        val employeeId =
+            sessionManager.getEmployeeId()
+                ?: return
+
+        val filters = """
+        [
+            ["employee","=","$employeeId"]
+        ]
+    """.trimIndent()
+
+        val fields = """
+        [
+            "name",
+            "employee",
+            "leave_type",
+            "from_date",
+            "to_date",
+            "status",
+            "description"
+        ]
+    """.trimIndent()
+
+        val response = leaveApi.getLeaveApplications(
+
+            fields = fields,
+
+            filters = filters
+
+        )
+
+        Log.d(
+            "LeaveSync",
+            "Downloaded ${response.data.size} leave applications"
+        )
+//
+//        response.data.forEach {
+//
+//            Log.d(
+//                "LeaveSync",
+//                """
+//            -----------------------
+//            ERPNext ID : ${it.name}
+//            Employee   : ${it.employee}
+//            Leave Type : ${it.leaveType}
+//            Status     : ${it.status}
+//            From Date  : ${it.fromDate}
+//            To Date    : ${it.toDate}
+//            Descriptions : ${it.description}
+//            -----------------------
+//            """.trimIndent()
+//            )
+//
+//        }
+
+        response.data.forEach { dto ->
+
+            val entity = dto.toEntity()
+
+            val existing = leaveApplicationDao.getByErpNextId(dto.name)
+
+            if (existing == null) {
+
+                leaveApplicationDao.insertLeaveApplication(entity)
+
+                Log.d(
+                    "LeaveSync",
+                    "Inserted ${dto.name}"
+                )
+
+            } else {
+
+                leaveApplicationDao.updateLeaveApplication(
+
+                    entity.copy(
+                        id = existing.id
+                    )
+
+                )
+
+                Log.d(
+                    "LeaveSync",
+                    "Updated ${dto.name}"
+                )
+
+            }
+
+        }
 
     }
+
+
+//    suspend fun downloadLatestLeaveApplications() {
+//
+//        val employeeId =
+//            sessionManager.getEmployeeId()
+//                ?: return
+//
+//        val response =
+//            leaveApi.getLeaveApplications(
+//
+//                fields = """
+//            [
+//                "name",
+//                "employee",
+//                "leave_type",
+//                "from_date",
+//                "to_date",
+//                "status"
+//            ]
+//            """.trimIndent(),
+//
+//                filters = """
+//            [
+//                ["employee","=","$employeeId"]
+//            ]
+//            """.trimIndent()
+//
+//            )
+//
+//        Log.d(
+//            "LeaveSync",
+//            "Downloaded ${response.data.size} leave applications"
+//        )
+//
+////        response.data.forEach { dto ->
+////
+////            val localLeave =
+////                leaveApplicationDao.getByErpNextId(dto.name)
+////                    ?: return@forEach
+////
+////            leaveApplicationDao.updateApplicationStatus(
+////
+////                erpNextId = dto.name,
+////
+////                status = mapStatus(dto.status),
+////
+////                updatedAt = System.currentTimeMillis()
+////
+////            )
+////
+////        }
+//
+//        response.data.forEach { dto ->
+//
+//            val entity = dto.toEntity()
+//
+//            val existingLeave =
+//
+//                leaveApplicationDao.getByErpNextId(
+//                    dto.name
+//                )
+//
+//            if (existingLeave == null) {
+//
+//                leaveApplicationDao.insertLeaveApplication(
+//                    entity
+//                )
+//
+//                Log.d(
+//                    "LeaveSync",
+//                    "Inserted ${dto.name}"
+//                )
+//
+//            }
+//
+//        }
+//
+//    }
+
+
+
+
+    private fun LeaveApplicationData.toEntity(): LeaveApplicationEntity {
+
+        return LeaveApplicationEntity(
+
+            id = 0,
+
+            employeeId = employee,
+
+            erpNextId = name,
+
+            leaveType = leaveType,
+
+            fromDate = parseDate(fromDate),
+
+            toDate = parseDate(toDate),
+
+            requestedDays = calculateRequestedDays(
+                parseDate(fromDate),
+                parseDate(toDate)
+            ),
+
+            description = description.orEmpty(),
+
+            applicationStatus = mapStatus(status),
+
+            syncStatus = SyncStatus.SYNCED,
+
+            createdAt = System.currentTimeMillis(),
+
+            updatedAt = System.currentTimeMillis()
+
+        )
+    }
+
+
+
+
 }
 
 
@@ -434,6 +660,54 @@ private fun formatDate(
     ).format(java.util.Date(millis))
 
 }
+
+private fun mapStatus(
+    status: String
+): LeaveApplicationStatus {
+
+    return when (status) {
+
+        "Open" ->
+            LeaveApplicationStatus.PENDING
+
+        "Approved" ->
+            LeaveApplicationStatus.APPROVED
+
+        "Rejected" ->
+            LeaveApplicationStatus.REJECTED
+
+        "Cancelled" ->
+            LeaveApplicationStatus.CANCELLED
+
+        else ->
+            LeaveApplicationStatus.PENDING
+    }
+
+}
+
+
+private fun parseDate(date: String): Long {
+
+    val formatter = SimpleDateFormat(
+        "yyyy-MM-dd",
+        Locale.getDefault()
+    )
+
+    return formatter.parse(date)?.time ?: 0L
+
+}
+
+private fun calculateRequestedDays(
+    fromDate: Long,
+    toDate: Long
+): Int {
+
+    return (((toDate - fromDate) / (24 * 60 * 60 * 1000)) + 1).toInt()
+
+}
+
+
+
 
 
 

@@ -34,6 +34,7 @@ class LeaveSyncWorker @AssistedInject constructor(
             leaveApplicationRepository
                 .syncPendingLeaveApplications()
 
+
             Result.success()
 
         } catch (e: IOException) {

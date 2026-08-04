@@ -10,6 +10,12 @@ data class LeaveApplicationResponse(
 
 )
 
+
+data class LeaveApplicationResponses(
+    @SerializedName("data")
+    val data : List<LeaveApplicationData>
+)
+
 data class LeaveApplicationData(
 
     @SerializedName("name")
@@ -21,7 +27,16 @@ data class LeaveApplicationData(
     @SerializedName("leave_type")
     val leaveType: String,
 
+    @SerializedName("from_date")
+    val fromDate : String,
+
+    @SerializedName("to_date")
+    val toDate : String,
+
     @SerializedName("status")
-    val status: String
+    val status: String,
+
+    @SerializedName("description")
+    val description : String? = null
 
 )

@@ -3,6 +3,7 @@ package com.example.workpulse.feature.leaveApplication
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.workpulse.data.repository.EmployeeRepository
 import com.example.workpulse.data.repository.LeaveApplicationRepository
 import com.example.workpulse.data.repository.LeaveRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,25 +21,44 @@ import javax.inject.Singleton
 
 @HiltViewModel
 class LeaveApplicationViewModel @Inject constructor(
-    private val leaveApplicationRepository: LeaveApplicationRepository
+    private val leaveApplicationRepository: LeaveApplicationRepository,
+    private val employeeRepository: EmployeeRepository
 ) : ViewModel(){
     private val _uiState = MutableStateFlow(LeaveApplicationUiState())
     val uiState : StateFlow<LeaveApplicationUiState> = _uiState.asStateFlow()
 
 
+    init {
+        observeEmployee()
+    }
 
+    private fun observeEmployee(){
+        viewModelScope.launch {
 
-//    fun onLeaveTypeSelected(leaveType: LeaveType){
-//        _uiState.update {
-//            currentState -> currentState.copy(
-//                leaveType = leaveType,
-//                errorMessage = null,
-//                showSuggestionDialog = false,
-//                suggestedLeaveTypes = emptyList()
-//
-//            )
-//        }
-//    }
+            employeeRepository
+                .getEmployee()
+                .collect { employee ->
+
+                    if (employee == null) return@collect
+
+                    _uiState.update {
+
+                        it.copy(
+
+                            employeeId = employee.employeeId,
+
+                            employeeName = employee.employeeName,
+
+                            company = employee.company ?: ""
+
+                        )
+
+                    }
+
+                }
+
+        }
+    }
 
     fun onLeaveTypeSelected(
         leaveType: LeaveType
@@ -124,7 +144,7 @@ class LeaveApplicationViewModel @Inject constructor(
 
     fun onSaveClick(){
 
-        Log.d("Leave APplication Save button Clicked", "save button clicked")
+        Log.d("Leave Application Save button Clicked", "save button clicked")
         viewModelScope.launch {
             _uiState.update {
                 it.copy(

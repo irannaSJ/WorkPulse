@@ -54,7 +54,7 @@ fun HomeScreen(
     onProfileClick : () -> Unit,
     onLeaveClick : () -> Unit,
     onAttendanceHistoryClick : () -> Unit,
-    onSettingsClick : () -> Unit,
+    onLeaveHistoryClick : () -> Unit,
     onLogoutClick : () -> Unit,
     leaveUiState : LeaveSummaryUiState
 ) {
@@ -113,12 +113,11 @@ fun HomeScreen(
 
                 },
 
-                onSettingsClick = {
+                onLeaveHistoryClick = {
                     scope.launch {
                         drawerState.close()
-                        onSettingsClick()
+                        onLeaveHistoryClick()
                     }
-
                 },
 
                 onLogoutClick = {

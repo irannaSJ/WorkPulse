@@ -9,6 +9,7 @@ import com.example.workpulse.core.navigation.Screen.Splash
 import com.example.workpulse.feature.home.presentation.HomeRoute
 import com.example.workpulse.feature.home.presentation.history.AttendanceHistoryRoute
 import com.example.workpulse.feature.leaveApplication.LeaveApplicationRoute
+import com.example.workpulse.feature.leaveHistory.LeaveHistoryRoute
 //import com.example.workpulse.feature.home.presentation.HomeRoute
 import com.example.workpulse.feature.login.presentation.LoginRoute
 import com.example.workpulse.feature.profile.presentation.ProfileRoute
@@ -80,7 +81,9 @@ fun AppNavHost(
                 onAttendanceHistoryClick = {
                     navController.navigate(Screen.AttendanceHistory.route)
                 },
-                onSettingsClick = {},
+                onLeaveHistoryClick = {
+                    navController.navigate(Screen.LeaveHistory.route)
+                },
                 onLogoutSuccess = {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(navController.graph.id) {
@@ -94,6 +97,14 @@ fun AppNavHost(
 
         composable(Screen.AttendanceHistory.route) {
             AttendanceHistoryRoute(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Screen.LeaveHistory.route){
+            LeaveHistoryRoute(
                 onBackClick = {
                     navController.popBackStack()
                 }

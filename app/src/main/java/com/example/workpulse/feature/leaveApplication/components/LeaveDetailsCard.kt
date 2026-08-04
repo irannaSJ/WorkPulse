@@ -222,7 +222,8 @@ fun ReadOnlyField(
         Text(
             text = label,
             style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -244,9 +245,9 @@ fun ReadOnlyField(
 
             },
             placeholder = {
-
                 Text(
-                    text = placeholder
+                    text = placeholder,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
             }

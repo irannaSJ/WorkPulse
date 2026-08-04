@@ -3,9 +3,11 @@ package com.example.workpulse.data.remote
 
 import com.example.workpulse.data.remote.dto.request.LeaveApplicationRequest
 import com.example.workpulse.data.remote.dto.response.LeaveApplicationResponse
+import com.example.workpulse.data.remote.dto.response.LeaveApplicationResponses
 import com.example.workpulse.data.remote.response.LeaveBalanceResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.Field
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -31,5 +33,21 @@ interface LeaveApi {
         request: LeaveApplicationRequest
 
     ): Response<LeaveApplicationResponse>
+
+
+    @GET("api/resource/Leave Application")
+    suspend fun getLeaveApplications(
+        @Query("fields")
+        fields: String,
+
+        @Query("filters")
+        filters: String,
+
+        @Query("order_by")
+        orderBy: String = "from_date desc"
+    ) : LeaveApplicationResponses
+
+
+
 
 }

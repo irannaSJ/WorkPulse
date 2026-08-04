@@ -17,6 +17,9 @@ data class LeaveApplicationRequest(
     val toDate: String,
 
     @SerializedName("description")
-    val description: String
+    val description: String,
+
+    @SerializedName("leave_approver")
+    val leaveApprover : String
 
 )

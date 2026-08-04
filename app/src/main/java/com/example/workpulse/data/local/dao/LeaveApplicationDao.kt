@@ -6,7 +6,9 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.workpulse.data.local.entity.LeaveApplicationEntity
+import com.example.workpulse.data.local.entity.LeaveApplicationStatus
 import com.example.workpulse.feature.attendance.data.local.entity.SyncStatus
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LeaveApplicationDao {
@@ -60,6 +62,51 @@ interface LeaveApplicationDao {
         updatedAt : Long
     )
 
+
+    @Query("""
+        UPDATE leave_application
+        SET erpNextId = :erpNextId,
+        syncStatus = :syncStatus,
+        updatedAt = :updatedAt
+        WHERE id = :id
+    """)
+    suspend fun updateSyncDetails(
+        id: Long,
+        erpNextId : String,
+        syncStatus: SyncStatus,
+        updatedAt: Long
+    )
+
+
+
+    @Query("""
+        SELECT *
+        FROM  leave_application
+        WHERE erpNextId = :erpNextId
+        LIMIT 1
+    """)
+    suspend fun getByErpNextId(
+        erpNextId: String
+    ) : LeaveApplicationEntity?
+
+
+    @Query("""
+UPDATE leave_application
+SET
+    applicationStatus = :status,
+    updatedAt = :updatedAt
+WHERE erpNextId = :erpNextId
+""")
+    suspend fun updateApplicationStatus(
+
+        erpNextId: String,
+
+        status: LeaveApplicationStatus,
+
+        updatedAt: Long
+
+    )
+
     @Query("""
         SELECT *
         FROM leave_application
@@ -70,11 +117,18 @@ interface LeaveApplicationDao {
     ) : LeaveApplicationEntity?
 
 
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(
+        leaveApplications: List<LeaveApplicationEntity>
+    )
+
+
     @Query("""
         SELECT * 
         FROM leave_application
-        ORDER BY createdAt DESC
+        ORDER BY fromDate DESC
     """)
-    suspend fun getLeaveApplications(): List<LeaveApplicationEntity>
+    fun getAllLeaveApplications(): Flow<List<LeaveApplicationEntity>>
 
 }

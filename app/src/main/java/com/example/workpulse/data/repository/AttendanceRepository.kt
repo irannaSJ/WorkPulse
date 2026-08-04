@@ -230,18 +230,7 @@ class AttendanceRepository @Inject constructor(
     /**
      * Update sync status
      */
-//    suspend fun updateSyncStatus(
-//        attendance: AttendanceEntity,
-//        syncStatus: SyncStatus
-//    ) {
-//
-//        attendanceDao.updateAttendance(
-//            attendance.copy(
-//                syncStatus = syncStatus,
-//                updatedAt = System.currentTimeMillis()
-//            )
-//        )
-//    }
+
 
     /**
      * Pending attendance
@@ -266,21 +255,6 @@ class AttendanceRepository @Inject constructor(
     private fun getTodayDate(): String =
         LocalDate.now().toString()
 
-
-//    private fun AttendanceEntity.toSyncRequest(): EmployeeCheckinRequest {
-//        return EmployeeCheckinRequest(
-//            employeeId = employeeId,
-//            attendanceDate = attendanceDate,
-//            punchInTime = punchInTime,
-//            punchOutTime = punchOutTime,
-//            workingSeconds = workingSeconds,
-//            latitude = latitude,
-//            longitude = logitude,
-//            accuracy = accuracy,
-//            deviceId = deviceId,
-////            locationStatus = locationStatus.name
-//        )
-//    }
 
     suspend fun syncPendingAttendance() {
 
