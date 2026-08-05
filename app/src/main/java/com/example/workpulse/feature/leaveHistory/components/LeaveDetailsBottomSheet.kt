@@ -22,13 +22,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.workpulse.core.ui.components.StatusChip
+import com.example.workpulse.feature.leaveHistory.LeaveDetailsUi
 import com.example.workpulse.feature.leaveHistory.LeaveHistoryCardUi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LeaveDetailsBottomSheet(
 
-    leave: LeaveHistoryCardUi,
+    leave: LeaveDetailsUi,
 
     onDismiss: () -> Unit
 
@@ -117,7 +118,7 @@ fun LeaveDetailsBottomSheet(
 
                 title = "Requested Days",
 
-                value = leave.duration
+                value = leave.requestedDays
 
             )
 
@@ -181,7 +182,7 @@ fun DetailRow(
 
     title: String,
 
-    value: String,
+    value: String?,
 
     modifier: Modifier = Modifier
 
@@ -205,13 +206,15 @@ fun DetailRow(
 
         )
 
-        Text(
+        if (value != null) {
+            Text(
 
-            text = value,
+                text = value,
 
-            style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium
 
-        )
+            )
+        }
 
     }
 

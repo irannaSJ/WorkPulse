@@ -62,21 +62,19 @@ fun LeaveHistoryRoute(
 
     )
 
-    if (
+    if (uiState.showBottomSheet) {
 
-        uiState.showBottomSheet &&
+        uiState.leaveDetails?.let { leave ->
 
-        uiState.leaveDetails != null
+            LeaveDetailsBottomSheet(
 
-    ) {
+                leave = leave,
 
-        LeaveDetailsBottomSheet(
+                onDismiss = viewModel::hideBottomSheet
 
-            leave = uiState.leaveDetails,
+            )
 
-            onDismiss = viewModel::hideBottomSheet
-
-        )
+        }
 
     }
 
