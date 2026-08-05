@@ -13,4 +13,8 @@ sealed class Screen(val route : String){
     data object LeaveApplication : Screen("leave_application")
 
     data object LeaveHistory : Screen("leave_history")
+
+    data object Main : Screen(
+        route = "main"
+    )
 }

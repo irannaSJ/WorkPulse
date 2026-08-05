@@ -185,6 +185,12 @@ class AttendanceRepository @Inject constructor(
 
         val appUuid = sessionManager.getOrCreateAppUuid()
 
+
+
+
+
+
+
         val deviceInfo = buildString {
 
             append("Device=")
@@ -323,6 +329,7 @@ class AttendanceRepository @Inject constructor(
                 updatedAttendance = updatedAttendance.copy(
 
                     deviceId = deviceInfo,
+                    location = locationText,
 
                     updatedAt = System.currentTimeMillis()
 
@@ -359,8 +366,10 @@ class AttendanceRepository @Inject constructor(
 
                             updatedAttendance = updatedAttendance.copy(
                                 punchInSyncStatus = SyncStatus.SYNCED,
+                                location = updatedAttendance.location,
                                 updatedAt = System.currentTimeMillis()
                             )
+
 
                             attendanceDao.updateAttendance(updatedAttendance)
 
@@ -400,6 +409,7 @@ class AttendanceRepository @Inject constructor(
 
                         updatedAttendance = updatedAttendance.copy(
                             punchOutSyncStatus = SyncStatus.SYNCED,
+                            location = updatedAttendance.location,
                             updatedAt = System.currentTimeMillis()
                         )
 

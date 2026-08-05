@@ -95,12 +95,16 @@ fun AttendanceEntity.toUiModel(): AttendanceHistoryUiModel {
 
         punchOut = formatTime(punchOutTime),
 
-        punchInLocation = if (latitude != null && logitude != null)
+        punchInLocation = if(location != "")
+            "$location"
+            else if (latitude != null && logitude != null)
             "$latitude, $logitude"
         else
             "--",
 
-        punchOutLocation = if (latitude != null && logitude != null)
+        punchOutLocation = if(location != "")
+            "$location"
+        else if (latitude != null && logitude != null)
             "$latitude, $logitude"
         else
             "--",

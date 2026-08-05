@@ -53,7 +53,7 @@ data class AttendanceEntity(
      */
     val punchInSyncStatus: SyncStatus,
 
-    val punchOutSyncStatus: SyncStatus,
+    val punchOutSyncStatus: SyncStatus ,
 
     /**
      * Local creation time
