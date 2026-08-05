@@ -3,6 +3,7 @@ package com.example.workpulse.data.repository
 import android.util.Log
 import com.example.workpulse.core.datastore.SessionManager
 import com.example.workpulse.core.location.LocationManager
+import com.example.workpulse.core.location.ReverseGeocoder
 import com.example.workpulse.core.worker.SyncScheduler
 import com.example.workpulse.data.local.dao.EmployeeDao
 import com.example.workpulse.data.local.entity.LocationStatus
@@ -34,7 +35,8 @@ class AttendanceRepository @Inject constructor(
     private val sessionManager: SessionManager,
     private val locationManager: LocationManager,
     private val attendanceApi: AttendanceApi,
-    private val syncScheduler: SyncScheduler
+    private val syncScheduler: SyncScheduler,
+    private val reverseGeocoder: ReverseGeocoder
 ){
     suspend fun getTodayAttendance(): AttendanceEntity? {
 
@@ -266,7 +268,69 @@ class AttendanceRepository @Inject constructor(
 
             try {
 
+                //Updating a project to convert the longitude and latitude into location:
+
                 var updatedAttendance = attendance
+
+                val locationText =
+
+                    if (
+                        attendance.latitude != null &&
+                        attendance.logitude != null
+                    ) {
+
+                        reverseGeocoder.getAddress(
+                            attendance.latitude,
+                            attendance.logitude
+                        )
+
+                    } else {
+
+                        ""
+
+                    }
+
+                val deviceInfo = buildString {
+
+                    if (locationText.isNotBlank()) {
+
+                        append("Location=")
+                        append(locationText)
+
+                    } else {
+
+                        attendance.latitude?.let {
+
+                            append(" | Lat=")
+                            append(it)
+
+                        }
+
+                        attendance.logitude?.let {
+
+                            append(" | Lng=")
+                            append(it)
+
+                        }
+
+                    }
+
+                    append(" | Device=")
+                    append(updatedAttendance.deviceId?.substringBefore(" |") ?: "")
+
+                }
+
+                updatedAttendance = updatedAttendance.copy(
+
+                    deviceId = deviceInfo,
+
+                    updatedAt = System.currentTimeMillis()
+
+                )
+
+                attendanceDao.updateAttendance(updatedAttendance)
+
+
 
                 // -------------------------------
                 // Sync Punch In
@@ -283,7 +347,7 @@ class AttendanceRepository @Inject constructor(
                             employee = attendance.employeeId,
                             time = formatDateTime(punchInTime),
                             logType = "IN",
-                            deviceId = attendance.deviceId,
+                            deviceId = updatedAttendance.deviceId,
                             latitude = attendance.latitude,
                             longitude = attendance.logitude
                         )

@@ -71,6 +71,7 @@ data class AttendanceEntity(
     val accuracy : Float ?= null,
     val deviceId : String = "",
     val locationStatus : LocationStatus = LocationStatus.PENDING,
+    val location: String = ""
 
 //    val logType : LogType
 )
