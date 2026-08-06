@@ -5,6 +5,14 @@ import androidx.compose.animation.core.tween
 
 object NavTransitions {
 
+    val tabEnter: AnimatedContentTransitionScope<*>.() -> EnterTransition = {
+        fadeIn(animationSpec = tween(200))
+    }
+
+    val tabExit: AnimatedContentTransitionScope<*>.() -> ExitTransition = {
+        fadeOut(animationSpec = tween(160))
+    }
+
     val enter: AnimatedContentTransitionScope<*>.() -> EnterTransition = {
 
         fadeIn(

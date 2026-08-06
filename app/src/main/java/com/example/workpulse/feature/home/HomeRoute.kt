@@ -25,6 +25,7 @@ fun HomeRoute(
     onProfileClick : () -> Unit,
     onLeaveClick : () -> Unit,
     onAttendanceHistoryClick : () -> Unit,
+    onAttendanceRequestClick : () -> Unit,
     onLeaveHistoryClick : () -> Unit,
     onLogoutSuccess : () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
@@ -144,6 +145,7 @@ fun HomeRoute(
         onProfileClick = onProfileClick,
         onLeaveClick = onLeaveClick,
         onAttendanceHistoryClick = onAttendanceHistoryClick,
+        onAttendanceRequestClick = onAttendanceRequestClick,
         onLeaveHistoryClick = onLeaveHistoryClick,
         onLogoutClick = {
             viewModel.logout()
@@ -153,5 +155,4 @@ fun HomeRoute(
 
 
 }
-
 

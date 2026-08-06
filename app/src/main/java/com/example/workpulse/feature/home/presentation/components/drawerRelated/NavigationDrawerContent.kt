@@ -15,6 +15,7 @@ import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Event
+import androidx.compose.material.icons.automirrored.outlined.Assignment
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -39,6 +40,8 @@ fun NavigationDrawerContent(
     onLeaveClick: () -> Unit,
 
     onAttendanceHistoryClick: () -> Unit,
+
+    onAttendanceRequestClick: () -> Unit,
 
     onLeaveHistoryClick: () -> Unit,
 
@@ -122,6 +125,13 @@ fun NavigationDrawerContent(
                 icon = Icons.Outlined.History,
                 selected = selectedRoute == "attendance_history",
                 onClick = onAttendanceHistoryClick
+            )
+
+            DrawerMenuItem(
+                title = "Attendance Request",
+                icon = Icons.AutoMirrored.Outlined.Assignment,
+                selected = selectedRoute == "attendance_request",
+                onClick = onAttendanceRequestClick
             )
 
 

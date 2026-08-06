@@ -34,7 +34,7 @@ import com.example.workpulse.feature.home.presentation.components.leaveRelated.L
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.example.workpulse.feature.home.presentation.components.drawerRelated.LogoutDialog
 import com.example.workpulse.feature.home.presentation.components.drawerRelated.NavigationDrawerContent
@@ -54,6 +54,7 @@ fun HomeScreen(
     onProfileClick : () -> Unit,
     onLeaveClick : () -> Unit,
     onAttendanceHistoryClick : () -> Unit,
+    onAttendanceRequestClick : () -> Unit,
     onLeaveHistoryClick : () -> Unit,
     onLogoutClick : () -> Unit,
     leaveUiState : LeaveSummaryUiState
@@ -62,7 +63,7 @@ fun HomeScreen(
         initialValue = DrawerValue.Closed
     )
 
-    var showLogoutDialog by remember {
+    var showLogoutDialog by rememberSaveable {
         mutableStateOf(false)
     }
     val scope = rememberCoroutineScope()
@@ -113,6 +114,13 @@ fun HomeScreen(
 
                 },
 
+                onAttendanceRequestClick = {
+                    scope.launch {
+                        drawerState.close()
+                        onAttendanceRequestClick()
+                    }
+                },
+
                 onLeaveHistoryClick = {
                     scope.launch {
                         drawerState.close()
@@ -142,7 +150,7 @@ fun HomeScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
-            .padding(20.dp)
+            .padding(16.dp)
     ) {
 
         HomeTopBar(

@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import com.example.workpulse.R
 import com.example.workpulse.feature.profile.presentation.components.AboutCard
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
@@ -81,9 +82,9 @@ fun ProfileScreen(
 ) {
 
 
-    var showEditSheet by remember { mutableStateOf(false) }
+    var showEditSheet by rememberSaveable { mutableStateOf(false) }
 
-    var showLogoutDialog by remember {
+    var showLogoutDialog by rememberSaveable {
         mutableStateOf(false)
     }
 
