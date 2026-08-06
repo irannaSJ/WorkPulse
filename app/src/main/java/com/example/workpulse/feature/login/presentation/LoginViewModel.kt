@@ -1,5 +1,6 @@
 package com.example.workpulse.feature.login.presentation
 
+import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 
 import androidx.lifecycle.ViewModel
@@ -55,10 +56,13 @@ class LoginViewModel @Inject constructor(
                 isLoading = true,
                 errorMessage = null
             )
-            authRepository.login(
+            Log.d("LOGIN", "1. Starting login")
+            val result = authRepository.login(
                 username = uiState.value.email,
                 password = uiState.value.password
             ).onSuccess {
+
+
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -73,7 +77,11 @@ class LoginViewModel @Inject constructor(
                         errorMessage = exception.message ?: "Login failed"
                     )
                 }
+                Log.d("LOGIN", "3. Success state updated")
             }
+            Log.d("LOGIN", "2. Repository returned: $result")
+
+            Log.d("LOGIN", "Success = ${uiState.value.isLoginSuccessful}")
 
         }
 

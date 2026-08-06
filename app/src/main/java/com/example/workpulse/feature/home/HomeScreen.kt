@@ -51,11 +51,10 @@ enum class AttendanceState {
 fun HomeScreen(
     uiState: HomeUiState,
     onAttendanceClick: () -> Unit,
-    onViewAllClick : () -> Unit,
     onProfileClick : () -> Unit,
     onLeaveClick : () -> Unit,
     onAttendanceHistoryClick : () -> Unit,
-    onSettingsClick : () -> Unit,
+    onLeaveHistoryClick : () -> Unit,
     onLogoutClick : () -> Unit,
     leaveUiState : LeaveSummaryUiState
 ) {
@@ -114,12 +113,11 @@ fun HomeScreen(
 
                 },
 
-                onSettingsClick = {
+                onLeaveHistoryClick = {
                     scope.launch {
                         drawerState.close()
-                        onSettingsClick()
+                        onLeaveHistoryClick()
                     }
-
                 },
 
                 onLogoutClick = {
@@ -174,7 +172,6 @@ fun HomeScreen(
 
         LeaveSummaryCard(
             remainingLeaves = uiState.remainingLeaves,
-            onViewAllClick = onViewAllClick,
             leaveUiState = leaveUiState
         )
 

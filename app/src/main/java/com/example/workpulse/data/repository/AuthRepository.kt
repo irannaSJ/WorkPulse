@@ -60,6 +60,8 @@ class AuthRepository @Inject constructor(
                         "company_email",
                         "personal_email",
                         "cell_number",
+                        "date_of_joining",
+                        "current_address",
                         "image"
                     ]
                     """.trimIndent()
@@ -86,6 +88,8 @@ class AuthRepository @Inject constructor(
                 personalEmail = employee.personalEmail,
                 mobileNumber = employee.mobileNumber,
                 profileImage = employee.profileImage,
+                dateOfJoining = employee.dateOfJoining,
+                currentAddress = employee.currentAddress,
                 updatedAt = System.currentTimeMillis()
             )
 

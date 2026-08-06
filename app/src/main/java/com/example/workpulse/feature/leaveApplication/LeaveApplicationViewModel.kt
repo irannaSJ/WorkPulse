@@ -1,7 +1,9 @@
 package com.example.workpulse.feature.leaveApplication
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.workpulse.data.repository.EmployeeRepository
 import com.example.workpulse.data.repository.LeaveApplicationRepository
 import com.example.workpulse.data.repository.LeaveRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,21 +21,74 @@ import javax.inject.Singleton
 
 @HiltViewModel
 class LeaveApplicationViewModel @Inject constructor(
-    private val leaveApplicationRepository: LeaveApplicationRepository
+    private val leaveApplicationRepository: LeaveApplicationRepository,
+    private val employeeRepository: EmployeeRepository
 ) : ViewModel(){
     private val _uiState = MutableStateFlow(LeaveApplicationUiState())
     val uiState : StateFlow<LeaveApplicationUiState> = _uiState.asStateFlow()
 
-    fun onLeaveTypeSelected(leaveType: LeaveType){
-        _uiState.update {
-            currentState -> currentState.copy(
-                leaveType = leaveType,
-                errorMessage = null,
-                showSuggestionDialog = false,
-                suggestedLeaveTypes = emptyList()
 
-            )
+    init {
+        observeEmployee()
+    }
+
+    private fun observeEmployee(){
+        viewModelScope.launch {
+
+            employeeRepository
+                .getEmployee()
+                .collect { employee ->
+
+                    if (employee == null) return@collect
+
+                    _uiState.update {
+
+                        it.copy(
+
+                            employeeId = employee.employeeId,
+
+                            employeeName = employee.employeeName,
+
+                            company = employee.company ?: ""
+
+                        )
+
+                    }
+
+                }
+
         }
+    }
+
+    fun onLeaveTypeSelected(
+        leaveType: LeaveType
+    ) {
+
+        viewModelScope.launch {
+
+            val balance = leaveApplicationRepository
+                .getAvailableBalance(leaveType)
+
+            _uiState.update {
+
+                it.copy(
+
+                    leaveType = leaveType,
+
+                    availableBalance = balance,
+
+                    errorMessage = null,
+
+                    showSuggestionDialog = false,
+
+                    suggestedLeaveTypes = emptyList()
+
+                )
+
+            }
+
+        }
+
     }
 
     fun onFromDateSelected(date : Long){
@@ -66,10 +121,8 @@ class LeaveApplicationViewModel @Inject constructor(
     }
 
     fun onReasonChanged(reason : String){
-
-        if(reason.length <=500) return
-        _uiState.update { currentState -> currentState.copy(
-            reason = reason,
+        _uiState.update { it.copy(
+            reason = reason.take(500),
             errorMessage = null
         ) }
 
@@ -90,6 +143,8 @@ class LeaveApplicationViewModel @Inject constructor(
 
 
     fun onSaveClick(){
+
+        Log.d("Leave Application Save button Clicked", "save button clicked")
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
@@ -113,11 +168,12 @@ class LeaveApplicationViewModel @Inject constructor(
 
                     _uiState.update {
                         it.copy(
-                            isSubmitting = false
+                            isSubmitting = false,
+                            successMessage = "Leave Application saved successfully"
                         )
                     }
 
-                    onResetClicked()
+//                    onResetClicked()
                 }
 
                 is LeaveApplicationResult.ValidationFailed -> {
@@ -177,6 +233,44 @@ class LeaveApplicationViewModel @Inject constructor(
             0
         } else {
             (((toDate - fromDate) / (24 * 60 * 60 * 1000)) + 1).toInt()
+        }
+
+    }
+
+
+    fun clearSuccessMessage() {
+
+        _uiState.update {
+
+            it.copy(
+                successMessage = null
+            )
+
+        }
+
+    }
+
+
+    fun clearErrorMessage() {
+
+        _uiState.update {
+
+            it.copy(
+                errorMessage = null
+            )
+
+        }
+
+    }
+
+    fun hideSuggestionDialog() {
+
+        _uiState.update {
+
+            it.copy(
+                showSuggestionDialog = false
+            )
+
         }
 
     }

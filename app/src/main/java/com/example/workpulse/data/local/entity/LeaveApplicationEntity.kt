@@ -9,6 +9,7 @@ data class LeaveApplicationEntity(
 
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
+    val erpNextId : String? = null,
 
     // Employee Information
     val employeeId: String,
@@ -24,18 +25,19 @@ data class LeaveApplicationEntity(
     val requestedDays: Int,
 
     // Leave Reason
-    val reason: String,
+    val description: String,
 
     // Application Status
     val applicationStatus: LeaveApplicationStatus,
 
     // Sync Status
     val syncStatus: SyncStatus,
+    val leaveApprover : String = "Administrator",
 
     // Audit Fields
     val createdAt: Long,
 
-    val updatedAt: Long
+    val updatedAt: Long,
 
 )
 

@@ -40,7 +40,7 @@ fun NavigationDrawerContent(
 
     onAttendanceHistoryClick: () -> Unit,
 
-    onSettingsClick: () -> Unit,
+    onLeaveHistoryClick: () -> Unit,
 
     onLogoutClick: () -> Unit,
 
@@ -104,10 +104,17 @@ fun NavigationDrawerContent(
             )
 
             DrawerMenuItem(
-                title = "Leave Management",
+                title = "Leave Application",
                 icon = Icons.Outlined.Event,
                 selected = selectedRoute == "leave",
                 onClick = onLeaveClick
+            )
+
+            DrawerMenuItem(
+                title = "Leave History",
+                icon = Icons.Outlined.Settings,
+                selected = selectedRoute == "settings",
+                onClick = onLeaveHistoryClick
             )
 
             DrawerMenuItem(
@@ -117,12 +124,6 @@ fun NavigationDrawerContent(
                 onClick = onAttendanceHistoryClick
             )
 
-            DrawerMenuItem(
-                title = "Settings",
-                icon = Icons.Outlined.Settings,
-                selected = selectedRoute == "settings",
-                onClick = onSettingsClick
-            )
 
             Spacer(
                 modifier = Modifier.weight(1f)

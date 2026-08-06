@@ -8,6 +8,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+
 import java.util.concurrent.TimeUnit
 
 class SyncScheduler(
@@ -40,4 +41,53 @@ class SyncScheduler(
                 request
             )
     }
+
+
+    fun scheduleLeaveSync() {
+
+        Log.d(
+            "LeaveSync",
+            "Scheduling WorkManager"
+        )
+
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(
+                NetworkType.CONNECTED
+            )
+            .build()
+
+        val request =
+
+            OneTimeWorkRequestBuilder<LeaveSyncWorker>()
+
+                .setConstraints(constraints)
+
+                .setBackoffCriteria(
+
+                    BackoffPolicy.EXPONENTIAL,
+
+                    10,
+
+                    TimeUnit.SECONDS
+
+                )
+
+                .build()
+
+        WorkManager
+            .getInstance(context)
+
+            .enqueueUniqueWork(
+
+                "leave_sync",
+
+                ExistingWorkPolicy.KEEP,
+
+                request
+
+            )
+
+    }
 }
+
+

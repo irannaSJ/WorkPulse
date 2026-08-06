@@ -1,4 +1,4 @@
-package com.example.workpulse.feature.profile.components
+package com.example.workpulse.feature.profile.presentation.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,7 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.workpulse.feature.profile.ProfileUiState
+import com.example.workpulse.feature.profile.presentation.ProfileUiState
 
 
 import android.net.Uri
@@ -36,7 +36,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
-import com.example.workpulse.core.datastore.SessionManager
 import com.example.workpulse.core.util.ImageStorageManager
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -155,6 +154,18 @@ fun EditProfileBottomSheet(
                 onValueChange = {
                     personalEmail = it
                 }
+            )
+
+//            EditableField(
+//                label = "Address",
+//                value = profile.currentAddress,
+//                onValueChange = {
+//                    profile.currentAddress = it
+//                }
+//            )
+            ReadOnlyField(
+                label = "Address",
+                value = profile.currentAddress
             )
 
             ReadOnlyField(

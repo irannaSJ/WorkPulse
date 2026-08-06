@@ -34,6 +34,12 @@ data class EmployeeData(
     @SerializedName("cell_number")
     val mobileNumber: String?,
 
+    @SerializedName("date_of_joining")
+    val dateOfJoining : String?,
+
+    @SerializedName("address")
+    val currentAddress : String?,
+
     @SerializedName("image")
     val profileImage: String?
 )

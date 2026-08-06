@@ -23,10 +23,9 @@ import com.example.workpulse.feature.leave.LeaveSummaryViewModel
 @Composable
 fun HomeRoute(
     onProfileClick : () -> Unit,
-    onViewAllClick : () -> Unit,
     onLeaveClick : () -> Unit,
     onAttendanceHistoryClick : () -> Unit,
-    onSettingsClick : () -> Unit,
+    onLeaveHistoryClick : () -> Unit,
     onLogoutSuccess : () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
     leaveViewModel : LeaveSummaryViewModel = hiltViewModel()
@@ -142,11 +141,10 @@ fun HomeRoute(
     HomeScreen(
         uiState = uiState,
         onAttendanceClick = viewModel :: onAttendanceClick,
-        onViewAllClick = onViewAllClick,
         onProfileClick = onProfileClick,
         onLeaveClick = onLeaveClick,
         onAttendanceHistoryClick = onAttendanceHistoryClick,
-        onSettingsClick = onSettingsClick,
+        onLeaveHistoryClick = onLeaveHistoryClick,
         onLogoutClick = {
             viewModel.logout()
         },

@@ -3,6 +3,7 @@ package com.example.workpulse.data.repository
 import android.util.Log
 import com.example.workpulse.core.datastore.SessionManager
 import com.example.workpulse.core.location.LocationManager
+import com.example.workpulse.core.location.ReverseGeocoder
 import com.example.workpulse.core.worker.SyncScheduler
 import com.example.workpulse.data.local.dao.EmployeeDao
 import com.example.workpulse.data.local.entity.LocationStatus
@@ -34,7 +35,8 @@ class AttendanceRepository @Inject constructor(
     private val sessionManager: SessionManager,
     private val locationManager: LocationManager,
     private val attendanceApi: AttendanceApi,
-    private val syncScheduler: SyncScheduler
+    private val syncScheduler: SyncScheduler,
+    private val reverseGeocoder: ReverseGeocoder
 ){
     suspend fun getTodayAttendance(): AttendanceEntity? {
 
@@ -183,6 +185,12 @@ class AttendanceRepository @Inject constructor(
 
         val appUuid = sessionManager.getOrCreateAppUuid()
 
+
+
+
+
+
+
         val deviceInfo = buildString {
 
             append("Device=")
@@ -230,18 +238,7 @@ class AttendanceRepository @Inject constructor(
     /**
      * Update sync status
      */
-//    suspend fun updateSyncStatus(
-//        attendance: AttendanceEntity,
-//        syncStatus: SyncStatus
-//    ) {
-//
-//        attendanceDao.updateAttendance(
-//            attendance.copy(
-//                syncStatus = syncStatus,
-//                updatedAt = System.currentTimeMillis()
-//            )
-//        )
-//    }
+
 
     /**
      * Pending attendance
@@ -267,21 +264,6 @@ class AttendanceRepository @Inject constructor(
         LocalDate.now().toString()
 
 
-//    private fun AttendanceEntity.toSyncRequest(): EmployeeCheckinRequest {
-//        return EmployeeCheckinRequest(
-//            employeeId = employeeId,
-//            attendanceDate = attendanceDate,
-//            punchInTime = punchInTime,
-//            punchOutTime = punchOutTime,
-//            workingSeconds = workingSeconds,
-//            latitude = latitude,
-//            longitude = logitude,
-//            accuracy = accuracy,
-//            deviceId = deviceId,
-////            locationStatus = locationStatus.name
-//        )
-//    }
-
     suspend fun syncPendingAttendance() {
 
         val pendingAttendance = attendanceDao.getPendingAttendance()
@@ -292,7 +274,70 @@ class AttendanceRepository @Inject constructor(
 
             try {
 
+                //Updating a project to convert the longitude and latitude into location:
+
                 var updatedAttendance = attendance
+
+                val locationText =
+
+                    if (
+                        attendance.latitude != null &&
+                        attendance.logitude != null
+                    ) {
+
+                        reverseGeocoder.getAddress(
+                            attendance.latitude,
+                            attendance.logitude
+                        )
+
+                    } else {
+
+                        ""
+
+                    }
+
+                val deviceInfo = buildString {
+
+                    if (locationText.isNotBlank()) {
+
+                        append("Location=")
+                        append(locationText)
+
+                    } else {
+
+                        attendance.latitude?.let {
+
+                            append(" | Lat=")
+                            append(it)
+
+                        }
+
+                        attendance.logitude?.let {
+
+                            append(" | Lng=")
+                            append(it)
+
+                        }
+
+                    }
+
+                    append(" | Device=")
+                    append(updatedAttendance.deviceId?.substringBefore(" |") ?: "")
+
+                }
+
+                updatedAttendance = updatedAttendance.copy(
+
+                    deviceId = deviceInfo,
+                    location = locationText,
+
+                    updatedAt = System.currentTimeMillis()
+
+                )
+
+                attendanceDao.updateAttendance(updatedAttendance)
+
+
 
                 // -------------------------------
                 // Sync Punch In
@@ -309,7 +354,7 @@ class AttendanceRepository @Inject constructor(
                             employee = attendance.employeeId,
                             time = formatDateTime(punchInTime),
                             logType = "IN",
-                            deviceId = attendance.deviceId,
+                            deviceId = updatedAttendance.deviceId,
                             latitude = attendance.latitude,
                             longitude = attendance.logitude
                         )
@@ -321,8 +366,10 @@ class AttendanceRepository @Inject constructor(
 
                             updatedAttendance = updatedAttendance.copy(
                                 punchInSyncStatus = SyncStatus.SYNCED,
+                                location = updatedAttendance.location,
                                 updatedAt = System.currentTimeMillis()
                             )
+
 
                             attendanceDao.updateAttendance(updatedAttendance)
 
@@ -362,6 +409,7 @@ class AttendanceRepository @Inject constructor(
 
                         updatedAttendance = updatedAttendance.copy(
                             punchOutSyncStatus = SyncStatus.SYNCED,
+                            location = updatedAttendance.location,
                             updatedAt = System.currentTimeMillis()
                         )
 

@@ -1,5 +1,6 @@
 package com.example.workpulse.feature.leaveApplication.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,7 +42,8 @@ fun LeaveDetailsCard(
 ) {
 
     ElevatedCard(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background),
         shape = RoundedCornerShape(24.dp),
         elevation = CardDefaults.elevatedCardElevation(
             defaultElevation = 4.dp
@@ -220,7 +222,8 @@ fun ReadOnlyField(
         Text(
             text = label,
             style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -242,9 +245,9 @@ fun ReadOnlyField(
 
             },
             placeholder = {
-
                 Text(
-                    text = placeholder
+                    text = placeholder,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
             }

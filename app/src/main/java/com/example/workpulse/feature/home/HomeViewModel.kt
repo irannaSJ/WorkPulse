@@ -2,6 +2,7 @@ package com.example.workpulse.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.workpulse.core.worker.SyncScheduler
 import com.example.workpulse.data.repository.AttendanceRepository
 import com.example.workpulse.data.repository.AuthRepository
 import com.example.workpulse.data.repository.EmployeeRepository
@@ -27,11 +28,13 @@ class HomeViewModel @Inject constructor(
     private val employeeRepository: EmployeeRepository,
     private val attendanceRepository: AttendanceRepository,
     private val leaveRepository : LeaveRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val syncScheduler : SyncScheduler
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
 
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
     private var timerJob: Job? = null
 
 
@@ -39,6 +42,8 @@ class HomeViewModel @Inject constructor(
         observeEmployee()
         observeTodayAttendance()
         observeLeaveBalance()
+        syncScheduler.scheduleLeaveSync()
+
     }
 
 

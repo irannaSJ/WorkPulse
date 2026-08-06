@@ -47,6 +47,7 @@ fun AttendanceHistoryScreen(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
         ) {
 
             AttendanceTopBar(

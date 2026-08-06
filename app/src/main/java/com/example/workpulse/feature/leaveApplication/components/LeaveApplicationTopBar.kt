@@ -28,19 +28,8 @@ fun LeaveApplicationTopBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(
-                RoundedCornerShape(
-                    bottomStart = 24.dp,
-                    bottomEnd = 24.dp
-                )
-            )
             .background(
-                brush = Brush.horizontalGradient(
-                    colors = listOf(
-                        Color(0xFF3B82F6),
-                        Color(0xFF2563EB)
-                    )
-                )
+                MaterialTheme.colorScheme.background
             ).statusBarsPadding()
     ){
         Row(
@@ -58,7 +47,7 @@ fun LeaveApplicationTopBar(
                 Icon(
                     imageVector = Icons.AutoMirrored.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color.White,
+                    tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(28.dp)
                 )
             }
@@ -71,30 +60,18 @@ fun LeaveApplicationTopBar(
                 Text(
                     text = "Leave Application",
                     style = MaterialTheme.typography.headlineSmall,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Bold
                 )
 
                 Text(
                     text = "Apply for leave",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White.copy(alpha = 0.9f)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
             }
 
-            IconButton(
-                onClick = onActionClick
-            ) {
-
-                Icon(
-                    imageVector = Icons.Outlined.NoteAdd,
-                    contentDescription = "New Leave",
-                    tint = Color.White,
-                    modifier = Modifier.size(28.dp)
-                )
-
-            }
         }
     }
 }

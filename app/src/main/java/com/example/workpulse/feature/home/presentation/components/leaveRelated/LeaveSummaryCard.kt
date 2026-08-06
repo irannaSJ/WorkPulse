@@ -19,7 +19,6 @@ import com.example.workpulse.feature.leave.components.LeaveTypeBreakdown
 fun LeaveSummaryCard(
 
     remainingLeaves: Int,
-    onViewAllClick: () -> Unit = {},
     leaveUiState : LeaveSummaryUiState
 
 ) {
@@ -71,14 +70,6 @@ fun LeaveSummaryCard(
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
-
-                }
-
-                TextButton(
-                    onClick = onViewAllClick
-                ) {
-
-                    Text("View All")
 
                 }
 

@@ -1,4 +1,4 @@
-package com.example.workpulse.feature.profile
+package com.example.workpulse.feature.profile.presentation
 
 data class ProfileUiState(
 
@@ -22,7 +22,7 @@ data class ProfileUiState(
     val personalEmail: String = "",
     val mobileNumber: String = "",
     val emergencyContact: String = "",
-    val currentAddress: String = "",
+    var currentAddress: String = "",
 
     // Personal Information
     val gender: String = "",
@@ -33,6 +33,8 @@ data class ProfileUiState(
     val isUpdateSuccessful: Boolean = false,
     val errorMessage: String? = null,
     val isLogoutSuccessful: Boolean = false,
+
+    val isEditing : Boolean = false,
 
     val imageUri: String = "",
     val app_uid : String = ""

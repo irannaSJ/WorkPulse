@@ -16,7 +16,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.workpulse.core.ui.theme.WorkPulseTheme
 import com.example.workpulse.feature.leaveApplication.components.BottomActionButtons
 import com.example.workpulse.feature.leaveApplication.components.DatesAndReasonCard
 import com.example.workpulse.feature.leaveApplication.components.LeaveApplicationTopBar
@@ -28,6 +30,7 @@ import java.util.Locale
 @Composable
 fun LeaveApplicationScreen(
     uiState: LeaveApplicationUiState,
+    snackbarHostState: SnackbarHostState,
     onBackClick : () -> Unit,
     onLeaveTypeClick : () -> Unit,
     onFromDateClick : () -> Unit,
@@ -41,17 +44,17 @@ fun LeaveApplicationScreen(
 
     Scaffold(
         modifier= modifier,
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState
+            )
+        },
         topBar = {
             LeaveApplicationTopBar(
                 onBackClick = onBackClick,
             )
         },
-        bottomBar = {
-            BottomActionButtons(
-                onResetClick = onResetClick,
-                onSaveClick = onSaveClick
-            )
-        }
+
     ) {
         padding ->
         LazyColumn(
@@ -77,12 +80,82 @@ fun LeaveApplicationScreen(
                 )
             }
 
+
             item {
-                Spacer(modifier = Modifier.height(80.dp))
+
+                BottomActionButtons(
+
+                    onResetClick = onResetClick,
+
+                    onSaveClick = onSaveClick,
+                    isSubmitting = uiState.isSubmitting
+
+                )
+
+            }
+
+            item {
+
+                Spacer(
+                    modifier = Modifier.height(50.dp)
+                )
+
+            }
             }
         }
     }
-}
+
+
+
+//@Preview(
+//    name = "Light Mode",
+//    showBackground = true,
+//    showSystemUi = true
+//)
+//
+//@Composable
+//private fun LeaveApplicationScreenPreview() {
+//
+//    WorkPulseTheme {
+//
+//        LeaveApplicationScreen(
+//
+//            uiState = LeaveApplicationUiState(
+//
+//                employeeName = "Iranna S J",
+//
+//                company = "Datamann Pvt Ltd",
+//
+//                leaveType = null,
+//
+//                fromDate = null,
+//
+//                toDate = null,
+//
+//                reason = "Family Function"
+//
+//            ),
+//
+//            onBackClick = {},
+//
+//            onLeaveTypeClick = {},
+//
+//            onFromDateClick = {},
+//
+//            onToDateClick = {},
+//
+//            onReasonChange = {},
+//
+//            onResetClick = {},
+//
+//            onSaveClick = {}
+//
+//        )
+//
+//    }
+//
+//}
+
 
 
 
