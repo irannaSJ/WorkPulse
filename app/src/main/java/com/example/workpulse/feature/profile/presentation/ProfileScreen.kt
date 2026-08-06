@@ -109,16 +109,20 @@ fun ProfileScreen(
 
                     onBackClick = onBackClick,
 
-                    onEditClick = onEditClick
+                    onEditClick = {
+//                        onEditClick
+                        showEditSheet = true
+                    }
 
                 )
             }
 
             item {
                 ProfileHeader(
-                    employeeName = uiState.employeeName,
-                    designation = uiState.designation,
-                    employeeId = uiState.employeeId,
+//                    employeeName = uiState.employeeName,
+//                    designation = uiState.designation,
+//                    employeeId = uiState.employeeId,
+                    uiState = uiState
                 )
 
             }
@@ -178,36 +182,40 @@ fun ProfileScreen(
         )
     }
 
+
+    if (showEditSheet) {
+
+        EditProfileBottomSheet(
+
+            profile = uiState,
+
+            onDismiss = {
+
+                showEditSheet = false
+
+            },
+
+            onSave = { email, imagePath ->
+
+                viewModel.updateProfile(
+                    personalEmail = email,
+                    imageUri = imagePath.orEmpty()
+                )
+
+                showEditSheet = false
+
+            }
+
+        )
+
     }
 
 
-//
-//    if (showEditSheet) {
-//
-//        EditProfileBottomSheet(
-//
-//            profile = uiState,
-//
-//            onDismiss = {
-//
-//                showEditSheet = false
-//
-//            },
-//
-//            onSave = { email, imagePath ->
-//
-//                viewModel.updateProfile(
-//                    personalEmail = email,
-//                    imageUri = imagePath.orEmpty()
-//                )
-//
-//                showEditSheet = false
-//
-//            }
-//
-//        )
-//
-//    }
+    }
+
+
+
+
 
 
 

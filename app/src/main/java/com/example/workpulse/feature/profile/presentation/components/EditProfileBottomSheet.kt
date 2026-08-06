@@ -156,6 +156,18 @@ fun EditProfileBottomSheet(
                 }
             )
 
+//            EditableField(
+//                label = "Address",
+//                value = profile.currentAddress,
+//                onValueChange = {
+//                    profile.currentAddress = it
+//                }
+//            )
+            ReadOnlyField(
+                label = "Address",
+                value = profile.currentAddress
+            )
+
             ReadOnlyField(
                 label = "Department",
                 value = profile.department

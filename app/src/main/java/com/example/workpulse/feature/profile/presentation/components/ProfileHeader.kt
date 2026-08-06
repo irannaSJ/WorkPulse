@@ -1,5 +1,7 @@
 package com.example.workpulse.feature.profile.presentation.components
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,14 +27,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.example.workpulse.feature.profile.presentation.ProfileUiState
+import java.io.File
 
 @Composable
 fun ProfileHeader(
-    employeeName: String,
-    designation: String,
-    employeeId: String,
+    uiState : ProfileUiState,
     modifier: Modifier = Modifier
 ) {
 
@@ -66,21 +71,38 @@ fun ProfileHeader(
                 color = MaterialTheme.colorScheme.surfaceVariant
             ) {
 
-                Icon(
-                    imageVector = Icons.Outlined.Person,
-                    contentDescription = "Profile Picture",
-                    modifier = Modifier
-                        .padding(20.dp)
-                        .clip(CircleShape),
-                    tint = MaterialTheme.colorScheme.primary
-                )
+
+                if (uiState.employeeImage.isNotBlank()) {
+
+                    AsyncImage(
+                        model = File(uiState.employeeImage),
+                        contentDescription = "Profile",
+                        modifier = Modifier
+                            .size(120.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+
+                } else {
+
+
+                    Icon(
+                        imageVector = Icons.Outlined.Person,
+                        contentDescription = "Profile Picture",
+                        modifier = Modifier
+                            .padding(20.dp)
+                            .clip(CircleShape),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+
+                }
 
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = employeeName,
+                text = uiState.employeeName,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -89,7 +111,7 @@ fun ProfileHeader(
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = designation,
+                text = uiState.designation,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -100,7 +122,7 @@ fun ProfileHeader(
                 onClick = {},
                 enabled = false,
                 label = {
-                    Text(employeeId)
+                    Text(uiState.employeeId)
                 },
                 leadingIcon = {
                     Icon(

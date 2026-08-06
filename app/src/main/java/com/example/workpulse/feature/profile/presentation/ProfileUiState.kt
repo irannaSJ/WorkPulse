@@ -22,7 +22,7 @@ data class ProfileUiState(
     val personalEmail: String = "",
     val mobileNumber: String = "",
     val emergencyContact: String = "",
-    val currentAddress: String = "",
+    var currentAddress: String = "",
 
     // Personal Information
     val gender: String = "",

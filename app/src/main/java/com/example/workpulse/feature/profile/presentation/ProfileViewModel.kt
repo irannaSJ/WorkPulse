@@ -56,7 +56,8 @@ class ProfileViewModel @Inject constructor(
                     personalEmail = employee.personalEmail ?: "",
                     mobileNumber = employee.mobileNumber ?: "",
                     dateOfJoining = employee.dateOfJoining?: "",
-                    currentAddress = employee.currentAddress?: "",
+//                    currentAddress = employee.currentAddress?: "",
+                    currentAddress = "Baner, Pune",
                     isLoading = false,
                 )
 
