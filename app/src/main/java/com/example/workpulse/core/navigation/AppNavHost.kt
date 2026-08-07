@@ -37,6 +37,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import com.example.workpulse.core.ui.theme.AppElevation
 import com.example.workpulse.core.ui.theme.Dimens
 import com.example.workpulse.core.navigation.Screen.Splash
+import com.example.workpulse.feature.attendanceRequest.AttendanceRequestRoute
 import com.example.workpulse.feature.attendanceRequest.AttendanceRequestScreen
 import com.example.workpulse.feature.home.presentation.HomeRoute
 import com.example.workpulse.feature.home.presentation.history.AttendanceHistoryRoute
@@ -167,7 +168,7 @@ fun AppNavHost(
         }
 
         composable(Screen.AttendanceRequest.route) {
-            AttendanceRequestScreen(
+            AttendanceRequestRoute(
                 onBackClick = {
                     navController.popBackStack()
                 }

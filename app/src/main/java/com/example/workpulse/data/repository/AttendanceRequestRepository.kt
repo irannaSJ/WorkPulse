@@ -5,6 +5,7 @@ import com.example.workpulse.data.local.dao.AttendanceRequestDao
 import com.example.workpulse.data.local.entity.AttendanceRequestEntity
 import com.example.workpulse.data.local.entity.AttendanceRequestStatus
 import com.example.workpulse.feature.attendance.data.local.entity.SyncStatus
+import com.example.workpulse.feature.attendanceRequest.AttendanceRequestType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
@@ -34,24 +35,22 @@ class AttendanceRequestRepository @Inject constructor(
      */
     suspend fun createAttendanceRequest(
         attendanceDate: String,
-        reason: String,
-        requestedPunchInTime: Long? = null,
-        requestedPunchOutTime: Long? = null,
+        reason: AttendanceRequestType?,
+        fromDate: Long?,
+        toDate: Long?,
+        location: String,
         sourceAttendanceId: Long? = null
     ): Result<Long> {
-        if (attendanceDate.isBlank()) {
-            return Result.failure(IllegalArgumentException("Attendance date is required."))
-        }
-        if (reason.isBlank()) {
-            return Result.failure(IllegalArgumentException("A reason is required."))
+        if (reason?.displayName ?: "" == "") {
+            return Result.failure(IllegalArgumentException("Request Type is required."))
         }
         if (
-            requestedPunchInTime != null &&
-            requestedPunchOutTime != null &&
-            requestedPunchOutTime < requestedPunchInTime
+            fromDate != null &&
+            toDate != null &&
+            toDate < fromDate
         ) {
             return Result.failure(
-                IllegalArgumentException("Punch-out time cannot be before punch-in time.")
+                IllegalArgumentException("From Date should be before To Date")
             )
         }
 
@@ -59,20 +58,27 @@ class AttendanceRequestRepository @Inject constructor(
             val employeeId = sessionManager.getEmployeeId()
             require(employeeId.isNotBlank()) { "No logged-in employee was found." }
 
-            check(
+            if (
                 attendanceRequestDao.getActiveRequestForDate(
                     employeeId = employeeId,
                     attendanceDate = attendanceDate
-                ) == null
-            ) { "An active attendance request already exists for this date." }
+                ) != null
+            ) {
+                return Result.failure(
+                    IllegalArgumentException(
+                        "An active attendance request already exists for this date."
+                    )
+                )
+            }
 
             attendanceRequestDao.insertAttendanceRequest(
                 AttendanceRequestEntity(
                     employeeId = employeeId,
                     attendanceDate = attendanceDate,
-                    requestedPunchInTime = requestedPunchInTime,
-                    requestedPunchOutTime = requestedPunchOutTime,
-                    reason = reason.trim(),
+                    fromDate = fromDate,
+                    toDate = toDate,
+                    reason = reason?.displayName ?: "",
+                    location = location,
                     sourceAttendanceId = sourceAttendanceId
                 )
             )

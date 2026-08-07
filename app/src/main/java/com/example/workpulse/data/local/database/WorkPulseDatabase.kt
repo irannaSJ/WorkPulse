@@ -22,7 +22,7 @@ import com.example.workpulse.feature.attendance.data.local.entity.AttendanceEnti
         LeaveBalanceEntity::class,
         LeaveApplicationEntity::class
     ],
-    version = 15,
+    version = 16,
     exportSchema = true
 )
 @TypeConverters(RoomConverters::class)
