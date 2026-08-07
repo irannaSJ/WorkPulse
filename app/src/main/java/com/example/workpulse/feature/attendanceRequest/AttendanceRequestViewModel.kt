@@ -83,10 +83,12 @@ class AttendanceRequestViewModel @Inject constructor(
 
             attendanceRequestRepository.createAttendanceRequest(
                 attendanceDate = formatAttendanceDate(request.fromDate),
-                reason = request.requestType,
+                requestType = request.requestType,
                 fromDate = request.fromDate,
                 toDate = request.toDate,
                 location = "Pune",
+                onHolidayInclude = request.includeHolidays,
+                reason = request.explanation,
                 sourceAttendanceId = request.sourceAttendanceId
             ).onSuccess {
                 _uiState.update {
@@ -95,7 +97,6 @@ class AttendanceRequestViewModel @Inject constructor(
                         successMessage = "Attendance request saved successfully."
                     )
                 }
-                resetForm()
             }.onFailure {
                 exception ->
                 _uiState.update {
@@ -126,7 +127,8 @@ class AttendanceRequestViewModel @Inject constructor(
 
                 errorMessage = null,
 
-                successMessage = null
+                successMessage = null,
+                includeHolidays = false,
 
             )
 
@@ -289,6 +291,20 @@ class AttendanceRequestViewModel @Inject constructor(
 
                 errorMessage = null
 
+            )
+
+        }
+
+    }
+
+    fun onIncludeHolidaysChanged(
+        include: Boolean
+    ) {
+
+        _uiState.update {
+
+            it.copy(
+                includeHolidays = include
             )
 
         }

@@ -19,6 +19,7 @@ data class AttendanceRequestUiState(
     val errorMessage: String? = null,
     val successMessage: String? = null,
     val showFromDatePicker: Boolean = false,
+    val includeHolidays: Boolean = false,
 
     val showToDatePicker: Boolean = false,
 

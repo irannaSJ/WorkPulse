@@ -71,6 +71,8 @@ fun AttendanceRequestRoute(
         onExplanationChanged =
             viewModel::onExplanationChanged,
 
+        onIncludeHolidaysChanged = viewModel :: onIncludeHolidaysChanged,
+
         onSubmitClick =
             viewModel::submitAttendanceRequest
 

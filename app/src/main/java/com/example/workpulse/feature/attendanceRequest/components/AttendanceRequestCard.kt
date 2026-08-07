@@ -24,8 +24,10 @@ fun AttendanceRequestCard(
     onToDateClick: () -> Unit,
 
     onRequestTypeClick: () -> Unit,
+    onIncludeHolidaysChanged: (Boolean) -> Unit,
 
     onExplanationChanged: (String) -> Unit,
+
 
     modifier: Modifier = Modifier
 
@@ -80,6 +82,14 @@ fun AttendanceRequestCard(
                 requestType = uiState.requestType,
 
                 onClick = onRequestTypeClick
+
+            )
+
+            IncludeHolidaysSwitch(
+
+                checked = uiState.includeHolidays,
+
+                onCheckedChange = onIncludeHolidaysChanged
 
             )
 

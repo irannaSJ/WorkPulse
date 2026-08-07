@@ -376,6 +376,7 @@ fun AttendanceRequestScreen(
     onToDateClick: () -> Unit,
 
     onRequestTypeClick: () -> Unit,
+    onIncludeHolidaysChanged: (Boolean) -> Unit,
 
     onExplanationChanged: (String) -> Unit,
 
@@ -411,6 +412,8 @@ fun AttendanceRequestScreen(
 
             onRequestTypeClick = onRequestTypeClick,
 
+            onIncludeHolidaysChanged = onIncludeHolidaysChanged,
+
             onExplanationChanged = onExplanationChanged,
 
             onSubmitClick = onSubmitClick
@@ -435,6 +438,7 @@ private fun AttendanceRequestContent(
     onToDateClick: () -> Unit,
 
     onRequestTypeClick: () -> Unit,
+    onIncludeHolidaysChanged : (Boolean) -> Unit,
 
     onExplanationChanged: (String) -> Unit,
 
@@ -484,6 +488,7 @@ private fun AttendanceRequestContent(
             onToDateClick = onToDateClick,
 
             onRequestTypeClick = onRequestTypeClick,
+            onIncludeHolidaysChanged = onIncludeHolidaysChanged,
 
             onExplanationChanged = onExplanationChanged
 
