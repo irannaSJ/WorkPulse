@@ -1,5 +1,6 @@
 package com.example.workpulse.data.repository
 
+import android.util.Log
 import com.example.workpulse.core.datastore.SessionManager
 import com.example.workpulse.core.worker.SyncScheduler
 import com.example.workpulse.data.local.dao.AttendanceRequestDao
@@ -25,7 +26,7 @@ class AttendanceRequestRepository @Inject constructor(
     private val attendanceRequestDao: AttendanceRequestDao,
     private val sessionManager: SessionManager,
     private val attendanceRequestApi : AttendanceRequestApi,
-    private val syncScheduler: SyncScheduler
+    private val syncScheduler: SyncScheduler,
 ) {
 
     fun observeAttendanceRequests(): Flow<List<AttendanceRequestEntity>> =
@@ -148,11 +149,74 @@ class AttendanceRequestRepository @Inject constructor(
 
 
 
+//    suspend fun syncPendingAttendanceRequests() {
+//
+//        val pendingRequests = getPendingAttendanceRequests()
+//
+//        if (pendingRequests.isEmpty()) return
+//
+//        for (request in pendingRequests) {
+//
+//            try {
+//
+//                val apiRequest = AttendanceRequestRequest(
+//
+//                    employee = request.employeeId,
+//
+//                    fromDate = formatDate(request.fromDate!!),
+//
+//                    toDate = formatDate(request.toDate!!),
+//
+//                    requestType = request.requestType.displayName,
+//
+//                    includeHolidays = request.includeHolidays,
+////                        if (request.includeHolidays) 1 else 0,
+//
+//                    reason = request.reason
+//
+//                )
+//
+//                val response =
+//                    attendanceRequestApi.createAttendanceRequest(apiRequest)
+//
+//                if (response.isSuccessful) {
+//
+//                    val erpNextId =
+//                        response.body()?.data?.name ?: continue
+//
+//                    markRequestSynced(
+//
+//                        localId = request.id,
+//
+//                        erpNextId = erpNextId
+//
+//                    )
+//                    syncLatestAttendanceRequests()
+//
+//                }
+//
+//            } catch (e: java.io.IOException) {
+//
+//                // No internet.
+//                throw e
+//
+//            } catch (e: Exception) {
+//
+//                e.printStackTrace()
+//
+//            }
+//
+//        }
+//
+//    }
+
     suspend fun syncPendingAttendanceRequests() {
 
         val pendingRequests = getPendingAttendanceRequests()
 
         if (pendingRequests.isEmpty()) return
+
+        var uploadSuccessful = false
 
         for (request in pendingRequests) {
 
@@ -169,7 +233,6 @@ class AttendanceRequestRepository @Inject constructor(
                     requestType = request.requestType.displayName,
 
                     includeHolidays = request.includeHolidays,
-//                        if (request.includeHolidays) 1 else 0,
 
                     reason = request.reason
 
@@ -181,16 +244,18 @@ class AttendanceRequestRepository @Inject constructor(
                 if (response.isSuccessful) {
 
                     val erpNextId =
-                        response.body()?.data?.name ?: continue
+                        response.body()?.data?.name
 
-                    markRequestSynced(
+                    if (erpNextId != null) {
 
-                        localId = request.id,
+                        markRequestSynced(
+                            localId = request.id,
+                            erpNextId = erpNextId
+                        )
 
-                        erpNextId = erpNextId
+                        uploadSuccessful = true
 
-                    )
-
+                    }
                 }
 
             } catch (e: java.io.IOException) {
@@ -201,10 +266,300 @@ class AttendanceRequestRepository @Inject constructor(
             } catch (e: Exception) {
 
                 e.printStackTrace()
-
             }
-
         }
 
+        /*
+         * At least one request was successfully uploaded.
+         * Now download the latest ERPNext records and update Room.
+         */
+//        if (uploadSuccessful) {
+//
+//            syncLatestAttendanceRequests()
+//
+//        }
+    }
+
+
+
+    suspend fun syncLatestAttendanceRequests() {
+
+        val employeeId =
+            sessionManager.getEmployeeId()
+
+        if (employeeId.isBlank()) {
+            return
+        }
+
+        val filters = """
+        [
+            ["Attendance Request", "employee", "=", "$employeeId"]
+        ]
+    """.trimIndent()
+
+        val fields = """
+        [
+            "name",
+            "employee",
+            "from_date",
+            "to_date",
+            "include_holidays",
+            "reason",
+            "explanation",
+            "docstatus"
+        ]
+    """.trimIndent()
+
+        val response =
+            attendanceRequestApi.getAttendanceRequests(
+
+                filters = filters,
+
+                fields = fields,
+
+                orderBy = "creation desc",
+
+                limit = 20
+
+            )
+
+        if (!response.isSuccessful) {
+
+            throw Exception(
+                "Failed to fetch attendance requests: ${response.code()}"
+            )
+        }
+
+        val serverRequests =
+            response.body()?.data
+                ?: emptyList()
+
+        for (serverRequest in serverRequests) {
+            Log.d(
+                "AttendanceRequestSync",
+                "ERPNext Request: $serverRequest"
+            )
+
+            Log.d(
+                "AttendanceRequestStatus",
+                "ERPNext: ${serverRequest.name} " +
+                        "docStatus=${serverRequest.docStatus} "
+
+            )
+
+            val existingRequest =
+                attendanceRequestDao
+                    .getRequestByErpNextId(
+                        serverRequest.name
+                    )
+
+
+            Log.d(
+                "AttendanceRequestSync",
+                "Local lookup: erpNextId=${serverRequest.name}, " +
+                        "localId=${existingRequest?.id}, " +
+                        "localStatus=${existingRequest?.requestStatus}"
+            )
+
+            val fromDate =
+                parseErpNextDate(
+                    serverRequest.fromDate
+                )
+
+            val toDate =
+                parseErpNextDate(
+                    serverRequest.toDate
+                )
+
+            val requestType =
+                mapRequestType(
+                    serverRequest.reason
+                )
+
+            val requestStatus =
+                mapRequestStatus(
+                    serverRequest.docStatus
+                )
+
+
+            if (existingRequest != null) {
+
+                Log.d(
+                    "AttendanceRequestSync",
+                    "UPDATING: ${existingRequest.id} " +
+                            "status $requestStatus"
+                )
+
+                attendanceRequestDao.updateAttendanceRequest(
+
+                    existingRequest.copy(
+
+                        employeeId =
+                            serverRequest.employee,
+
+                        attendanceDate =
+                            serverRequest.fromDate ?: "",
+
+                        fromDate =
+                            fromDate,
+
+                        toDate =
+                            toDate,
+
+                        reason =
+                            serverRequest.explanation ?: "",
+
+                        requestType =
+                            requestType,
+
+                        includeHolidays =
+                            serverRequest.includeHolidays == 1,
+
+                        requestStatus =
+                            requestStatus,
+
+                        syncStatus =
+                            SyncStatus.SYNCED,
+
+                        updatedAt =
+                            System.currentTimeMillis()
+                    )
+                )
+
+            } else {
+
+                Log.d(
+                    "AttendanceRequestSync",
+                    "INSERTING new ERPNext request: ${serverRequest.name}"
+                )
+
+                attendanceRequestDao.insertAttendanceRequest(
+
+
+                    AttendanceRequestEntity(
+
+                        erpNextId = serverRequest.name,
+
+                        employeeId = serverRequest.employee,
+
+                        attendanceDate =
+                            serverRequest.fromDate ?: "",
+
+                        fromDate =
+                            parseErpNextDate(
+                                serverRequest.fromDate
+                            ),
+
+                        toDate =
+                            parseErpNextDate(
+                                serverRequest.toDate
+                            ),
+
+                        reason =
+                            serverRequest.explanation ?: "",
+
+                        requestType =
+                            mapRequestType(
+                                requestType.displayName
+                            ),
+
+                        includeHolidays =
+                            serverRequest.includeHolidays == 1,
+
+                        requestStatus =
+                            requestStatus,
+
+                        syncStatus =
+                            SyncStatus.SYNCED
+                    )
+                )
+            }
+        }
+    }
+}
+
+
+//private fun mapRequestType(
+//    requestType: String?
+//): AttendanceRequestType {
+//
+//    return when (
+//        requestType
+//            ?.trim()
+//            ?.uppercase()
+//    ) {
+//
+//        "ON_DUTY" ->
+//            AttendanceRequestType.ON_DUTY
+//
+//        "WORK_FROM_HOME" ->
+//            AttendanceRequestType.WORK_FROM_HOME
+//
+//        else ->
+//            AttendanceRequestType.ON_DUTY
+//    }
+//}
+
+private fun mapRequestType(
+    reason: String?
+): AttendanceRequestType {
+    return when (reason?.trim()?.lowercase()) {
+        "work from home" ->
+            AttendanceRequestType.WORK_FROM_HOME
+
+        "on duty" ->
+            AttendanceRequestType.ON_DUTY
+
+        else ->
+            AttendanceRequestType.ON_DUTY
+    }
+}
+
+
+private fun mapRequestStatus(
+    docStatus: Int
+): AttendanceRequestStatus {
+
+    return when (docStatus) {
+
+        0 ->
+            AttendanceRequestStatus.PENDING
+
+        1 ->
+            AttendanceRequestStatus.APPROVED
+
+        2 ->
+            AttendanceRequestStatus.CANCELLED
+
+        else ->
+            AttendanceRequestStatus.PENDING
+    }
+}
+
+
+private fun parseErpNextDate(
+    date: String?
+): Long? {
+
+    if (date.isNullOrBlank()) {
+        return null
+    }
+
+    return try {
+
+        java.text.SimpleDateFormat(
+            "yyyy-MM-dd",
+            java.util.Locale.getDefault()
+        )
+            .apply {
+                timeZone =
+                    java.util.TimeZone.getTimeZone("UTC")
+            }
+            .parse(date)
+            ?.time
+
+    } catch (e: Exception) {
+
+        null
     }
 }

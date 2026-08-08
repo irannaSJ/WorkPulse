@@ -46,7 +46,7 @@ class SyncScheduler(
 
         Log.d(
             "AttendanceRequestSync",
-            "Scheduling WorkManager"
+            "Scheduling attendance request sync"
         )
 
         val constraints = Constraints.Builder()

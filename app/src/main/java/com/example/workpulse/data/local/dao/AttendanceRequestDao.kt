@@ -76,4 +76,17 @@ interface AttendanceRequestDao {
         requestStatus: AttendanceRequestStatus,
         updatedAt: Long
     )
+
+
+
+    @Query(
+        """
+    SELECT * FROM attendance_request
+    WHERE erpNextId = :erpNextId
+    LIMIT 1
+    """
+    )
+    suspend fun getRequestByErpNextId(
+        erpNextId: String
+    ): AttendanceRequestEntity?
 }

@@ -39,6 +39,7 @@ import com.example.workpulse.core.ui.theme.Dimens
 import com.example.workpulse.core.navigation.Screen.Splash
 import com.example.workpulse.feature.attendanceRequest.AttendanceRequestRoute
 import com.example.workpulse.feature.attendanceRequest.AttendanceRequestScreen
+import com.example.workpulse.feature.attendanceRequestHistory.AttendanceRequestHistoryRoute
 import com.example.workpulse.feature.home.presentation.HomeRoute
 import com.example.workpulse.feature.home.presentation.history.AttendanceHistoryRoute
 import com.example.workpulse.feature.leaveApplication.LeaveApplicationRoute
@@ -142,6 +143,10 @@ fun AppNavHost(
                 onLeaveHistoryClick = {
                     navController.navigateToBottomDestination(Screen.LeaveHistory.route)
                 },
+                onAttendanceRequestHistoryClick = {
+                    navController.navigateToBottomDestination(Screen.AttendanceRequestHistory.route )
+                },
+
                 onLogoutSuccess = {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(navController.graph.id) {
@@ -152,6 +157,7 @@ fun AppNavHost(
                 }
             )
         }
+
 
         composable(
             route = Screen.AttendanceHistory.route,
@@ -188,6 +194,20 @@ fun AppNavHost(
                 }
             )
         }
+
+            composable(
+                route = Screen.AttendanceRequestHistory.route,
+                enterTransition = NavTransitions.tabEnter,
+                exitTransition = NavTransitions.tabExit,
+                popEnterTransition = NavTransitions.tabEnter,
+                popExitTransition = NavTransitions.tabExit
+            ) {
+                AttendanceRequestHistoryRoute(
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
 
         composable(Screen.LeaveApplication.route){
             LeaveApplicationRoute(

@@ -16,7 +16,7 @@ sealed class Screen(val route : String){
 
     data object LeaveHistory : Screen("leave_history")
 
-    data object Main : Screen(
-        route = "main"
-    )
+
+
+    data object AttendanceRequestHistory : Screen("attendance_request_history")
 }

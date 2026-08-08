@@ -57,6 +57,7 @@ fun HomeScreen(
     onAttendanceRequestClick : () -> Unit,
     onLeaveHistoryClick : () -> Unit,
     onLogoutClick : () -> Unit,
+    onAttendanceRequestHistoryClick:() -> Unit,
     leaveUiState : LeaveSummaryUiState
 ) {
     val drawerState = rememberDrawerState(
@@ -125,6 +126,13 @@ fun HomeScreen(
                     scope.launch {
                         drawerState.close()
                         onLeaveHistoryClick()
+                    }
+                },
+
+                onAttendanceRequestHistoryClick = {
+                    scope.launch {
+                        drawerState.close()
+                        onAttendanceRequestHistoryClick()
                     }
                 },
 
