@@ -56,36 +56,22 @@ class SyncScheduler(
             .build()
 
         val request =
-
             OneTimeWorkRequestBuilder<AttendanceRequestSyncWorker>()
-
                 .setConstraints(constraints)
-
                 .setBackoffCriteria(
-
                     BackoffPolicy.EXPONENTIAL,
-
                     10,
-
                     TimeUnit.SECONDS
-
                 )
-
                 .build()
 
         WorkManager
             .getInstance(context)
-
             .enqueueUniqueWork(
-
                 "attendance_request_sync",
-
                 ExistingWorkPolicy.KEEP,
-
                 request
-
             )
-
     }
 
 

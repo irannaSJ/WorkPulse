@@ -88,7 +88,7 @@ class AttendanceRequestRepository @Inject constructor(
                 )
             }
 
-            attendanceRequestDao.insertAttendanceRequest(
+            val localId = attendanceRequestDao.insertAttendanceRequest(
                 AttendanceRequestEntity(
                     employeeId = employeeId,
                     attendanceDate = attendanceDate,
@@ -101,8 +101,10 @@ class AttendanceRequestRepository @Inject constructor(
                     sourceAttendanceId = sourceAttendanceId
                 )
             )
-
             syncScheduler.scheduleAttendanceRequestSync()
+
+            localId
+
 
 
         }

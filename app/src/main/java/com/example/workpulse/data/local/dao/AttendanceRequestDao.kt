@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 interface AttendanceRequestDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAttendanceRequest(request: AttendanceRequestEntity): Result<Unit>
+    suspend fun insertAttendanceRequest(request: AttendanceRequestEntity): Long
 
     @Update
     suspend fun updateAttendanceRequest(request: AttendanceRequestEntity)
