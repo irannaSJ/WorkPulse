@@ -75,17 +75,17 @@ fun AttendanceRequestHistoryScreen(
         // Search
         // --------------------------------
 
-        OutlinedTextField(
-            value = uiState.searchQuery,
-            onValueChange = onSearchQueryChange,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            label = {
-                Text("Search requests")
-            },
-            singleLine = true
-        )
+//        OutlinedTextField(
+//            value = uiState.searchQuery,
+//            onValueChange = onSearchQueryChange,
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(horizontal = 20.dp),
+//            label = {
+//                Text("Search requests")
+//            },
+//            singleLine = true
+//        )
 
         // --------------------------------
         // Filter
@@ -248,25 +248,7 @@ private fun AttendanceRequestHistoryFilterRow(
             )
         }
 
-        item {
 
-            FilterChip(
-                selected =
-                    selectedFilter ==
-                            AttendanceRequestHistoryFilter.REJECTED,
-
-                onClick = {
-                    onFilterSelected(
-                        AttendanceRequestHistoryFilter.REJECTED
-                    )
-                },
-
-                label = {
-                    Text("Rejected")
-                }
-            )
-
-        }
 
         item {
 
