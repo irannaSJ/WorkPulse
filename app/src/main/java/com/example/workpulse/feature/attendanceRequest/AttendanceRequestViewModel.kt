@@ -86,7 +86,7 @@ class AttendanceRequestViewModel @Inject constructor(
                 requestType = request.requestType,
                 fromDate = request.fromDate,
                 toDate = request.toDate,
-                location = "Pune",
+                location = "Baner, Pune, Maharashtra, India",
                 onHolidayInclude = request.includeHolidays,
                 reason = request.explanation,
                 sourceAttendanceId = request.sourceAttendanceId
