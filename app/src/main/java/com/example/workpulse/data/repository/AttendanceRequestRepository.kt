@@ -147,69 +147,6 @@ class AttendanceRequestRepository @Inject constructor(
     }
 
 
-
-
-//    suspend fun syncPendingAttendanceRequests() {
-//
-//        val pendingRequests = getPendingAttendanceRequests()
-//
-//        if (pendingRequests.isEmpty()) return
-//
-//        for (request in pendingRequests) {
-//
-//            try {
-//
-//                val apiRequest = AttendanceRequestRequest(
-//
-//                    employee = request.employeeId,
-//
-//                    fromDate = formatDate(request.fromDate!!),
-//
-//                    toDate = formatDate(request.toDate!!),
-//
-//                    requestType = request.requestType.displayName,
-//
-//                    includeHolidays = request.includeHolidays,
-////                        if (request.includeHolidays) 1 else 0,
-//
-//                    reason = request.reason
-//
-//                )
-//
-//                val response =
-//                    attendanceRequestApi.createAttendanceRequest(apiRequest)
-//
-//                if (response.isSuccessful) {
-//
-//                    val erpNextId =
-//                        response.body()?.data?.name ?: continue
-//
-//                    markRequestSynced(
-//
-//                        localId = request.id,
-//
-//                        erpNextId = erpNextId
-//
-//                    )
-//                    syncLatestAttendanceRequests()
-//
-//                }
-//
-//            } catch (e: java.io.IOException) {
-//
-//                // No internet.
-//                throw e
-//
-//            } catch (e: Exception) {
-//
-//                e.printStackTrace()
-//
-//            }
-//
-//        }
-//
-//    }
-
     suspend fun syncPendingAttendanceRequests() {
 
         val pendingRequests = getPendingAttendanceRequests()
