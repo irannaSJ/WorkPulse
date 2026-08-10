@@ -107,56 +107,6 @@ fun LeaveApplicationScreen(
 
 
 
-//@Preview(
-//    name = "Light Mode",
-//    showBackground = true,
-//    showSystemUi = true
-//)
-//
-//@Composable
-//private fun LeaveApplicationScreenPreview() {
-//
-//    WorkPulseTheme {
-//
-//        LeaveApplicationScreen(
-//
-//            uiState = LeaveApplicationUiState(
-//
-//                employeeName = "Iranna S J",
-//
-//                company = "Datamann Pvt Ltd",
-//
-//                leaveType = null,
-//
-//                fromDate = null,
-//
-//                toDate = null,
-//
-//                reason = "Family Function"
-//
-//            ),
-//
-//            onBackClick = {},
-//
-//            onLeaveTypeClick = {},
-//
-//            onFromDateClick = {},
-//
-//            onToDateClick = {},
-//
-//            onReasonChange = {},
-//
-//            onResetClick = {},
-//
-//            onSaveClick = {}
-//
-//        )
-//
-//    }
-//
-//}
-
-
 
 
 

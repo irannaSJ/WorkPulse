@@ -308,34 +308,34 @@ fun AboutCard(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-            HorizontalDivider()
-            Spacer(modifier = Modifier.height(16.dp))
-
-            InfoRow(
-                icon = Icons.Outlined.Tag,
-                title = "Build Number",
-                value = buildNumber
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-            HorizontalDivider()
-            Spacer(modifier = Modifier.height(16.dp))
-
-            SettingsRow(
-                title = "Privacy Policy",
-                icon = Icons.Outlined.PrivacyTip,
-                onClick = onPrivacyPolicyClick
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-            HorizontalDivider()
-            Spacer(modifier = Modifier.height(16.dp))
-
-            SettingsRow(
-                title = "Terms & Conditions",
-                icon = Icons.Outlined.Description,
-                onClick = onTermsClick
-            )
+//            HorizontalDivider()
+//            Spacer(modifier = Modifier.height(16.dp))
+//
+//            InfoRow(
+//                icon = Icons.Outlined.Tag,
+//                title = "Build Number",
+//                value = buildNumber
+//            )
+//
+//            Spacer(modifier = Modifier.height(16.dp))
+//            HorizontalDivider()
+//            Spacer(modifier = Modifier.height(16.dp))
+//
+//            SettingsRow(
+//                title = "Privacy Policy",
+//                icon = Icons.Outlined.PrivacyTip,
+//                onClick = onPrivacyPolicyClick
+//            )
+//
+//            Spacer(modifier = Modifier.height(16.dp))
+//            HorizontalDivider()
+//            Spacer(modifier = Modifier.height(16.dp))
+//
+//            SettingsRow(
+//                title = "Terms & Conditions",
+//                icon = Icons.Outlined.Description,
+//                onClick = onTermsClick
+//            )
 
         }
 

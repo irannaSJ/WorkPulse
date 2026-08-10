@@ -1,6 +1,7 @@
 package com.example.workpulse.core.network
 
 import com.example.workpulse.data.remote.AttendanceApi
+import com.example.workpulse.data.remote.AttendanceRequestApi
 import com.example.workpulse.data.remote.AuthApi
 import com.example.workpulse.data.remote.LeaveApi
 
@@ -87,6 +88,14 @@ object NetworkModule {
     ): LeaveApi {
 
         return retrofit.create(LeaveApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAttendanceRequestApi(
+        retrofit: Retrofit
+    ): AttendanceRequestApi{
+        return  retrofit.create(AttendanceRequestApi::class.java)
     }
 }
 
