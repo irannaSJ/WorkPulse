@@ -16,89 +16,54 @@ import com.example.workpulse.feature.attendanceRequest.AttendanceRequestUiState
 
 @Composable
 fun AttendanceRequestCard(
-
     uiState: AttendanceRequestUiState,
-
     onFromDateClick: () -> Unit,
-
     onToDateClick: () -> Unit,
-
     onRequestTypeClick: () -> Unit,
     onIncludeHolidaysChanged: (Boolean) -> Unit,
-
     onExplanationChanged: (String) -> Unit,
-
-
     modifier: Modifier = Modifier
-
 ) {
 
     ElevatedCard(
 
         modifier = modifier.fillMaxWidth(),
-
         shape = RoundedCornerShape(24.dp),
-
         elevation = CardDefaults.elevatedCardElevation(
             defaultElevation = 4.dp
         ),
-
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
-
     ) {
-
         Column(
-
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp),
-
             verticalArrangement = Arrangement.spacedBy(20.dp)
-
         ) {
-
             EmployeeField(
-
                 employeeName = uiState.employeeName
-
             )
-
             DateRangeSection(
-
                 fromDate = uiState.fromDate,
-
                 toDate = uiState.toDate,
-
                 onFromDateClick = onFromDateClick,
-
                 onToDateClick = onToDateClick
-
             )
 
             RequestTypeDropDown(
-
                 requestType = uiState.requestType,
-
                 onClick = onRequestTypeClick
-
             )
 
             IncludeHolidaysSwitch(
-
                 checked = uiState.includeHolidays,
-
                 onCheckedChange = onIncludeHolidaysChanged
-
             )
-
             ExplanationField(
-
                 value = uiState.explanation,
-
                 onValueChange = onExplanationChanged
-
             )
 
         }

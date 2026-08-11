@@ -150,9 +150,6 @@ fun HomeScreen(
 
     ) {
 
-        // Your existing HomeScreen UI goes here
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()

@@ -11,11 +11,8 @@ import androidx.compose.runtime.Composable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AttendanceDatePickerDialog(
-
     onDismiss: () -> Unit,
-
     onDateSelected: (Long) -> Unit
-
 ) {
 
     val datePickerState = rememberDatePickerState()
@@ -39,13 +36,9 @@ fun AttendanceDatePickerDialog(
                 }
 
             ) {
-
                 Text("OK")
-
             }
-
         },
-
         dismissButton = {
 
             TextButton(
@@ -57,7 +50,6 @@ fun AttendanceDatePickerDialog(
                 Text("Cancel")
 
             }
-
         }
 
     ) {

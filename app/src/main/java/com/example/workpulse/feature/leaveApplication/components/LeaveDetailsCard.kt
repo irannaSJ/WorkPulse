@@ -92,7 +92,7 @@ fun LeaveDropDownField(
     placeholder: String,
     availableBalance: Double? = null,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier : Modifier = Modifier
 ) {
 
     Column(
