@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,22 +34,17 @@ fun AttendanceHistoryScreen(
 ) {
 
     val attendanceList = uiState.attendanceList
-    var selectedAttendance by remember {
-        mutableStateOf<AttendanceHistoryUiModel?>(null)
+    var selectedAttendanceIndex by rememberSaveable {
+        mutableStateOf<Int?>(null)
     }
 
 
 
-    Scaffold(
-        containerColor = Color(0xFFF6F8FC)
-    ) { padding ->
-
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
 
             AttendanceTopBar(
                 onBackClick,
@@ -82,8 +78,8 @@ fun AttendanceHistoryScreen(
 
                     AttendanceHistoryCard(
                         attendance = attendance,
-                        onClick = { selected ->
-                            selectedAttendance = selected
+                        onClick = {
+                            selectedAttendanceIndex = attendanceList.indexOf(attendance)
                         }
                     )
 
@@ -100,22 +96,13 @@ fun AttendanceHistoryScreen(
 
         }
 
-    }
-
-    selectedAttendance?.let {
-
-        AttendanceDetailsBottomSheet(
-
-            attendance = it,
-
-            onDismiss = {
-
-                selectedAttendance = null
-
-            }
-
-        )
-
+    selectedAttendanceIndex?.let { index ->
+        attendanceList.getOrNull(index)?.let { attendance ->
+            AttendanceDetailsBottomSheet(
+                attendance = attendance,
+                onDismiss = { selectedAttendanceIndex = null }
+            )
+        }
     }
 
 }
@@ -130,30 +117,23 @@ private fun AttendanceTopBar(
 
 ) {
 
-    Row(
-
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 20.dp),
-
-        verticalAlignment = Alignment.CenterVertically
-
+            .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
-
         FilledTonalIconButton(
-            onClick = onBackClick
+            onClick = onBackClick,
+            modifier = Modifier.align(Alignment.CenterStart)
         ) {
-
             Icon(
                 Icons.AutoMirrored.Filled.ArrowBack,
                 null
             )
-
         }
 
-        Spacer(modifier = Modifier.weight(0.6f))
-
         Column(
+            modifier = Modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
@@ -169,20 +149,6 @@ private fun AttendanceTopBar(
             )
 
         }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-//        FilledTonalIconButton(
-//            onClick = onCalendarClick
-//        ) {
-//
-//            Icon(
-//                Icons.Outlined.CalendarMonth,
-//                null
-//            )
-//
-//        }
-
     }
 
 }

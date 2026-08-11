@@ -10,11 +10,13 @@ sealed class Screen(val route : String){
 
     data object AttendanceHistory : Screen("attendance_history")
 
+    data object AttendanceRequest : Screen("attendance_request")
+
     data object LeaveApplication : Screen("leave_application")
 
     data object LeaveHistory : Screen("leave_history")
 
-    data object Main : Screen(
-        route = "main"
-    )
+
+
+    data object AttendanceRequestHistory : Screen("attendance_request_history")
 }

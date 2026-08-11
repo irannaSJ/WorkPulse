@@ -10,6 +10,10 @@ object NetworkConstants {
 const val BASE_URL = "https://opening-advantages-rewards-arc.trycloudflare.com/"
 
 
+//    const val BASE_URL =
+//        "https://defining-copying-mathematical-colleagues.trycloudflare.com/"
+    const val BASE_URL = "https://opening-advantages-rewards-arc.trycloudflare.com/"
+
 
     const val LOGIN = "api/method/login"
     const val LOGOUT = "api/method/logout"
@@ -18,7 +22,7 @@ const val BASE_URL = "https://opening-advantages-rewards-arc.trycloudflare.com/"
     const val READ_TIME = 30L
     const val WRITE_TIME = 30L
 
-    const val CONTENT_TYPE = "Content-type"
-    const val APPLICATION_JSON = "application/json"
-    const val FORM_URL_ENCODED = "application/x-www-form-urlencoded"
+//    const val CONTENT_TYPE = "Content-type"
+//    const val APPLICATION_JSON = "application/json"
+//    const val FORM_URL_ENCODED = "application/x-www-form-urlencoded"
 }

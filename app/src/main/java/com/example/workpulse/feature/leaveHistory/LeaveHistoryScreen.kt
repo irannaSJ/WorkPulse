@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.SearchOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -53,27 +52,14 @@ fun LeaveHistoryScreen(
 
 ) {
 
-    Scaffold(
-
-        modifier = modifier,
-
-        topBar = {
-
-            LeaveHistoryTopBar(
-
-                onBackClick = onBackClick
-
-            )
-
-        }
-
-    ) { padding ->
-
+    Column(
+        modifier = modifier.fillMaxSize()
+    ) {
+        LeaveHistoryTopBar(
+            onBackClick = onBackClick
+        )
         LazyColumn(
-
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
+            modifier = Modifier.weight(1f),
 
             contentPadding = PaddingValues(16.dp),
 
