@@ -416,26 +416,6 @@ class AttendanceRequestRepository @Inject constructor(
 }
 
 
-//private fun mapRequestType(
-//    requestType: String?
-//): AttendanceRequestType {
-//
-//    return when (
-//        requestType
-//            ?.trim()
-//            ?.uppercase()
-//    ) {
-//
-//        "ON_DUTY" ->
-//            AttendanceRequestType.ON_DUTY
-//
-//        "WORK_FROM_HOME" ->
-//            AttendanceRequestType.WORK_FROM_HOME
-//
-//        else ->
-//            AttendanceRequestType.ON_DUTY
-//    }
-//}
 
 private fun mapRequestType(
     reason: String?
