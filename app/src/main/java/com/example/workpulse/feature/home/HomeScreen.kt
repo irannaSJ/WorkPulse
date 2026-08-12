@@ -24,11 +24,11 @@ import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.unit.dp
 
-import com.example.workpulse.feature.home.presentation.components.attendanceRelated.DateTimeCard
+import com.example.workpulse.feature.attendance.DateTimeCard
 import com.example.workpulse.feature.home.presentation.components.HomeTopBar
 
 
-import com.example.workpulse.feature.home.presentation.components.attendanceRelated.AttendanceCard
+import com.example.workpulse.feature.attendance.AttendanceCard
 import com.example.workpulse.feature.home.presentation.components.leaveRelated.LeaveSummaryCard
 
 

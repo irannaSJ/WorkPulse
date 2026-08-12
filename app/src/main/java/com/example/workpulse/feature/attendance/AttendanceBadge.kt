@@ -1,4 +1,4 @@
-package com.example.workpulse.feature.home.presentation.components.attendanceRelated
+package com.example.workpulse.feature.attendance
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip

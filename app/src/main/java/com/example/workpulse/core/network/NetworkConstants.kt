@@ -12,7 +12,7 @@ object NetworkConstants {
 
 //    const val BASE_URL =
 //        "https://defining-copying-mathematical-colleagues.trycloudflare.com/"
-    const val BASE_URL = "https://referring-moderators-ran-evident.trycloudflare.com/"
+    const val BASE_URL = "https://injection-discussion-pit-viewing.trycloudflare.com/"
 
 
     const val LOGIN = "api/method/login"

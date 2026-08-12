@@ -47,7 +47,6 @@ class HomeViewModel @Inject constructor(
     }
 
 
-
     private fun observeLeaveBalance() {
 
         viewModelScope.launch {
@@ -202,7 +201,6 @@ class HomeViewModel @Inject constructor(
         )
 
     }
-
 
     fun logout(){
         viewModelScope.launch {

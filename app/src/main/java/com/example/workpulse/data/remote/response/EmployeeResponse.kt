@@ -37,9 +37,12 @@ data class EmployeeData(
     @SerializedName("date_of_joining")
     val dateOfJoining : String?,
 
-    @SerializedName("address")
+    @SerializedName("current_address")
     val currentAddress : String?,
 
     @SerializedName("image")
-    val profileImage: String?
+    val profileImage: String?,
+
+    @SerializedName("leave_approver")
+    val leaveApprover : String?,
 )

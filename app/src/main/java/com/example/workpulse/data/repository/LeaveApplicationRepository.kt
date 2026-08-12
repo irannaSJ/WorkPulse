@@ -290,7 +290,7 @@ class LeaveApplicationRepository @Inject constructor(
                         applicationStatus = LeaveApplicationStatus.PENDING,
 
                         syncStatus = SyncStatus.PENDING,
-                        leaveApprover = "Administrator",
+                        leaveApprover = employee.leaveApprover,
 
                         createdAt = currentTime,
 

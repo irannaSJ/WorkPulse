@@ -62,7 +62,8 @@ class AuthRepository @Inject constructor(
                         "cell_number",
                         "date_of_joining",
                         "current_address",
-                        "image"
+                        "image",
+                        "leave_approver"
                     ]
                     """.trimIndent()
             )
@@ -90,6 +91,7 @@ class AuthRepository @Inject constructor(
                 profileImage = employee.profileImage,
                 dateOfJoining = employee.dateOfJoining,
                 currentAddress = employee.currentAddress,
+                leaveApprover = employee.leaveApprover,
                 updatedAt = System.currentTimeMillis()
             )
 
