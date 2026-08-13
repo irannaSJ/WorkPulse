@@ -3,6 +3,7 @@ package com.example.workpulse.di
 import android.content.Context
 import androidx.room.Room
 import com.example.workpulse.data.local.dao.AttendanceRequestDao
+import com.example.workpulse.data.local.dao.CompOffApplicationDao
 import com.example.workpulse.data.local.dao.EmployeeDao
 import com.example.workpulse.data.local.dao.LeaveApplicationDao
 import com.example.workpulse.data.local.dao.LeaveBalanceDao
@@ -67,6 +68,13 @@ object DatabaseModule {
         return database.leaveBalanceDao()
     }
 
+    @Provides
+    @Singleton
+    fun provideCompOffApplicationDao(
+        database : WorkPulseDatabase
+    ): CompOffApplicationDao{
+        return  database.compOffApplicationDao()
+    }
 
     @Provides
     @Singleton

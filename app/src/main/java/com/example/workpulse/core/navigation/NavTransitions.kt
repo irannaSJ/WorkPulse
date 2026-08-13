@@ -1,35 +1,168 @@
 package com.example.workpulse.core.navigation
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 
 object NavTransitions {
 
-    val tabEnter: AnimatedContentTransitionScope<*>.() -> EnterTransition = {
-        fadeIn(animationSpec = tween(200))
-    }
+    /*
+     * ---------------------------------------------------------
+     * BOTTOM NAVIGATION
+     * ---------------------------------------------------------
+     *
+     * Smooth and calm.
+     */
 
-    val tabExit: AnimatedContentTransitionScope<*>.() -> ExitTransition = {
-        fadeOut(animationSpec = tween(160))
-    }
-
-    val enter: AnimatedContentTransitionScope<*>.() -> EnterTransition = {
+    val bottomEnter:
+            AnimatedContentTransitionScope<*>.() -> EnterTransition = {
 
         fadeIn(
-            animationSpec = tween(400)
-        ) + slideInVertically(
-            animationSpec = tween(400),
-            initialOffsetY = { it / 10 }
+            animationSpec = tween(
+                durationMillis = 520,
+                easing = FastOutSlowInEasing
+            )
+        ) + slideInHorizontally(
+            animationSpec = tween(
+                durationMillis = 520,
+                easing = FastOutSlowInEasing
+            ),
+            initialOffsetX = { it / 14 }
         )
-
     }
 
-    val exit: AnimatedContentTransitionScope<*>.() -> ExitTransition = {
+    val bottomExit:
+            AnimatedContentTransitionScope<*>.() -> ExitTransition = {
 
         fadeOut(
-            animationSpec = tween(250)
+            animationSpec = tween(
+                durationMillis = 380,
+                easing = FastOutSlowInEasing
+            )
         )
-
     }
 
+
+    /*
+     * ---------------------------------------------------------
+     * NORMAL FORWARD NAVIGATION
+     * ---------------------------------------------------------
+     */
+
+    val enter:
+            AnimatedContentTransitionScope<*>.() -> EnterTransition = {
+
+        fadeIn(
+            animationSpec = tween(
+                durationMillis = 580,
+                easing = FastOutSlowInEasing
+            )
+        ) + slideInHorizontally(
+            animationSpec = tween(
+                durationMillis = 580,
+                easing = FastOutSlowInEasing
+            ),
+            initialOffsetX = { it / 10 }
+        )
+    }
+
+    val exit:
+            AnimatedContentTransitionScope<*>.() -> ExitTransition = {
+
+        fadeOut(
+            animationSpec = tween(
+                durationMillis = 400,
+                easing = FastOutSlowInEasing
+            )
+        ) + slideOutHorizontally(
+            animationSpec = tween(
+                durationMillis = 400,
+                easing = FastOutSlowInEasing
+            ),
+            targetOffsetX = { -it / 24 }
+        )
+    }
+
+
+    /*
+     * ---------------------------------------------------------
+     * BACK NAVIGATION
+     * ---------------------------------------------------------
+     */
+
+    val popEnter:
+            AnimatedContentTransitionScope<*>.() -> EnterTransition = {
+
+        fadeIn(
+            animationSpec = tween(
+                durationMillis = 540,
+                easing = FastOutSlowInEasing
+            )
+        ) + slideInHorizontally(
+            animationSpec = tween(
+                durationMillis = 540,
+                easing = FastOutSlowInEasing
+            ),
+            initialOffsetX = { -it / 10 }
+        )
+    }
+
+    val popExit:
+            AnimatedContentTransitionScope<*>.() -> ExitTransition = {
+
+        fadeOut(
+            animationSpec = tween(
+                durationMillis = 360,
+                easing = FastOutSlowInEasing
+            )
+        ) + slideOutHorizontally(
+            animationSpec = tween(
+                durationMillis = 360,
+                easing = FastOutSlowInEasing
+            ),
+            targetOffsetX = { it / 10 }
+        )
+    }
+
+
+    /*
+     * ---------------------------------------------------------
+     * PREMIUM SCREEN
+     * ---------------------------------------------------------
+     */
+
+    val premiumEnter:
+            AnimatedContentTransitionScope<*>.() -> EnterTransition = {
+
+        fadeIn(
+            animationSpec = tween(
+                durationMillis = 550,
+                easing = FastOutSlowInEasing
+            )
+        ) + scaleIn(
+            initialScale = 0.96f,
+            animationSpec = tween(
+                durationMillis = 550,
+                easing = FastOutSlowInEasing
+            )
+        )
+    }
+
+    val premiumExit:
+            AnimatedContentTransitionScope<*>.() -> ExitTransition = {
+
+        fadeOut(
+            animationSpec = tween(
+                durationMillis = 350,
+                easing = FastOutSlowInEasing
+            )
+        )
+    }
 }

@@ -16,7 +16,7 @@ data class CompOffApplicationRequest (
     val toDate : String,
 
     @SerializedName("reason")
-    val reason : String
+    val reason : String? = null
 
 
 )

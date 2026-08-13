@@ -5,20 +5,20 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.workpulse.data.local.entity.ComposeOffRequestEntity
+import com.example.workpulse.data.local.entity.CompOffApplicationEntity
 import com.example.workpulse.feature.attendance.data.local.entity.SyncStatus
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface ComposeOffRequestDao {
+interface CompOffApplicationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertComposeOffApplication(
-        compOffApplication : ComposeOffRequestEntity
+        compOffApplication : CompOffApplicationEntity
     )
 
     @Update
     suspend fun updateComposeOffApplication(
-        compOffApplication : ComposeOffRequestEntity
+        compOffApplication : CompOffApplicationEntity
     )
 
     @Query("""
@@ -31,11 +31,11 @@ interface ComposeOffRequestDao {
         AND toDate >= :fromDate
         ) LIMIT 1
     """)
-    suspend fun getOverlappingLeaveApplication(
+     suspend fun getOverlappingLeaveApplication(
         employeeId: String,
         fromDate: Long?,
         toDate: Long?
-    ): ComposeOffRequestEntity?
+    ): CompOffApplicationEntity?
 
 
 
@@ -44,9 +44,9 @@ interface ComposeOffRequestDao {
         FROM compOff_application
         WHERE syncStatus = :syncStatus
     """)
-    suspend fun getPendingCompOffApplication(
+    fun getPendingCompOffApplication(
         syncStatus: SyncStatus = SyncStatus.PENDING
-    ): Flow<List<ComposeOffRequestEntity>>
+    ): Flow<List<CompOffApplicationEntity>>
 
     @Query("""
         UPDATE compoff_application
@@ -69,7 +69,7 @@ interface ComposeOffRequestDao {
     """)
     suspend fun getByErpNextId(
         erpNextId: String
-    ): ComposeOffRequestEntity?
+    ): CompOffApplicationEntity?
 
 
     @Query("""
@@ -77,7 +77,7 @@ interface ComposeOffRequestDao {
         FROM compOff_application
         ORDER BY fromDate DESC
     """)
-    fun getAllCompOffApplications() : Flow<List<ComposeOffRequestEntity>>
+    fun getAllCompOffApplications() : Flow<List<CompOffApplicationEntity>>
 
 
 }

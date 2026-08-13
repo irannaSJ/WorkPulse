@@ -5,10 +5,10 @@ import androidx.room.PrimaryKey
 import com.example.workpulse.feature.attendance.data.local.entity.SyncStatus
 
 @Entity(tableName = "compOff_application")
-data class ComposeOffRequestEntity (
+data class CompOffApplicationEntity (
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val erpNextId : String,
+    val erpNextId : String? = null,
     val employeeId : String,
     val leaveType : String = "Compensatory Off",
     val reason : String,
