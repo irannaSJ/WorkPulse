@@ -1,5 +1,6 @@
 package com.example.workpulse.data.repository
 
+import android.util.Log
 import com.example.workpulse.core.datastore.SessionManager
 import com.example.workpulse.core.worker.SyncScheduler
 import com.example.workpulse.data.local.dao.CompOffApplicationDao
@@ -11,7 +12,12 @@ import com.example.workpulse.feature.leaveApplication.LeaveValidationResult
 import java.util.Calendar
 import com.example.workpulse.data.local.entity.ApplicationStatus
 import com.example.workpulse.data.local.entity.CompOffApplicationEntity
+import com.example.workpulse.data.remote.dto.request.CompOffApplicationRequest
+import com.example.workpulse.data.remote.dto.response.CompOffApplicationData
 import com.example.workpulse.feature.attendance.data.local.entity.SyncStatus
+import okio.IOException
+import java.text.SimpleDateFormat
+import java.util.Locale
 import javax.inject.Inject
 
 class CompOffApplicationRepository @Inject constructor(
@@ -135,6 +141,8 @@ class CompOffApplicationRepository @Inject constructor(
                     compOffApplicationDao.insertComposeOffApplication(
                         compOffApplication
                     )
+                    Log.d("saving Comp Off application : ","${employee.employeeId}")
+                    syncScheduler.scheduleCompOffSync()
                     LeaveApplicationResult.Success
 
                 }
@@ -178,4 +186,124 @@ class CompOffApplicationRepository @Inject constructor(
 
         return calander.timeInMillis
     }
+
+    suspend fun syncPendingCompOffApplications(){
+        updatePendingCompOffApplication()
+        downloadLatestCompOffApplications()
+    }
+
+
+    private suspend fun updatePendingCompOffApplication(){
+        val pendingApplications = compOffApplicationDao.getPendingCompOffApplication()
+        for (application in pendingApplications){
+            val request = CompOffApplicationRequest(
+                employee = application.employeeId,
+                leaveType = application.leaveType,
+                fromDate = formatDate(application.fromDate),
+                toDate = formatDate(application.toDate),
+                reason = application.reason
+            )
+
+            try {
+                val response = compOffApi.createCompOffApplication(request)
+                if(response.isSuccessful){
+                    val erpNextId = response.body()?.data?.name?:continue
+
+                    compOffApplicationDao.updateSyncDetails(
+                        id = application.id,
+                        erpNextId = erpNextId,
+                        syncStatus = SyncStatus.SYNCED,
+                    )
+                } else{
+                    //
+                }
+            }catch (e : IOException){
+                throw e
+            }catch (e : Exception){
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private suspend fun downloadLatestCompOffApplications(){
+        val employeeId = sessionManager.getEmployeeId()
+        val filters = """
+            [ ["employee", "=", "$employeeId"]]
+        """.trimIndent()
+        val fields="""
+            [
+                "name",
+                "employee",
+                "from_date",
+                "to_date",
+                "status",
+                "reason"
+            ]
+        """.trimIndent()
+
+        val response = compOffApi.getCompOffApplication(
+            fields = fields,
+            filters= filters
+
+        )
+        Log.d("CompOff Application ", " Downloaded ${response.data.size} compoff applications")
+
+//        for(dto in response.data) {
+        response.data.forEach { dto ->
+            val entity = dto.toEntity()
+            val existing = compOffApplicationDao.getByErpNextId(dto.name)
+            if (existing == null){
+                compOffApplicationDao.insertComposeOffApplication(entity)
+
+            }else{
+                compOffApplicationDao.updateComposeOffApplication(
+                    entity.copy(id = existing.id)
+                )
+            }
+        }
+    }
+
+    private fun CompOffApplicationData.toEntity() : CompOffApplicationEntity{
+        return CompOffApplicationEntity(
+            id = 0,
+            employeeId = employee,
+            erpNextId = name,
+            leaveType = "Compensatory Off",
+            fromDate = parseDate(fromDate),
+            toDate = parseDate(toDate),
+            reason = reason.orEmpty(),
+            compOffApplicationStatus = mapStatus(status),
+            syncStatus = SyncStatus.SYNCED,
+        )
+    }
+
+}
+
+private fun mapStatus(
+    status: String
+): ApplicationStatus{
+    return when(status){
+        "Open" -> ApplicationStatus.PENDING
+        "Submitted" -> ApplicationStatus.SUBMITTED
+        "Cancelled" -> ApplicationStatus.CANCELLED
+        else -> ApplicationStatus.PENDING
+    }
+}
+
+
+private fun formatDate(
+    millis : Long
+) : String{
+    return java.text.SimpleDateFormat(
+        "yyyy-MM-dd",
+        java.util.Locale.getDefault()
+    ).format(java.util.Date(millis))
+}
+
+private fun parseDate(date : String) : Long{
+    val formatter = SimpleDateFormat(
+        "yyyy-MM-dd",
+        Locale.getDefault()
+    )
+    return formatter.parse(date)?.time ?: 0L
 }
