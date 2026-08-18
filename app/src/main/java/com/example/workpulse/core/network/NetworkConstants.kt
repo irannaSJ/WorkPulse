@@ -2,7 +2,7 @@ package com.example.workpulse.core.network
 
 object NetworkConstants {
 
-//    const val BASE_URL = "http://10.205.75.19:8000"
+    const val BASE_URL = "http://10.246.81.19:8000"
 //    const val BASE_URL = "http://10.163.155.19:8000"
 //    const val BASE_URL = "http://10.132.113.19:8000"
 //    const val BASE_URL = "http://10.159.58.19:8000"
@@ -12,7 +12,7 @@ object NetworkConstants {
 
 //    const val BASE_URL =
 //        "https://defining-copying-mathematical-colleagues.trycloudflare.com/"
-    const val BASE_URL = "https://series-prot-radius-hired.trycloudflare.com/"
+//    const val BASE_URL = "https://series-prot-radius-hired.trycloudflare.com/"
 
 
     const val LOGIN = "api/method/login"

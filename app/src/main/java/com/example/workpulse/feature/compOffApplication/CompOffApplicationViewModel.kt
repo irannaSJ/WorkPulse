@@ -1,5 +1,6 @@
 package com.example.workpulse.feature.compOffApplication
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.workpulse.data.repository.CompOffApplicationRepository
@@ -81,6 +82,18 @@ class CompOffApplicationViewModel @Inject constructor(
     }
 
     fun onSaveClick(){
+
+        if (uiState.value.isSubmitting ||
+            uiState.value.isSubmitted) {
+            return
+        }
+        Log.d(
+            "CompOffSubmit",
+            "Submit clicked: fromDate=${uiState.value.fromDate}, " +
+                    "toDate=${uiState.value.toDate}, " +
+                    "reason=${uiState.value.reason}"
+        )
+
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
@@ -89,7 +102,7 @@ class CompOffApplicationViewModel @Inject constructor(
                 )
             }
             val result = compOffApplicationRepository.saveCompOffApplication(
-                leaveType = "Compensatory Off",
+
                 fromDate = uiState.value.fromDate,
                 toDate = uiState.value.toDate,
                 reason = uiState.value.reason,
@@ -101,6 +114,7 @@ class CompOffApplicationViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isSubmitting = false,
+                            isSubmitted = true,
                             successMessage = "Comp Off Application Saved successfully"
                         )
                     }
@@ -116,9 +130,10 @@ class CompOffApplicationViewModel @Inject constructor(
                             }
                         }
 
-                        LeaveApplicationResult.Success -> Unit
+
                         else -> {}
                     }
+
                 }
                 is LeaveApplicationResult.Error -> {
                     _uiState.update {

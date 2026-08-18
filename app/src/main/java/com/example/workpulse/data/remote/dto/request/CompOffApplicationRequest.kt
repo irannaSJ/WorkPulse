@@ -12,7 +12,7 @@ data class CompOffApplicationRequest (
     @SerializedName("work_from_date")
     val fromDate  : String,
 
-    @SerializedName("work_to_date")
+    @SerializedName("work_end_date")
     val toDate : String,
 
     @SerializedName("reason")

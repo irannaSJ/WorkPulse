@@ -23,8 +23,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.workpulse.core.components.MessageBanner
 import com.example.workpulse.core.ui.components.WorkPulseTopBar
 import com.example.workpulse.feature.compOffApplication.components.CompOffRequestCard
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 
 
 @Composable
@@ -91,6 +95,48 @@ private fun CompOffApplicationContent(
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
 
+//        uiState.successMessage?.let { message ->
+//            MessageBanner(
+//                message = message,
+//                isError = false
+//            )
+//        }
+//
+//        uiState.errorMessage?.let { message ->
+//            MessageBanner(
+//                message = message,
+//                isError = true
+//            )
+//        }
+
+        AnimatedVisibility(
+            visible = uiState.successMessage != null,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            uiState.successMessage?.let { message ->
+
+                MessageBanner(
+                    message = message,
+                    isError = false
+                )
+            }
+        }
+
+        AnimatedVisibility(
+            visible = uiState.errorMessage != null,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            uiState.errorMessage?.let { message ->
+
+                MessageBanner(
+                    message = message,
+                    isError = true
+                )
+            }
+        }
+
         CompOffRequestCard(
             uiState =uiState,
             onFromDateClick = onFromDateClick,
@@ -101,8 +147,7 @@ private fun CompOffApplicationContent(
         Button(
             onClick = onSubmitClick,
             modifier = Modifier.fillMaxWidth(),
-            enabled = !uiState.isSubmitting
-        ){
+            enabled = !uiState.isSubmitting && !uiState.isSubmitted        ){
             if(uiState.isSubmitting){
                 CircularProgressIndicator()
             }else{
@@ -115,16 +160,3 @@ private fun CompOffApplicationContent(
     }
 
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun previewCompOffApplication(){
-//    CompOffApplicationScreen(
-//        uiState = CompOffApplicationUiState(),
-//        onBackClick = {},
-//        onFromDateClick = {},
-//        onToDateClick = {},
-//        onReasonChanged = {},
-//        onSubmitClick = {}
-//    )
-//}

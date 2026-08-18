@@ -13,4 +13,5 @@ data class CompOffApplicationUiState(
     val isSubmitting : Boolean = false,
     val errorMessage : String? = null,
     val successMessage : String? = null,
+    val isSubmitted : Boolean = false
 )

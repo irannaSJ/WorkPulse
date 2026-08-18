@@ -46,7 +46,7 @@ interface CompOffApplicationDao {
     """)
     fun getPendingCompOffApplication(
         syncStatus: SyncStatus = SyncStatus.PENDING
-    ): Flow<List<CompOffApplicationEntity>>
+    ): List<CompOffApplicationEntity>
 
     @Query("""
         UPDATE compoff_application

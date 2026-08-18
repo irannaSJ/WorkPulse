@@ -1,6 +1,6 @@
 package com.example.workpulse.feature.compOffApplication
 
-import androidx.compose.material3.SnackbarHostState
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.workpulse.feature.leaveApplication.components.DatePickerDialog
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -20,20 +21,22 @@ fun CompOffApplicationRoute(onBackClick : () -> Unit) {
     var showFromDatePicker by remember { mutableStateOf(false  ) }
     var showToDatePicker by remember { mutableStateOf(false) }
 
-    val snackBarHostState = remember { SnackbarHostState() }
+
 
     LaunchedEffect(uiState.successMessage) {
-        uiState.successMessage?.let {
-            snackBarHostState.showSnackbar(it)
-            viewModel.onResetClicked()
+
+        if (uiState.successMessage != null) {
+
+            delay(3000)
+
             viewModel.clearSuccessMessage()
         }
     }
 
     LaunchedEffect(uiState.errorMessage) {
-        uiState.errorMessage?.let {
-            snackBarHostState.showSnackbar(it)
-            viewModel.clearSuccessMessage()
+        if(uiState.errorMessage != null){
+            delay(3000)
+            viewModel.clearErrorMessage()
         }
     }
 
@@ -68,6 +71,7 @@ fun CompOffApplicationRoute(onBackClick : () -> Unit) {
             }
         )
     }
+
 
 
 

@@ -43,6 +43,7 @@ class HomeViewModel @Inject constructor(
         observeTodayAttendance()
         observeLeaveBalance()
         syncScheduler.scheduleLeaveSync()
+        syncScheduler.scheduleCompOffSync()
 
     }
 

@@ -370,6 +370,7 @@ class LeaveApplicationRepository @Inject constructor(
         val pendingApplications =
             leaveApplicationDao.getPendingLeaveApplication()
 
+
         for (application in pendingApplications) {
 
             val request = LeaveApplicationRequest(

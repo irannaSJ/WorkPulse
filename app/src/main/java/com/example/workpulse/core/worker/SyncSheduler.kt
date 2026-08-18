@@ -120,6 +120,30 @@ class SyncScheduler(
             )
 
     }
+
+    fun scheduleCompOffSync(){
+        val  constraints = Constraints.Builder()
+            .setRequiredNetworkType(
+                NetworkType.CONNECTED
+            )
+            .build()
+        val request = OneTimeWorkRequestBuilder<CompOffSyncWorker>()
+            .setConstraints(constraints)
+            .setBackoffCriteria(
+                BackoffPolicy.EXPONENTIAL,
+                10,
+                TimeUnit.SECONDS
+            )
+            .build()
+
+        WorkManager.getInstance(context)
+            .enqueueUniqueWork(
+                "compoff_sync",
+                ExistingWorkPolicy.KEEP,
+                request
+
+            )
+    }
 }
 
 

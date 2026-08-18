@@ -13,8 +13,12 @@ data class CompOffApplicationResponses(
     val data: List<CompOffApplicationData>
 )
 data class CompOffApplicationData(
+
     @SerializedName("name")
     val name : String,
+
+    @SerializedName("employee_name")
+    val employeeName : String,
 
     @SerializedName("employee")
     val employee : String,
@@ -25,8 +29,11 @@ data class CompOffApplicationData(
     @SerializedName("work_from_date")
     val fromDate : String,
 
-    @SerializedName("work_to_date")
+    @SerializedName("work_end_date")
     val toDate : String,
+
+    @SerializedName("docstatus")
+    val status: Int,
 
     @SerializedName("reason")
     val reason : String? = null

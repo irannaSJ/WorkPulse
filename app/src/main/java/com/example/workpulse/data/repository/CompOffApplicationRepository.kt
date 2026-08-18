@@ -30,17 +30,13 @@ class CompOffApplicationRepository @Inject constructor(
 ) {
 
     suspend fun validateCompOffApplication(
-        leaveType: String,
         fromDate: Long?,
         toDate: Long?,
         reason: String,
         requestedDays: Int?
     ) : Any {
 
-        if(leaveType == null){
-            return LeaveValidationResult.Error("Please mention the Leave Type")
-        }
-
+        Log.d("Error: ","Error in Validate CompOff Application")
         if(fromDate == null){
             return LeaveValidationResult.Error("Please select the From Date")
         }
@@ -51,11 +47,11 @@ class CompOffApplicationRepository @Inject constructor(
         if(reason.isBlank()){
             return LeaveValidationResult.Error("Please Enter the Reason")
         }
-        if (requestedDays != null) {
-            if(requestedDays <=0){
-                return LeaveValidationResult.Error("The Requested Days are less then 0")
-            }
-        }
+//        if (requestedDays != null) {
+//            if(requestedDays <=0){
+//                return LeaveValidationResult.Error("The Requested Days are less than 0")
+//            }
+//        }
         if(fromDate > toDate){
             return LeaveValidationResult.Error("The From Date cannot be after To Date")
         }
@@ -66,19 +62,17 @@ class CompOffApplicationRepository @Inject constructor(
             return duplicateValidation
         }
 
-        val today = getStartOfToday()
-        if(fromDate < today){
-            return LeaveValidationResult.Error(
-                "From Date Cannot be in the Past"
-            )
-        }
-        if(toDate < today){
-            return LeaveValidationResult.Error(
-                "To Date cannot be in the Past"
-            )
-        }
-
-
+//        val today = getStartOfToday()
+//        if(fromDate < today){
+//            return LeaveValidationResult.Error(
+//                "From Date Cannot be in the Past"
+//            )
+//        }
+//        if(toDate < today){
+//            return LeaveValidationResult.Error(
+//                "To Date cannot be in the Past"
+//            )
+//        }
 
         return LeaveValidationResult.Success
     }
@@ -96,17 +90,37 @@ class CompOffApplicationRepository @Inject constructor(
             toDate = toDate
         )
 
+        Log.d(
+            "CompOffDuplicate",
+            """
+    Checking duplicate:
+    employeeId=$employeeId
+    fromDate=$fromDate
+    toDate=$toDate
+    existing=$existingCompOff
+    """.trimIndent()
+        )
+
         if(existingCompOff != null){
+
+            Log.d(
+                "CompOffDuplicate",
+                "DUPLICATE FOUND: id=${existingCompOff.id}, " +
+                        "erpNextId=${existingCompOff.erpNextId}"
+            )
             return LeaveValidationResult.Error(
                 "Leave Application Already Exists for the selected Dates"
             )
         }
+        Log.d(
+            "CompOffSubmit",
+            "No duplicate found"
+        )
 
         return LeaveValidationResult.Success
     }
 
     suspend fun saveCompOffApplication(
-        leaveType: String,
         fromDate: Long?,
         toDate: Long?,
         reason: String,
@@ -118,9 +132,14 @@ class CompOffApplicationRepository @Inject constructor(
 
             val employee = employeeDao.getEmployeeOnce()
                 ?:return LeaveApplicationResult.Error("Employee Not Found")
+
+            Log.d(
+                "CompOffSubmit",
+                "Starting saveCompOffApplication"
+            )
+
             when(
                 val validationResult = validateCompOffApplication(
-                    leaveType = leaveType,
                     fromDate = fromDate,
                     toDate = toDate,
                     reason = reason,
@@ -138,15 +157,23 @@ class CompOffApplicationRepository @Inject constructor(
                         compOffApplicationStatus = ApplicationStatus.PENDING,
                         syncStatus = SyncStatus.PENDING
                     )
+                    Log.d(
+                        "CompOffSubmit",
+                        "Validation successful. Inserting into Room: $compOffApplication"
+                    )
                     compOffApplicationDao.insertComposeOffApplication(
                         compOffApplication
                     )
-                    Log.d("saving Comp Off application : ","${employee.employeeId}")
+                    Log.d(
+                        "CompOffSubmit",
+                        "Room INSERT completed. local entity = $compOffApplication"
+                    )
                     syncScheduler.scheduleCompOffSync()
                     LeaveApplicationResult.Success
 
                 }
                 else -> {
+                    Log.d("Comp Off application :", "Comp off application failed to save")
                     LeaveApplicationResult.ValidationFailed(validationResult as LeaveValidationResult)
                 }
             }
@@ -226,6 +253,7 @@ class CompOffApplicationRepository @Inject constructor(
     }
 
     private suspend fun downloadLatestCompOffApplications(){
+        Log.d("download Compoff application:", "Comp Off application Download file is reached")
         val employeeId = sessionManager.getEmployeeId()
         val filters = """
             [ ["employee", "=", "$employeeId"]]
@@ -233,17 +261,19 @@ class CompOffApplicationRepository @Inject constructor(
         val fields="""
             [
                 "name",
+                "employee_name",
                 "employee",
-                "from_date",
-                "to_date",
-                "status",
+                "work_from_date",
+                "work_end_date",
+                "docstatus",
                 "reason"
             ]
         """.trimIndent()
 
         val response = compOffApi.getCompOffApplication(
             fields = fields,
-            filters= filters
+            filters= filters,
+            limit = 15
 
         )
         Log.d("CompOff Application ", " Downloaded ${response.data.size} compoff applications")
@@ -280,15 +310,17 @@ class CompOffApplicationRepository @Inject constructor(
 }
 
 private fun mapStatus(
-    status: String
+    status: Int
 ): ApplicationStatus{
     return when(status){
-        "Open" -> ApplicationStatus.PENDING
-        "Submitted" -> ApplicationStatus.SUBMITTED
-        "Cancelled" -> ApplicationStatus.CANCELLED
+        0 -> ApplicationStatus.PENDING
+        1 -> ApplicationStatus.SUBMITTED
+        2 -> ApplicationStatus.CANCELLED
         else -> ApplicationStatus.PENDING
     }
 }
+
+
 
 
 private fun formatDate(
