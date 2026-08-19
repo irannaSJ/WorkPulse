@@ -14,7 +14,10 @@ import com.example.workpulse.data.local.entity.ApplicationStatus
 import com.example.workpulse.data.local.entity.CompOffApplicationEntity
 import com.example.workpulse.data.remote.dto.request.CompOffApplicationRequest
 import com.example.workpulse.data.remote.dto.response.CompOffApplicationData
+import com.example.workpulse.data.remote.dto.response.ErrorResponse
 import com.example.workpulse.feature.attendance.data.local.entity.SyncStatus
+import com.google.gson.Gson
+import com.google.gson.internal.GsonTypes
 import okio.IOException
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -26,7 +29,8 @@ class CompOffApplicationRepository @Inject constructor(
     private val leaveBalanceDao: LeaveBalanceDao,
     private val sessionManager: SessionManager,
     private val compOffApplicationDao : CompOffApplicationDao,
-    private val syncScheduler: SyncScheduler
+    private val syncScheduler: SyncScheduler,
+    private val gson : Gson
 ) {
 
     suspend fun validateCompOffApplication(
@@ -189,6 +193,34 @@ class CompOffApplicationRepository @Inject constructor(
 
 
 
+    private fun extractServerError(
+        errorBody: String?
+    ): String {
+
+        if (errorBody.isNullOrBlank()) {
+            return "Failed to submit Comp Off request"
+        }
+
+        return try {
+
+            val json = gson.fromJson(
+                errorBody,
+                ErrorResponse::class.java
+            )
+
+            json.exception
+                ?.substringAfter("ValidationError: ")
+                ?.trim()
+                ?: "Failed to submit Comp Off request"
+
+        } catch (e: Exception) {
+
+            "Failed to submit Comp Off request"
+        }
+    }
+
+
+
     private fun getStartOfToday() : Long{
         val calander  = Calendar.getInstance()
         calander.set(
@@ -242,7 +274,16 @@ class CompOffApplicationRepository @Inject constructor(
                         syncStatus = SyncStatus.SYNCED,
                     )
                 } else{
-                    //
+                    val errorMessage = extractServerError(response.errorBody()?.string())
+                    Log.e(
+                        "CompOffSync",
+                        "ERPNext rejected Comp Off request: $errorMessage"
+                    )
+                    compOffApplicationDao.updateSyncFailure(
+                        id = application.id,
+                        syncStatus = SyncStatus.FAILED,
+                        errorMessage = errorMessage
+                    )
                 }
             }catch (e : IOException){
                 throw e

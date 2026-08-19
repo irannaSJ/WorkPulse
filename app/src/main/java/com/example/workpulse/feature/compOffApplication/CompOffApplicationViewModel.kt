@@ -148,8 +148,6 @@ class CompOffApplicationViewModel @Inject constructor(
     }
 
 
-
-
     private fun calculateRequestedDays(
         fromDate : Long,
         toDate : Long

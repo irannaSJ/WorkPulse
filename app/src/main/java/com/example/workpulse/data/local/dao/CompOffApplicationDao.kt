@@ -73,6 +73,19 @@ interface CompOffApplicationDao {
 
 
     @Query("""
+    UPDATE compOff_application
+    SET syncStatus = :syncStatus,
+        syncErrorMessage = :errorMessage
+    WHERE id = :id
+""")
+    suspend fun updateSyncFailure(
+        id: Long,
+        syncStatus: SyncStatus,
+        errorMessage: String
+    )
+
+
+    @Query("""
         SELECT *
         FROM compOff_application
         ORDER BY fromDate DESC

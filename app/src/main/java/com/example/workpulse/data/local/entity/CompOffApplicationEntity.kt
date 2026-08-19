@@ -15,6 +15,7 @@ data class CompOffApplicationEntity (
     val fromDate : Long,
     val toDate : Long,
     val syncStatus : SyncStatus,
+    val syncErrorMessage: String? = null,
     val compOffApplicationStatus : ApplicationStatus
 
 

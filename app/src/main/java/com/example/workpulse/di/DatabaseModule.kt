@@ -7,6 +7,7 @@ import com.example.workpulse.data.local.dao.CompOffApplicationDao
 import com.example.workpulse.data.local.dao.EmployeeDao
 import com.example.workpulse.data.local.dao.LeaveApplicationDao
 import com.example.workpulse.data.local.dao.LeaveBalanceDao
+import com.example.workpulse.data.local.database.MIGRATION_23_24
 import com.example.workpulse.data.local.database.WorkPulseDatabase
 import com.example.workpulse.feature.attendance.data.local.dao.AttendanceDao
 import dagger.Module
@@ -31,7 +32,7 @@ object DatabaseModule {
             WorkPulseDatabase::class.java,
             "workpulse_database"
         )
-            .fallbackToDestructiveMigration()
+            .addMigrations(MIGRATION_23_24)
             .build()
     }
 
