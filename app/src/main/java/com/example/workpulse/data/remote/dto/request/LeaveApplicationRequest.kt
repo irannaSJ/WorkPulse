@@ -20,6 +20,6 @@ data class LeaveApplicationRequest(
     val description: String,
 
     @SerializedName("leave_approver")
-    val leaveApprover : String
+    val leaveApprover: String?
 
 )

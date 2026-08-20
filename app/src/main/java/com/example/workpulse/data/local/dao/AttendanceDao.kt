@@ -74,21 +74,14 @@ interface AttendanceDao {
      * Delete all attendance of an employee
      * (used during logout)
      */
-    @Query(
-        """
-        DELETE FROM attendance
-        WHERE employeeId = :employeeId
-        """
-    )
-    suspend fun deleteAttendanceByEmployee(
-        employeeId: String
-    )
+//    @Query(
+//        """
+//        DELETE FROM attendance
+//        WHERE employeeId = :employeeId
+//        """
+//    )
+//    suspend fun deleteAttendanceByEmployee(
+//        employeeId: String
+//    )
 
-
-    /**
-     * Delete everything
-     * (mainly useful during development/testing)
-     */
-    @Query("DELETE FROM attendance")
-    suspend fun deleteAllAttendance()
 }

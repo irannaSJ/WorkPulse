@@ -1,4 +1,4 @@
-package com.example.workpulse.feature.home.presentation.components.attendanceRelated
+package com.example.workpulse.feature.attendance
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -325,7 +325,7 @@ private fun PunchedOutContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "See you tomorrow 👋",
+            text = "SEe you tomorrow",
             style = MaterialTheme.typography.bodyMedium,
             color = Color.Gray
         )

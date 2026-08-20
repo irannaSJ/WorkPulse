@@ -234,27 +234,27 @@ class AttendanceRepository @Inject constructor(
         syncScheduler.scheduleAttendanceSync()
         return AttendanceResult.Success
     }
-
-    /**
-     * Update sync status
-     */
-
-
-    /**
-     * Pending attendance
-     */
-    suspend fun getPendingAttendance(): List<AttendanceEntity> {
-        return attendanceDao.getPendingAttendance()
-    }
-
-    /**
-     * Clear attendance of an employee
-     */
-    suspend fun deleteAttendanceByEmployee(
-        employeeId: String
-    ) {
-        attendanceDao.deleteAttendanceByEmployee(employeeId)
-    }
+//
+//    /**
+//     * Update sync status
+//     */
+//
+//
+//    /**
+//     * Pending attendance
+//     */
+//    suspend fun getPendingAttendance(): List<AttendanceEntity> {
+//        return attendanceDao.getPendingAttendance()
+//    }
+//
+//    /**
+//     * Clear attendance of an employee
+//     */
+//    suspend fun deleteAttendanceByEmployee(
+//        employeeId: String
+//    ) {
+//        attendanceDao.deleteAttendanceByEmployee(employeeId)
+//    }
 
 
     private suspend fun getCurrentEmployee() =

@@ -16,6 +16,7 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.automirrored.outlined.Assignment
+import androidx.compose.material.icons.outlined.AddBox
 import androidx.compose.material.icons.outlined.HistoryToggleOff
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +48,7 @@ fun NavigationDrawerContent(
     onLeaveHistoryClick: () -> Unit,
 
     onAttendanceRequestHistoryClick : () -> Unit,
+    onCompOffApplicationClick : () -> Unit,
 
     onLogoutClick: () -> Unit,
 
@@ -142,6 +144,13 @@ fun NavigationDrawerContent(
                 icon = Icons.Outlined.HistoryToggleOff,
                 selected = selectedRoute == "attendance_request_history",
                 onClick = onAttendanceRequestHistoryClick
+            )
+
+            DrawerMenuItem(
+                title = "Compensatory Off Request",
+                icon = Icons.Outlined.AddBox,
+                selected = selectedRoute == "compoff_application",
+                onClick = onCompOffApplicationClick
             )
 
 

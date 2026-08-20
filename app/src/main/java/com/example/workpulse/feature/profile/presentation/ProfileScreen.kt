@@ -219,8 +219,6 @@ fun ProfileScreen(
 
 
 
-
-
 @Composable
 private fun ProfileTopBar(
 
@@ -274,7 +272,7 @@ private fun ProfileTopBar(
 
                         contentDescription = "Notifications",
 
-                        tint = Color(0xFF0F172A)
+                        tint = MaterialTheme.colorScheme.onSurface
 
                     )
 

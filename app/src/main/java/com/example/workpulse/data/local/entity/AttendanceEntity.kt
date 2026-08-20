@@ -16,53 +16,16 @@ data class AttendanceEntity(
 
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-
-    /**
-     * Employee ID from EmployeeEntity
-     */
     val employeeId: String,
-
-    /**
-     * Format: yyyy-MM-dd
-     * Example: 2026-07-22
-     */
     val attendanceDate: String,
-
-    /**
-     * Epoch milliseconds
-     */
     val punchInTime: Long? = null,
-
-    /**
-     * Epoch milliseconds
-     */
     val punchOutTime: Long? = null,
-
-    /**
-     * Total working duration in seconds
-     */
     val workingSeconds: Long = 0,
-
-    /**
-     * Current attendance state
-     */
     val status: AttendanceStatus,
-
-    /**
-     * Sync status with ERPNext
-     */
     val punchInSyncStatus: SyncStatus,
 
     val punchOutSyncStatus: SyncStatus ,
-
-    /**
-     * Local creation time
-     */
     val createdAt: Long = System.currentTimeMillis(),
-
-    /**
-     * Last modification time
-     */
     val updatedAt: Long = System.currentTimeMillis(),
 
     val latitude : Double? = null,
@@ -94,11 +57,6 @@ enum class SyncStatus {
 
     FAILED,
     NOT_REQUIRED
-}
-
-enum class LogType{
-    IN,
-    OUT
 }
 
 

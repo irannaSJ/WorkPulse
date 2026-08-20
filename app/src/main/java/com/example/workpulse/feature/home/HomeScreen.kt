@@ -24,11 +24,11 @@ import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.unit.dp
 
-import com.example.workpulse.feature.home.presentation.components.attendanceRelated.DateTimeCard
+import com.example.workpulse.feature.attendance.DateTimeCard
 import com.example.workpulse.feature.home.presentation.components.HomeTopBar
 
 
-import com.example.workpulse.feature.home.presentation.components.attendanceRelated.AttendanceCard
+import com.example.workpulse.feature.attendance.AttendanceCard
 import com.example.workpulse.feature.home.presentation.components.leaveRelated.LeaveSummaryCard
 
 
@@ -56,8 +56,9 @@ fun HomeScreen(
     onAttendanceHistoryClick : () -> Unit,
     onAttendanceRequestClick : () -> Unit,
     onLeaveHistoryClick : () -> Unit,
-    onLogoutClick : () -> Unit,
     onAttendanceRequestHistoryClick:() -> Unit,
+    onCompOffApplicationClick : () -> Unit,
+    onLogoutClick : () -> Unit,
     leaveUiState : LeaveSummaryUiState
 ) {
     val drawerState = rememberDrawerState(
@@ -135,6 +136,12 @@ fun HomeScreen(
                         onAttendanceRequestHistoryClick()
                     }
                 },
+                onCompOffApplicationClick = {
+                    scope.launch {
+                        drawerState.close()
+                        onCompOffApplicationClick()
+                    }
+                },
 
                 onLogoutClick = {
                     scope.launch {
@@ -149,9 +156,6 @@ fun HomeScreen(
         }
 
     ) {
-
-        // Your existing HomeScreen UI goes here
-
 
     Column(
         modifier = Modifier

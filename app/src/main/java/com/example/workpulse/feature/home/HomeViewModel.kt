@@ -43,9 +43,9 @@ class HomeViewModel @Inject constructor(
         observeTodayAttendance()
         observeLeaveBalance()
         syncScheduler.scheduleLeaveSync()
+        syncScheduler.scheduleCompOffSync()
 
     }
-
 
 
     private fun observeLeaveBalance() {
@@ -202,7 +202,6 @@ class HomeViewModel @Inject constructor(
         )
 
     }
-
 
     fun logout(){
         viewModelScope.launch {

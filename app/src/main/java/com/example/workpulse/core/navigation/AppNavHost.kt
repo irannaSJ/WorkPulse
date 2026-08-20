@@ -40,6 +40,8 @@ import com.example.workpulse.core.navigation.Screen.Splash
 import com.example.workpulse.feature.attendanceRequest.AttendanceRequestRoute
 import com.example.workpulse.feature.attendanceRequest.AttendanceRequestScreen
 import com.example.workpulse.feature.attendanceRequestHistory.AttendanceRequestHistoryRoute
+import com.example.workpulse.feature.compOffApplication.CompOffApplicationRoute
+import com.example.workpulse.feature.compOffApplicationsHistory.CompOffApplicationHistoryRoute
 import com.example.workpulse.feature.home.presentation.HomeRoute
 import com.example.workpulse.feature.home.presentation.history.AttendanceHistoryRoute
 import com.example.workpulse.feature.leaveApplication.LeaveApplicationRoute
@@ -49,7 +51,6 @@ import com.example.workpulse.feature.login.presentation.LoginRoute
 import com.example.workpulse.feature.profile.presentation.ProfileRoute
 //import com.example.workpulse.feature.profile.presentation.ProfileRoute
 import com.example.workpulse.feature.splash.presentation.SplashRoute
-
 @Composable
 fun AppNavHost(
     navController : NavHostController,
@@ -75,7 +76,14 @@ fun AppNavHost(
             startDestination = Screen.Splash.route,
             modifier = modifier
                 .padding(innerPadding)
-                .consumeWindowInsets(innerPadding)
+                .consumeWindowInsets(innerPadding),
+
+
+            enterTransition = NavTransitions.enter,
+            exitTransition = NavTransitions.exit,
+
+            popEnterTransition = NavTransitions.popEnter,
+            popExitTransition = NavTransitions.popExit
         ) {
         composable(Screen.Splash.route) {
             SplashRoute(
@@ -101,10 +109,10 @@ fun AppNavHost(
 
         composable(
             route = Screen.Login.route,
-            enterTransition = NavTransitions.enter,
-            exitTransition = NavTransitions.exit,
-            popEnterTransition = NavTransitions.enter,
-            popExitTransition = NavTransitions.exit
+            enterTransition = NavTransitions.premiumEnter,
+            exitTransition = NavTransitions.premiumExit,
+            popEnterTransition = NavTransitions.popEnter,
+            popExitTransition = NavTransitions.popExit
             ) {
             LoginRoute(
                 onNavigateToHome = {
@@ -122,10 +130,10 @@ fun AppNavHost(
         //screen upgrading from here we changed the profile navigation here
         composable(
             route = Screen.Home.route,
-            enterTransition = NavTransitions.tabEnter,
-            exitTransition = NavTransitions.tabExit,
-            popEnterTransition = NavTransitions.tabEnter,
-            popExitTransition = NavTransitions.tabExit
+            enterTransition = NavTransitions.bottomEnter,
+            exitTransition = NavTransitions.bottomExit,
+            popEnterTransition = NavTransitions.popEnter,
+            popExitTransition = NavTransitions.popExit
         ) {
             HomeRoute(
                 onProfileClick = {
@@ -147,6 +155,10 @@ fun AppNavHost(
                     navController.navigateToBottomDestination(Screen.AttendanceRequestHistory.route )
                 },
 
+                onCompOffApplicationClick = {
+                    navController.navigateToBottomDestination(Screen.CompOffApplication.route)
+                },
+
                 onLogoutSuccess = {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(navController.graph.id) {
@@ -161,10 +173,10 @@ fun AppNavHost(
 
         composable(
             route = Screen.AttendanceHistory.route,
-            enterTransition = NavTransitions.tabEnter,
-            exitTransition = NavTransitions.tabExit,
-            popEnterTransition = NavTransitions.tabEnter,
-            popExitTransition = NavTransitions.tabExit
+            enterTransition = NavTransitions.bottomEnter,
+            exitTransition = NavTransitions.bottomExit,
+            popEnterTransition = NavTransitions.bottomEnter,
+            popExitTransition = NavTransitions.bottomExit
         ) {
             AttendanceHistoryRoute(
                 onBackClick = {
@@ -173,7 +185,28 @@ fun AppNavHost(
             )
         }
 
-        composable(Screen.AttendanceRequest.route) {
+            composable(
+                route = Screen.CompOffApplicationHistory.route,
+                enterTransition = NavTransitions.bottomEnter,
+                exitTransition = NavTransitions.bottomExit,
+                popEnterTransition = NavTransitions.bottomEnter,
+                popExitTransition = NavTransitions.bottomExit
+            ){
+                CompOffApplicationHistoryRoute(
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+
+            }
+
+        composable(
+            route  = Screen.AttendanceRequest.route,
+            enterTransition = NavTransitions.enter,
+            exitTransition = NavTransitions.exit,
+            popEnterTransition = NavTransitions.popEnter,
+            popExitTransition = NavTransitions.popExit
+            ) {
             AttendanceRequestRoute(
                 onBackClick = {
                     navController.popBackStack()
@@ -183,10 +216,10 @@ fun AppNavHost(
 
         composable(
             route = Screen.LeaveHistory.route,
-            enterTransition = NavTransitions.tabEnter,
-            exitTransition = NavTransitions.tabExit,
-            popEnterTransition = NavTransitions.tabEnter,
-            popExitTransition = NavTransitions.tabExit
+            enterTransition = NavTransitions.bottomEnter,
+            exitTransition = NavTransitions.bottomExit,
+            popEnterTransition = NavTransitions.bottomEnter,
+            popExitTransition = NavTransitions.bottomExit
         ) {
             LeaveHistoryRoute(
                 onBackClick = {
@@ -197,10 +230,10 @@ fun AppNavHost(
 
             composable(
                 route = Screen.AttendanceRequestHistory.route,
-                enterTransition = NavTransitions.tabEnter,
-                exitTransition = NavTransitions.tabExit,
-                popEnterTransition = NavTransitions.tabEnter,
-                popExitTransition = NavTransitions.tabExit
+                enterTransition = NavTransitions.enter,
+                exitTransition = NavTransitions.exit,
+                popEnterTransition = NavTransitions.popEnter,
+                popExitTransition = NavTransitions.popExit
             ) {
                 AttendanceRequestHistoryRoute(
                     onBackClick = {
@@ -209,20 +242,42 @@ fun AppNavHost(
                 )
             }
 
-        composable(Screen.LeaveApplication.route){
+        composable(
+            route = Screen.LeaveApplication.route,
+            enterTransition = NavTransitions.enter,
+            exitTransition = NavTransitions.exit,
+            popEnterTransition = NavTransitions.popEnter,
+            popExitTransition = NavTransitions.popExit
+        ){
             LeaveApplicationRoute(
                 onBackClick ={
                     navController.popBackStack()
                 }
             )
         }
+            composable(
+                route = Screen.CompOffApplication.route,
+                enterTransition = NavTransitions.enter,
+                exitTransition = NavTransitions.exit,
+                popEnterTransition = NavTransitions.popEnter,
+                popExitTransition = NavTransitions.popExit
+            ) {
+                CompOffApplicationRoute(
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onButtonClick = {
+                        navController.navigate(Screen.CompOffApplicationHistory.route)
+                    }
+                )
+            }
 
         composable(
             route = Screen.Profile.route,
-            enterTransition = NavTransitions.tabEnter,
-            exitTransition = NavTransitions.tabExit,
-            popEnterTransition = NavTransitions.tabEnter,
-            popExitTransition = NavTransitions.tabExit
+            enterTransition = NavTransitions.bottomEnter,
+            exitTransition = NavTransitions.bottomExit,
+            popEnterTransition = NavTransitions.bottomEnter,
+            popExitTransition = NavTransitions.bottomExit
         ) {
             ProfileRoute(
                 onBackClick = {

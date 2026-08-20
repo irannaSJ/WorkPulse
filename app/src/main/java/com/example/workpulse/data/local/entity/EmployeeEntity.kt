@@ -29,5 +29,6 @@ data class EmployeeEntity(
 
     val profileImage: String? = null,
 
-    val updatedAt: Long
+    val updatedAt: Long,
+    val leaveApprover : String? = null
 )

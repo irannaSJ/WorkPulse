@@ -290,7 +290,7 @@ class LeaveApplicationRepository @Inject constructor(
                         applicationStatus = LeaveApplicationStatus.PENDING,
 
                         syncStatus = SyncStatus.PENDING,
-                        leaveApprover = "Administrator",
+                        leaveApprover = employee.leaveApprover,
 
                         createdAt = currentTime,
 
@@ -369,6 +369,7 @@ class LeaveApplicationRepository @Inject constructor(
     private suspend fun updatePendingLeaveApplications(){
         val pendingApplications =
             leaveApplicationDao.getPendingLeaveApplication()
+
 
         for (application in pendingApplications) {
 
@@ -522,86 +523,6 @@ class LeaveApplicationRepository @Inject constructor(
         }
 
     }
-
-
-//    suspend fun downloadLatestLeaveApplications() {
-//
-//        val employeeId =
-//            sessionManager.getEmployeeId()
-//                ?: return
-//
-//        val response =
-//            leaveApi.getLeaveApplications(
-//
-//                fields = """
-//            [
-//                "name",
-//                "employee",
-//                "leave_type",
-//                "from_date",
-//                "to_date",
-//                "status"
-//            ]
-//            """.trimIndent(),
-//
-//                filters = """
-//            [
-//                ["employee","=","$employeeId"]
-//            ]
-//            """.trimIndent()
-//
-//            )
-//
-//        Log.d(
-//            "LeaveSync",
-//            "Downloaded ${response.data.size} leave applications"
-//        )
-//
-////        response.data.forEach { dto ->
-////
-////            val localLeave =
-////                leaveApplicationDao.getByErpNextId(dto.name)
-////                    ?: return@forEach
-////
-////            leaveApplicationDao.updateApplicationStatus(
-////
-////                erpNextId = dto.name,
-////
-////                status = mapStatus(dto.status),
-////
-////                updatedAt = System.currentTimeMillis()
-////
-////            )
-////
-////        }
-//
-//        response.data.forEach { dto ->
-//
-//            val entity = dto.toEntity()
-//
-//            val existingLeave =
-//
-//                leaveApplicationDao.getByErpNextId(
-//                    dto.name
-//                )
-//
-//            if (existingLeave == null) {
-//
-//                leaveApplicationDao.insertLeaveApplication(
-//                    entity
-//                )
-//
-//                Log.d(
-//                    "LeaveSync",
-//                    "Inserted ${dto.name}"
-//                )
-//
-//            }
-//
-//        }
-//
-//    }
-
 
 
 
