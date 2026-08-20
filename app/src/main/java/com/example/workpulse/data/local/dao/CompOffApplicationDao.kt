@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.example.workpulse.data.local.entity.ApplicationStatus
 import com.example.workpulse.data.local.entity.CompOffApplicationEntity
 import com.example.workpulse.feature.attendance.data.local.entity.SyncStatus
 import kotlinx.coroutines.flow.Flow
@@ -75,12 +76,14 @@ interface CompOffApplicationDao {
     @Query("""
     UPDATE compOff_application
     SET syncStatus = :syncStatus,
+    compOffApplicationStatus = :compOffApplicationStatus,
         syncErrorMessage = :errorMessage
     WHERE id = :id
 """)
     suspend fun updateSyncFailure(
         id: Long,
         syncStatus: SyncStatus,
+        compOffApplicationStatus: ApplicationStatus,
         errorMessage: String
     )
 

@@ -20,4 +20,6 @@ sealed class Screen(val route : String){
 
 
     data object AttendanceRequestHistory : Screen("attendance_request_history")
+
+    data object CompOffApplicationHistory : Screen("compoff_application_history")
 }

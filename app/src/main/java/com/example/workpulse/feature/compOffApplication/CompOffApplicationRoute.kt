@@ -9,12 +9,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.workpulse.feature.compOffApplicationsHistory.CompOffApplicationHistoryRoute
 import com.example.workpulse.feature.leaveApplication.components.DatePickerDialog
 import kotlinx.coroutines.delay
 
 
 @Composable
-fun CompOffApplicationRoute(onBackClick : () -> Unit) {
+fun CompOffApplicationRoute(onBackClick : () -> Unit, onButtonClick : () -> Unit) {
     val viewModel : CompOffApplicationViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -46,7 +47,8 @@ fun CompOffApplicationRoute(onBackClick : () -> Unit) {
         onFromDateClick = { showFromDatePicker = true },
         onToDateClick = {showToDatePicker = true},
         onReasonChanged = viewModel::onReasonChanged,
-        onSubmitClick = viewModel::onSaveClick
+        onSubmitClick = viewModel::onSaveClick,
+        onButtonClick = onButtonClick
     )
 
     if (showFromDatePicker){
@@ -71,8 +73,6 @@ fun CompOffApplicationRoute(onBackClick : () -> Unit) {
             }
         )
     }
-
-
 
 
 }

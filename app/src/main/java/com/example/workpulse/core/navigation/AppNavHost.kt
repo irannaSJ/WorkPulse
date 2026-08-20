@@ -41,6 +41,7 @@ import com.example.workpulse.feature.attendanceRequest.AttendanceRequestRoute
 import com.example.workpulse.feature.attendanceRequest.AttendanceRequestScreen
 import com.example.workpulse.feature.attendanceRequestHistory.AttendanceRequestHistoryRoute
 import com.example.workpulse.feature.compOffApplication.CompOffApplicationRoute
+import com.example.workpulse.feature.compOffApplicationsHistory.CompOffApplicationHistoryRoute
 import com.example.workpulse.feature.home.presentation.HomeRoute
 import com.example.workpulse.feature.home.presentation.history.AttendanceHistoryRoute
 import com.example.workpulse.feature.leaveApplication.LeaveApplicationRoute
@@ -50,7 +51,6 @@ import com.example.workpulse.feature.login.presentation.LoginRoute
 import com.example.workpulse.feature.profile.presentation.ProfileRoute
 //import com.example.workpulse.feature.profile.presentation.ProfileRoute
 import com.example.workpulse.feature.splash.presentation.SplashRoute
-
 @Composable
 fun AppNavHost(
     navController : NavHostController,
@@ -185,6 +185,21 @@ fun AppNavHost(
             )
         }
 
+            composable(
+                route = Screen.CompOffApplicationHistory.route,
+                enterTransition = NavTransitions.bottomEnter,
+                exitTransition = NavTransitions.bottomExit,
+                popEnterTransition = NavTransitions.bottomEnter,
+                popExitTransition = NavTransitions.bottomExit
+            ){
+                CompOffApplicationHistoryRoute(
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+
+            }
+
         composable(
             route  = Screen.AttendanceRequest.route,
             enterTransition = NavTransitions.enter,
@@ -250,6 +265,9 @@ fun AppNavHost(
                 CompOffApplicationRoute(
                     onBackClick = {
                         navController.popBackStack()
+                    },
+                    onButtonClick = {
+                        navController.navigate(Screen.CompOffApplicationHistory.route)
                     }
                 )
             }

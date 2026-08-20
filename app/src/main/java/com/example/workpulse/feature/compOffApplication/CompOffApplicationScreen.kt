@@ -29,6 +29,7 @@ import com.example.workpulse.feature.compOffApplication.components.CompOffReques
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import com.example.workpulse.core.components.TopBarWithTwoFunctions
 
 
 @Composable
@@ -39,14 +40,15 @@ fun CompOffApplicationScreen(
     onToDateClick : () -> Unit,
     onReasonChanged : (String) -> Unit,
     onSubmitClick:() -> Unit,
+    onButtonClick : () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
         modifier = modifier,
         topBar = {
-            WorkPulseTopBar(
-                title = "Compensatory Off Request",
-                onBackClick = onBackClick
+            TopBarWithTwoFunctions(
+                onBackClick = onBackClick,
+                onButtonClick = onButtonClick
             )
         }
 

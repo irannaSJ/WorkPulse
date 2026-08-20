@@ -282,6 +282,7 @@ class CompOffApplicationRepository @Inject constructor(
                     compOffApplicationDao.updateSyncFailure(
                         id = application.id,
                         syncStatus = SyncStatus.FAILED,
+                        compOffApplicationStatus = ApplicationStatus.REJECTED,
                         errorMessage = errorMessage
                     )
                 }

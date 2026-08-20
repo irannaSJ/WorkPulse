@@ -33,7 +33,7 @@ fun AttendanceHistoryCard(
             .padding(horizontal = 16.dp),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp
@@ -62,7 +62,7 @@ fun AttendanceHistoryCard(
 
                 Text(
                     text = attendance.day,
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.surface,
                     fontSize = 15.sp
                 )
 
@@ -104,7 +104,7 @@ fun AttendanceHistoryCard(
                     Icon(
                         Icons.Default.LocationOn,
                         null,
-                        tint = Color(0xFF3B82F6),
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(18.dp)
                     )
 
@@ -112,7 +112,7 @@ fun AttendanceHistoryCard(
 
                     Text(
                         attendance.punchInLocation,
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 14.sp
                     )
 
@@ -156,7 +156,7 @@ fun AttendanceHistoryCard(
                     Icon(
                         Icons.Default.LocationOn,
                         null,
-                        tint = Color(0xFF3B82F6),
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(18.dp)
                     )
 
@@ -164,7 +164,7 @@ fun AttendanceHistoryCard(
 
                     Text(
                         attendance.punchOutLocation,
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 14.sp
                     )
 
