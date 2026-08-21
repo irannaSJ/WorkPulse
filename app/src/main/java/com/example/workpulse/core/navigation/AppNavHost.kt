@@ -51,6 +51,8 @@ import com.example.workpulse.feature.login.presentation.LoginRoute
 import com.example.workpulse.feature.profile.presentation.ProfileRoute
 //import com.example.workpulse.feature.profile.presentation.ProfileRoute
 import com.example.workpulse.feature.splash.presentation.SplashRoute
+import com.example.workpulse.feature.faceRecognition.presentation.camera.FaceCameraTestScreen
+
 @Composable
 fun AppNavHost(
     navController : NavHostController,
@@ -73,7 +75,8 @@ fun AppNavHost(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Splash.route,
+//            startDestination = Screen.Splash.route,
+            startDestination = "face_camera_test",
             modifier = modifier
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding),
@@ -106,6 +109,10 @@ fun AppNavHost(
             )
 
         }
+
+            composable("face_camera_test") {
+                FaceCameraTestScreen()
+            }
 
         composable(
             route = Screen.Login.route,
