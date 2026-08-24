@@ -8,5 +8,6 @@ data class SplashUiState(
 
 enum class SplashDestination{
     LOGIN,
-    HOME
+    HOME,
+    FACE_REGISTRATION
 }

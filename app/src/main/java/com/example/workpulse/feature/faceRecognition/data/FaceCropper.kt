@@ -1,16 +1,17 @@
-package com.example.workpulse.feature.faceRecognition.data.face
+package com.example.workpulse.feature.faceRecognition.data
 
 import android.graphics.Bitmap
 import android.graphics.Rect
+import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
 
-class FaceImagePreprocessor {
+class FaceCropper @Inject constructor() {
 
-    fun cropAndResize(
+    fun cropFace(
         bitmap: Bitmap,
         boundingBox: Rect
-    ): Bitmap {
+    ): Bitmap? {
 
         val left = max(
             0,
@@ -35,25 +36,16 @@ class FaceImagePreprocessor {
         val width = right - left
         val height = bottom - top
 
-        require(
-            width > 0 && height > 0
-        ) {
-            "Invalid face bounding box"
+        if (width <= 0 || height <= 0) {
+            return null
         }
 
-        val croppedBitmap = Bitmap.createBitmap(
+        return Bitmap.createBitmap(
             bitmap,
             left,
             top,
             width,
             height
-        )
-
-        return Bitmap.createScaledBitmap(
-            croppedBitmap,
-            112,
-            112,
-            true
         )
     }
 }

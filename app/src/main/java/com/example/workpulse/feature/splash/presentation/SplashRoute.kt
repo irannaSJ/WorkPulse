@@ -9,6 +9,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 fun SplashRoute(
     onNavigateToHome : () -> Unit,
     onNavigateToLogin : () -> Unit,
+    onNavigateToFaceRegistration: () -> Unit,
     viewModel: SplashViewModel = hiltViewModel()
 ){
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -25,6 +26,8 @@ fun SplashRoute(
 
                 SplashDestination.HOME ->
                     onNavigateToHome()
+
+                SplashDestination.FACE_REGISTRATION -> onNavigateToFaceRegistration()
 
                 else -> {}
             }

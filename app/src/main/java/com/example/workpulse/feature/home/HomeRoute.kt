@@ -20,6 +20,10 @@ import com.example.workpulse.feature.leave.LeaveSummaryViewModel
 
 @Composable
 fun HomeRoute(
+    faceVerificationGranted: Boolean,
+    onFaceVerificationConsumed: () -> Unit,
+    onFaceVerificationRequired: () -> Unit,
+    onFaceRegistrationRequired: () -> Unit,
     onProfileClick : () -> Unit,
     onLeaveClick : () -> Unit,
     onAttendanceHistoryClick : () -> Unit,
@@ -35,6 +39,17 @@ fun HomeRoute(
     val context = LocalContext.current
 
     val leaveUiState by leaveViewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(faceVerificationGranted) {
+        if (faceVerificationGranted) {
+            onFaceVerificationConsumed()
+            viewModel.onAttendanceClick()
+        }
+    }
+
+    LaunchedEffect(uiState.requiresFaceRegistration) {
+        if (uiState.requiresFaceRegistration) onFaceRegistrationRequired()
+    }
 
 
 
@@ -141,7 +156,7 @@ fun HomeRoute(
 
     HomeScreen(
         uiState = uiState,
-        onAttendanceClick = viewModel :: onAttendanceClick,
+        onAttendanceClick = onFaceVerificationRequired,
         onProfileClick = onProfileClick,
         onLeaveClick = onLeaveClick,
         onAttendanceHistoryClick = onAttendanceHistoryClick,
@@ -157,4 +172,3 @@ fun HomeRoute(
 
 
 }
-

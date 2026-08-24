@@ -1,10 +1,9 @@
-package com.example.workpulse.feature.faceRecognition.data.face
+package com.example.workpulse.feature.faceRecognition.data
 
-import android.graphics.PointF
+import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
-import com.google.mlkit.vision.common.InputImage
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -19,7 +18,7 @@ class FaceDetector @Inject constructor() {
                 FaceDetectorOptions.LANDMARK_MODE_NONE
             )
             .setClassificationMode(
-                FaceDetectorOptions.CLASSIFICATION_MODE_NONE
+                FaceDetectorOptions.CLASSIFICATION_MODE_ALL
             )
             .build()
     )
@@ -27,10 +26,7 @@ class FaceDetector @Inject constructor() {
     suspend fun detectFaces(
         image: InputImage
     ): List<Face> {
-
-        return detector
-            .process(image)
-            .await()
+        return detector.process(image).await()
     }
 
     fun close() {

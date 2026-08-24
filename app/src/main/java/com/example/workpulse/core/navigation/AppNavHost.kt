@@ -27,6 +27,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -38,10 +39,11 @@ import com.example.workpulse.core.ui.theme.AppElevation
 import com.example.workpulse.core.ui.theme.Dimens
 import com.example.workpulse.core.navigation.Screen.Splash
 import com.example.workpulse.feature.attendanceRequest.AttendanceRequestRoute
-import com.example.workpulse.feature.attendanceRequest.AttendanceRequestScreen
 import com.example.workpulse.feature.attendanceRequestHistory.AttendanceRequestHistoryRoute
 import com.example.workpulse.feature.compOffApplication.CompOffApplicationRoute
 import com.example.workpulse.feature.compOffApplicationsHistory.CompOffApplicationHistoryRoute
+import com.example.workpulse.feature.faceRecognition.model.FaceRecognitionMode
+import com.example.workpulse.feature.faceRecognition.presentation.FaceRecognitionScreen
 import com.example.workpulse.feature.home.presentation.HomeRoute
 import com.example.workpulse.feature.home.presentation.history.AttendanceHistoryRoute
 import com.example.workpulse.feature.leaveApplication.LeaveApplicationRoute
@@ -51,7 +53,6 @@ import com.example.workpulse.feature.login.presentation.LoginRoute
 import com.example.workpulse.feature.profile.presentation.ProfileRoute
 //import com.example.workpulse.feature.profile.presentation.ProfileRoute
 import com.example.workpulse.feature.splash.presentation.SplashRoute
-import com.example.workpulse.feature.faceRecognition.presentation.camera.FaceCameraTestScreen
 
 @Composable
 fun AppNavHost(
@@ -75,8 +76,8 @@ fun AppNavHost(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-//            startDestination = Screen.Splash.route,
-            startDestination = "face_camera_test",
+            startDestination = Screen.Splash.route,
+//            startDestination = "face_camera_test",
             modifier = modifier
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding),
@@ -90,6 +91,9 @@ fun AppNavHost(
         ) {
         composable(Screen.Splash.route) {
             SplashRoute(
+                onNavigateToFaceRegistration = {
+                    navController.navigate(Screen.FaceRegistration.route) { popUpTo(Splash.route) { inclusive = true } }
+                },
 
                 onNavigateToLogin = {
                     navController.navigate(Screen.Login.route) {
@@ -110,10 +114,6 @@ fun AppNavHost(
 
         }
 
-            composable("face_camera_test") {
-                FaceCameraTestScreen()
-            }
-
         composable(
             route = Screen.Login.route,
             enterTransition = NavTransitions.premiumEnter,
@@ -122,6 +122,12 @@ fun AppNavHost(
             popExitTransition = NavTransitions.popExit
             ) {
             LoginRoute(
+                onNavigateToFaceRegistration = {
+                    navController.navigate(Screen.FaceRegistration.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
                 onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) {
@@ -130,6 +136,32 @@ fun AppNavHost(
                         launchSingleTop = true
                     }
                 }
+            )
+        }
+
+        composable(Screen.FaceRegistration.route) {
+            FaceRecognitionScreen(
+                mode = FaceRecognitionMode.Registration,
+                viewModel = hiltViewModel(),
+                onRegistrationComplete = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.FaceRegistration.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+                onBack = { navController.navigate(Screen.Login.route) { popUpTo(Screen.FaceRegistration.route) { inclusive = true } } }
+            )
+        }
+
+        composable(Screen.FaceVerification.route) {
+            FaceRecognitionScreen(
+                mode = FaceRecognitionMode.Verification,
+                viewModel = hiltViewModel(),
+                onVerified = {
+                    navController.previousBackStackEntry?.savedStateHandle?.set("attendance_face_verified", true)
+                    navController.popBackStack()
+                },
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -142,7 +174,20 @@ fun AppNavHost(
             popEnterTransition = NavTransitions.popEnter,
             popExitTransition = NavTransitions.popExit
         ) {
+            val faceVerified = navController.currentBackStackEntry
+                ?.savedStateHandle?.get<Boolean>("attendance_face_verified") == true
             HomeRoute(
+                faceVerificationGranted = faceVerified,
+                onFaceVerificationConsumed = {
+                    navController.currentBackStackEntry?.savedStateHandle?.set("attendance_face_verified", false)
+                },
+                onFaceVerificationRequired = { navController.navigate(Screen.FaceVerification.route) },
+                onFaceRegistrationRequired = {
+                    navController.navigate(Screen.FaceRegistration.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
                 onProfileClick = {
                     navController.navigateToBottomDestination(Screen.Profile.route)
                 },

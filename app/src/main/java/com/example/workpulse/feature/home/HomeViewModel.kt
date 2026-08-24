@@ -6,6 +6,9 @@ import com.example.workpulse.core.worker.SyncScheduler
 import com.example.workpulse.data.repository.AttendanceRepository
 import com.example.workpulse.data.repository.AuthRepository
 import com.example.workpulse.data.repository.EmployeeRepository
+import com.example.workpulse.data.repository.FaceEmbeddingRepository
+import com.example.workpulse.core.datastore.SessionManager
+import android.util.Log
 import com.example.workpulse.data.repository.LeaveRepository
 import com.example.workpulse.feature.attendance.data.local.entity.AttendanceStatus
 import com.example.workpulse.feature.home.presentation.AttendanceState
@@ -29,7 +32,9 @@ class HomeViewModel @Inject constructor(
     private val attendanceRepository: AttendanceRepository,
     private val leaveRepository : LeaveRepository,
     private val authRepository: AuthRepository,
-    private val syncScheduler : SyncScheduler
+    private val syncScheduler : SyncScheduler,
+    private val faceEmbeddingRepository: FaceEmbeddingRepository,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
 
@@ -42,9 +47,19 @@ class HomeViewModel @Inject constructor(
         observeEmployee()
         observeTodayAttendance()
         observeLeaveBalance()
+        checkFaceEnrollment()
         syncScheduler.scheduleLeaveSync()
         syncScheduler.scheduleCompOffSync()
 
+    }
+
+    private fun checkFaceEnrollment() {
+        viewModelScope.launch {
+            val employeeId = sessionManager.getEmployeeId()
+            val isRegistered = employeeId.isNotBlank() && faceEmbeddingRepository.hasEmbedding(employeeId)
+            Log.i(TAG, "Face enrollment check completed: registered=$isRegistered")
+            _uiState.update { it.copy(requiresFaceRegistration = !isRegistered) }
+        }
     }
 
 
@@ -218,4 +233,6 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    private companion object { const val TAG = "HomeViewModel" }
 }

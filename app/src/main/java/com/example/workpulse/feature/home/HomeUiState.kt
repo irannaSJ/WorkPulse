@@ -40,4 +40,5 @@ data class HomeUiState(
 
     val remainingLeaves: Int = 0,
     val isLogoutSuccessful: Boolean = false,
+    val requiresFaceRegistration: Boolean = false,
 )
