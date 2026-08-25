@@ -5,9 +5,13 @@ import androidx.room.Room
 import com.example.workpulse.data.local.dao.AttendanceRequestDao
 import com.example.workpulse.data.local.dao.CompOffApplicationDao
 import com.example.workpulse.data.local.dao.EmployeeDao
+import com.example.workpulse.data.local.dao.FaceEmbeddingDao
 import com.example.workpulse.data.local.dao.LeaveApplicationDao
 import com.example.workpulse.data.local.dao.LeaveBalanceDao
 import com.example.workpulse.data.local.database.MIGRATION_23_24
+import com.example.workpulse.data.local.database.MIGRATION_24_25
+import com.example.workpulse.data.local.database.MIGRATION_25_26
+import com.example.workpulse.data.local.database.MIGRATION_26_27
 import com.example.workpulse.data.local.database.WorkPulseDatabase
 import com.example.workpulse.feature.attendance.data.local.dao.AttendanceDao
 import dagger.Module
@@ -32,7 +36,7 @@ object DatabaseModule {
             WorkPulseDatabase::class.java,
             "workpulse_database"
         )
-            .addMigrations(MIGRATION_23_24)
+            .addMigrations(MIGRATION_23_24, MIGRATION_24_25, MIGRATION_25_26, MIGRATION_26_27)
             .build()
     }
 
@@ -83,5 +87,14 @@ object DatabaseModule {
         database: WorkPulseDatabase
     ): LeaveApplicationDao{
         return database.leaveApplicationDao()
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideFaceEmbeddingDao(
+        database: WorkPulseDatabase
+    ): FaceEmbeddingDao {
+        return database.faceEmbeddingDao()
     }
 }

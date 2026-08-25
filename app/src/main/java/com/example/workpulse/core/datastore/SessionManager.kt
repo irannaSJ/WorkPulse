@@ -51,7 +51,7 @@ class SessionManager @Inject constructor(
             preferences[EMPLOYEE_ID] = employeeId
 
             preferences[USER_ID] = userId
-            preferences[COMPANY_NAME] = company as String
+            company?.let { preferences[COMPANY_NAME] = it }
         }
     }
 

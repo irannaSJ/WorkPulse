@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import androidx.lifecycle.viewModelScope
 import com.example.workpulse.data.repository.AuthRepository
+import com.example.workpulse.data.repository.FaceEmbeddingRepository
+import com.example.workpulse.core.datastore.SessionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -16,7 +18,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val faceEmbeddingRepository: FaceEmbeddingRepository,
+    private val sessionManager: SessionManager
 )  : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState : StateFlow<LoginUiState> = _uiState.asStateFlow()
@@ -56,17 +60,22 @@ class LoginViewModel @Inject constructor(
                 isLoading = true,
                 errorMessage = null
             )
-            Log.d("LOGIN", "1. Starting login")
+            Log.d(TAG, "Starting login")
             val result = authRepository.login(
                 username = uiState.value.email,
                 password = uiState.value.password
             ).onSuccess {
 
+                val employeeId = sessionManager.getEmployeeId()
+                val requiresRegistration = employeeId.isBlank() || !faceEmbeddingRepository.hasEmbedding(employeeId)
+                Log.i(TAG, "Face enrollment check completed: registered=${!requiresRegistration}")
+
 
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        isLoginSuccessful = true
+                        isLoginSuccessful = true,
+                        requiresFaceRegistration = requiresRegistration
                     )
                 }
             }.onFailure { exception ->
@@ -77,11 +86,9 @@ class LoginViewModel @Inject constructor(
                         errorMessage = exception.message ?: "Login failed"
                     )
                 }
-                Log.d("LOGIN", "3. Success state updated")
+                Log.d(TAG, "Login failed")
             }
-            Log.d("LOGIN", "2. Repository returned: $result")
-
-            Log.d("LOGIN", "Success = ${uiState.value.isLoginSuccessful}")
+            Log.d(TAG, "Login completed: success=${result.isSuccess}")
 
         }
 
@@ -93,5 +100,7 @@ class LoginViewModel @Inject constructor(
             it.copy(isLoginSuccessful = false)
         }
     }
+
+    private companion object { const val TAG = "LoginViewModel" }
 
 }

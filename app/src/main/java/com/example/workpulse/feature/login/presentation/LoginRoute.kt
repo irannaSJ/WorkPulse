@@ -8,13 +8,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 fun LoginRoute(
     onNavigateToHome : () -> Unit,
+    onNavigateToFaceRegistration: () -> Unit,
     viewModel : LoginViewModel= hiltViewModel()
 ){
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState.value.isLoginSuccessful) {
         if(uiState.value.isLoginSuccessful){
-            onNavigateToHome()
+            if (uiState.value.requiresFaceRegistration) onNavigateToFaceRegistration() else onNavigateToHome()
             viewModel.onLoginNavigationComplete()
         }
     }

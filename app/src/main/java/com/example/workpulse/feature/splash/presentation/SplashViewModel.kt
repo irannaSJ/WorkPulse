@@ -3,6 +3,7 @@ package com.example.workpulse.feature.splash.presentation
 
 import androidx.lifecycle.ViewModel
 import com.example.workpulse.core.datastore.SessionManager
+import com.example.workpulse.data.repository.FaceEmbeddingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val sessionManager : SessionManager
+    private val sessionManager : SessionManager,
+    private val faceEmbeddingRepository: FaceEmbeddingRepository
 ) : ViewModel()
 {
     private val _uiState = MutableStateFlow(SplashUiState())
@@ -60,7 +62,8 @@ class SplashViewModel @Inject constructor(
             delay(700)
 
             val destination = if(sessionManager.isLoggedIn()){
-                SplashDestination.HOME
+                if (faceEmbeddingRepository.hasEmbedding(sessionManager.getEmployeeId())) SplashDestination.HOME
+                else SplashDestination.FACE_REGISTRATION
             }else{
                 SplashDestination.LOGIN
             }

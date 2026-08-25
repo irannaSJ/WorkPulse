@@ -6,11 +6,13 @@ import androidx.room.TypeConverters
 import com.example.workpulse.data.local.dao.AttendanceRequestDao
 import com.example.workpulse.data.local.dao.CompOffApplicationDao
 import com.example.workpulse.data.local.dao.EmployeeDao
+import com.example.workpulse.data.local.dao.FaceEmbeddingDao
 import com.example.workpulse.data.local.dao.LeaveApplicationDao
 import com.example.workpulse.data.local.dao.LeaveBalanceDao
 import com.example.workpulse.data.local.entity.EmployeeEntity
 import com.example.workpulse.data.local.entity.AttendanceRequestEntity
 import com.example.workpulse.data.local.entity.CompOffApplicationEntity
+import com.example.workpulse.data.local.entity.FaceEmbeddingEntity
 import com.example.workpulse.data.local.entity.LeaveApplicationEntity
 import com.example.workpulse.data.local.entity.LeaveBalanceEntity
 import com.example.workpulse.feature.attendance.data.local.dao.AttendanceDao
@@ -23,9 +25,10 @@ import com.example.workpulse.feature.attendance.data.local.entity.AttendanceEnti
         AttendanceRequestEntity::class,
         LeaveBalanceEntity::class,
         LeaveApplicationEntity::class,
-        CompOffApplicationEntity :: class
+        CompOffApplicationEntity :: class,
+        FaceEmbeddingEntity::class,
     ],
-    version = 25,
+    version = 27,
     exportSchema = true
 )
 @TypeConverters(RoomConverters::class)
@@ -40,6 +43,7 @@ abstract class WorkPulseDatabase : RoomDatabase() {
     abstract fun leaveBalanceDao() : LeaveBalanceDao
 
     abstract fun leaveApplicationDao() : LeaveApplicationDao
+    abstract fun faceEmbeddingDao() :  FaceEmbeddingDao
 
     abstract fun compOffApplicationDao() : CompOffApplicationDao
 
