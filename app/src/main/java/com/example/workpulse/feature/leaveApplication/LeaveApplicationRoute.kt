@@ -15,7 +15,10 @@ import com.example.workpulse.feature.leaveApplication.components.LeaveSuggestion
 import com.example.workpulse.feature.leaveApplication.components.LeaveTypeDialog
 
 @Composable
-fun LeaveApplicationRoute(onBackClick : () -> Unit){
+fun LeaveApplicationRoute(
+    onBackClick : () -> Unit,
+    onSaved: () -> Unit = {}
+){
 
     val viewModel : LeaveApplicationViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -39,6 +42,7 @@ fun LeaveApplicationRoute(onBackClick : () -> Unit){
             viewModel.onResetClicked()
 
             viewModel.clearSuccessMessage()
+            onSaved()
 
         }
 

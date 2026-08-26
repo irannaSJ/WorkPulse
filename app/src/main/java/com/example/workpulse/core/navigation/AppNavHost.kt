@@ -262,6 +262,12 @@ fun AppNavHost(
             AttendanceRequestRoute(
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onSaved = {
+                    navController.navigate(Screen.AttendanceRequestHistory.route) {
+                        popUpTo(Screen.AttendanceRequest.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -304,6 +310,12 @@ fun AppNavHost(
             LeaveApplicationRoute(
                 onBackClick ={
                     navController.popBackStack()
+                },
+                onSaved = {
+                    navController.navigate(Screen.LeaveHistory.route) {
+                        popUpTo(Screen.LeaveApplication.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -320,6 +332,12 @@ fun AppNavHost(
                     },
                     onButtonClick = {
                         navController.navigate(Screen.CompOffApplicationHistory.route)
+                    },
+                    onSaved = {
+                        navController.navigate(Screen.CompOffApplicationHistory.route) {
+                            popUpTo(Screen.CompOffApplication.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
