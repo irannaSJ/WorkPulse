@@ -100,7 +100,6 @@ class FaceRecognitionEngine @Inject constructor(
 
         val outputTensor =
             interpreter!!.getOutputTensor(0)
-
         Log.d(
             TAG,
             "MobileFaceNet initialized"

@@ -29,6 +29,7 @@ import com.example.workpulse.feature.compOffApplication.components.CompOffReques
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import com.example.workpulse.core.components.InformationCard
 import com.example.workpulse.core.components.TopBarWithTwoFunctions
 
 
@@ -138,6 +139,8 @@ private fun CompOffApplicationContent(
                 )
             }
         }
+        val rules = listOf("From Date and To Date should be Holidays","From Date and To Date should be in past")
+        InformationCard(rules)
 
         CompOffRequestCard(
             uiState =uiState,
