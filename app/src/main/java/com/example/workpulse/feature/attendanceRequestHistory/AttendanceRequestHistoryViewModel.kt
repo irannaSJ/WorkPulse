@@ -2,6 +2,7 @@ package com.example.workpulse.feature.attendanceRequestHistory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.workpulse.core.worker.SyncScheduler
 import com.example.workpulse.data.local.entity.AttendanceRequestEntity
 import com.example.workpulse.data.local.entity.AttendanceRequestStatus
 import com.example.workpulse.data.repository.AttendanceRequestRepository
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AttendanceRequestHistoryViewModel @Inject constructor(
-    private val repository: AttendanceRequestRepository
+    private val repository: AttendanceRequestRepository,
+    private val syncScheduler: SyncScheduler
 ) : ViewModel() {
 
     private val _uiState =
@@ -34,6 +36,7 @@ class AttendanceRequestHistoryViewModel @Inject constructor(
 
     init {
         observeAttendanceRequests()
+        syncScheduler.scheduleAttendanceRequestSync()
     }
 
 

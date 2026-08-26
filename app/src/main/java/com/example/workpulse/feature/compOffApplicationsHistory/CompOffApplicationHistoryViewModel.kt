@@ -2,6 +2,7 @@ package com.example.workpulse.feature.compOffApplicationsHistory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.workpulse.core.worker.SyncScheduler
 import com.example.workpulse.data.local.entity.ApplicationStatus
 import com.example.workpulse.data.local.entity.CompOffApplicationEntity
 import com.example.workpulse.data.local.entity.EmployeeEntity
@@ -21,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CompOffApplicationHistoryViewModel @Inject constructor(
     private val repository: CompOffApplicationHistoryRepository,
-    private val employeeRepository : EmployeeRepository
+    private val employeeRepository : EmployeeRepository,
+    private val syncScheduler: SyncScheduler
 ): ViewModel(){
     private val _uiState = MutableStateFlow(CompOffApplicationHistoryUiState())
     val uiState : StateFlow<CompOffApplicationHistoryUiState> = _uiState.asStateFlow()
@@ -32,6 +34,7 @@ class CompOffApplicationHistoryViewModel @Inject constructor(
     init {
         observeCompOffApplications()
         observeEmployee()
+        syncScheduler.scheduleCompOffSync()
     }
 
     private fun observeEmployee() {

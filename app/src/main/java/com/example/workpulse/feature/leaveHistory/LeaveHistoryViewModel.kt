@@ -2,6 +2,7 @@ package com.example.workpulse.feature.leaveHistory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.workpulse.core.worker.SyncScheduler
 import com.example.workpulse.data.local.entity.EmployeeEntity
 import com.example.workpulse.data.local.entity.LeaveApplicationEntity
 import com.example.workpulse.data.local.entity.LeaveApplicationStatus
@@ -22,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LeaveHistoryViewModel @Inject constructor(
     private val repository: LeaveHistoryRepository,
-    private val employeeRepository: EmployeeRepository
+    private val employeeRepository: EmployeeRepository,
+    private val syncSchedular : SyncScheduler
 ) : ViewModel() {
 
     private val _uiState =
@@ -41,6 +43,7 @@ class LeaveHistoryViewModel @Inject constructor(
     init {
         observeLeaveApplications()
         observeEmployee()
+        syncSchedular.scheduleLeaveSync()
     }
 
 

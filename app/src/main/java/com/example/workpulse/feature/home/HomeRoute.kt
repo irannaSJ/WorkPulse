@@ -153,7 +153,6 @@ fun HomeRoute(
         }
 
     }
-
     HomeScreen(
         uiState = uiState,
         onAttendanceClick = onFaceVerificationRequired,
