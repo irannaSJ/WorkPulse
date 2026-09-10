@@ -208,18 +208,13 @@ class FaceRecognitionEngine @Inject constructor(
 
         try {
 
-            val mediaImage =
-                imageProxy.image
-                    ?: return@withContext FaceFrame(0, null, null, 0, 0)
-
             val rotationDegrees =
                 imageProxy.imageInfo.rotationDegrees
 
-            val inputImage =
-                InputImage.fromMediaImage(
-                    mediaImage,
-                    rotationDegrees
-                )
+            val bitmap = imageProxyToBitmap(imageProxy)
+                ?:return@withContext FaceFrame(0,null,null,0,0)
+            val rotatedBitmap = rotateBitmap(bitmap,rotationDegrees)
+            val inputImage = InputImage.fromBitmap(rotatedBitmap,0)
 
             val faces =
                 detector()
@@ -233,38 +228,26 @@ class FaceRecognitionEngine @Inject constructor(
             val face =
                 faces.first()
 
-            val bitmap =
-                imageProxyToBitmap(
-                    imageProxy
-                )
-                    ?: return@withContext FaceFrame(1, face, null, 0, 0)
-
-            val rotatedBitmap =
-                rotateBitmap(
-                    bitmap,
-                    rotationDegrees
-                )
-
             try {
 
-                val adjustedBoundingBox =
-                    adjustBoundingBoxForRotation(
-                        face.boundingBox,
-                        imageProxy.width,
-                        imageProxy.height,
-                        rotationDegrees
-                    )
+                val aligned = alignedFace(
+                    face = face,
+                    rotatedBitmap = rotatedBitmap
+                )
 
-                FaceFrame(
+                if (aligned == null) {
+                    return@withContext FaceFrame(
+                        faceCount = 1,
+                        face = face,
+                        bitmap = null,
+                        frameWidth = rotatedBitmap.width,
+                        frameHeight = rotatedBitmap.height
+                    )
+                }
+                return@withContext FaceFrame(
                     faceCount = 1,
                     face = face,
-                    bitmap = alignedFace(
-                        face = face,
-                        rotatedBitmap = rotatedBitmap,
-                        originalWidth = imageProxy.width,
-                        originalHeight = imageProxy.height,
-                        rotationDegrees = rotationDegrees
-                    ) ?: cropFace(rotatedBitmap, adjustedBoundingBox),
+                    bitmap = aligned,
                     frameWidth = rotatedBitmap.width,
                     frameHeight = rotatedBitmap.height
                 )
@@ -369,35 +352,167 @@ class FaceRecognitionEngine @Inject constructor(
     }
 
     /** Aligns eye positions to MobileFaceNet's expected canonical face orientation. */
+//    private fun alignedFace(
+//        face: Face,
+//        rotatedBitmap: Bitmap,
+//        originalWidth: Int,
+//        originalHeight: Int,
+//        rotationDegrees: Int
+//    ): Bitmap? {
+//        val leftEye = face.getLandmark(FaceLandmark.LEFT_EYE)?.position ?: return null
+//        val rightEye = face.getLandmark(FaceLandmark.RIGHT_EYE)?.position ?: return null
+//        val left = rotatePoint(leftEye, originalWidth, originalHeight, rotationDegrees)
+//        val right = rotatePoint(rightEye, originalWidth, originalHeight, rotationDegrees)
+//        if (kotlin.math.hypot((right.x - left.x).toDouble(), (right.y - left.y).toDouble()) < 20.0) return null
+//
+//        val transform = Matrix()
+//        val source = floatArrayOf(left.x, left.y, right.x, right.y)
+//        val destination = floatArrayOf(35f, 43f, 77f, 43f)
+//        if (!transform.setPolyToPoly(source, 0, destination, 0, 2)) return null
+//        return Bitmap.createBitmap(INPUT_SIZE, INPUT_SIZE, Bitmap.Config.ARGB_8888).also { output ->
+//            Canvas(output).drawBitmap(rotatedBitmap, transform, null)
+//        }
+//    }
+
+
+
     private fun alignedFace(
         face: Face,
-        rotatedBitmap: Bitmap,
-        originalWidth: Int,
-        originalHeight: Int,
-        rotationDegrees: Int
+        rotatedBitmap: Bitmap
     ): Bitmap? {
-        val leftEye = face.getLandmark(FaceLandmark.LEFT_EYE)?.position ?: return null
-        val rightEye = face.getLandmark(FaceLandmark.RIGHT_EYE)?.position ?: return null
-        val left = rotatePoint(leftEye, originalWidth, originalHeight, rotationDegrees)
-        val right = rotatePoint(rightEye, originalWidth, originalHeight, rotationDegrees)
-        if (kotlin.math.hypot((right.x - left.x).toDouble(), (right.y - left.y).toDouble()) < 20.0) return null
 
-        val transform = Matrix()
-        val source = floatArrayOf(left.x, left.y, right.x, right.y)
-        val destination = floatArrayOf(35f, 43f, 77f, 43f)
-        if (!transform.setPolyToPoly(source, 0, destination, 0, 2)) return null
-        return Bitmap.createBitmap(INPUT_SIZE, INPUT_SIZE, Bitmap.Config.ARGB_8888).also { output ->
-            Canvas(output).drawBitmap(rotatedBitmap, transform, null)
+        val sourcePoints = listOf(
+            face.getLandmark(FaceLandmark.LEFT_EYE)?.position,
+            face.getLandmark(FaceLandmark.RIGHT_EYE)?.position,
+            face.getLandmark(FaceLandmark.NOSE_BASE)?.position,
+            face.getLandmark(FaceLandmark.MOUTH_LEFT)?.position,
+            face.getLandmark(FaceLandmark.MOUTH_RIGHT)?.position
+        )
+
+        // All five landmarks must be available.
+        if (sourcePoints.any { it == null }) {
+            Log.d(TAG, "Missing one or more facial landmarks")
+            return null
+        }
+
+        val src = sourcePoints.map { it!! }
+
+        val dst = listOf(
+            PointF(38.2946f, 51.6963f), // left eye
+            PointF(73.5318f, 51.5014f), // right eye
+            PointF(56.0252f, 71.7366f), // nose
+            PointF(41.5493f, 92.3655f), // left mouth
+            PointF(70.7299f, 92.2041f)  // right mouth
+        )
+
+        val matrix = createSimilarityTransform(src, dst)
+            ?: return null
+
+        return Bitmap.createBitmap(
+            INPUT_SIZE,
+            INPUT_SIZE,
+            Bitmap.Config.ARGB_8888
+        ).also { output ->
+            val canvas = Canvas(output)
+            canvas.drawBitmap(rotatedBitmap, matrix, null)
         }
     }
 
-    private fun rotatePoint(point: PointF, originalWidth: Int, originalHeight: Int, rotationDegrees: Int): PointF =
-        when (rotationDegrees) {
-            90 -> PointF(originalHeight - point.y, point.x)
-            180 -> PointF(originalWidth - point.x, originalHeight - point.y)
-            270 -> PointF(point.y, originalWidth - point.x)
-            else -> PointF(point.x, point.y)
+    private fun createSimilarityTransform(
+        source: List<PointF>,
+        destination: List<PointF>
+    ): Matrix? {
+
+        if (source.size != 5 || destination.size != 5) {
+            return null
         }
+
+        var srcCenterX = 0.0
+        var srcCenterY = 0.0
+        var dstCenterX = 0.0
+        var dstCenterY = 0.0
+
+        for (i in source.indices) {
+            srcCenterX += source[i].x
+            srcCenterY += source[i].y
+
+            dstCenterX += destination[i].x
+            dstCenterY += destination[i].y
+        }
+
+        srcCenterX /= source.size
+        srcCenterY /= source.size
+        dstCenterX /= destination.size
+        dstCenterY /= destination.size
+
+        var scaleDenominator = 0.0
+        var aNumerator = 0.0
+        var bNumerator = 0.0
+
+        for (i in source.indices) {
+            val sx = source[i].x.toDouble() - srcCenterX
+            val sy = source[i].y.toDouble() - srcCenterY
+
+            val dx = destination[i].x.toDouble() - dstCenterX
+            val dy = destination[i].y.toDouble() - dstCenterY
+
+            scaleDenominator += sx * sx + sy * sy
+
+            aNumerator += (sx * dx) + (sy * dy)
+            bNumerator += (sx * dy) - (sy * dx)
+        }
+
+        if (scaleDenominator < 1e-8) {
+            Log.d(TAG, "Invalid landmark configuration")
+            return null
+        }
+
+        val a = aNumerator / scaleDenominator
+        val b = bNumerator / scaleDenominator
+
+        /*
+         * Transformation:
+         *
+         * x' = a*x - b*y + tx
+         * y' = b*x + a*y + ty
+         */
+
+        val tx =
+            dstCenterX -
+                    (a * srcCenterX) +
+                    (b * srcCenterY)
+
+        val ty =
+            dstCenterY -
+                    (b * srcCenterX) -
+                    (a * srcCenterY)
+
+        return Matrix().apply {
+            setValues(
+                floatArrayOf(
+                    a.toFloat(),
+                    (-b).toFloat(),
+                    tx.toFloat(),
+
+                    b.toFloat(),
+                    a.toFloat(),
+                    ty.toFloat(),
+
+                    0f,
+                    0f,
+                    1f
+                )
+            )
+        }
+    }
+
+//    private fun rotatePoint(point: PointF, originalWidth: Int, originalHeight: Int, rotationDegrees: Int): PointF =
+//        when (rotationDegrees) {
+//            90 -> PointF(originalHeight - point.y, point.x)
+//            180 -> PointF(originalWidth - point.x, originalHeight - point.y)
+//            270 -> PointF(point.y, originalWidth - point.x)
+//            else -> PointF(point.x, point.y)
+//        }
 
     // ------------------------------------------------------------------------
     // EMBEDDING COMPARISON
