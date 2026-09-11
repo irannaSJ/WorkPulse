@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.workpulse.feature.attendanceRequest.AttendanceRequestType
 import com.example.workpulse.feature.attendanceRequest.AttendanceRequestUiState
+import com.example.workpulse.core.ui.theme.Dimens
+import com.example.workpulse.core.ui.theme.WorkPulseShapes
 
 @Composable
 fun AttendanceRequestCard(
@@ -28,7 +30,7 @@ fun AttendanceRequestCard(
     ElevatedCard(
 
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = WorkPulseShapes.large,
         elevation = CardDefaults.elevatedCardElevation(
             defaultElevation = 4.dp
         ),
@@ -39,8 +41,8 @@ fun AttendanceRequestCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                .padding(Dimens.Space20),
+            verticalArrangement = Arrangement.spacedBy(Dimens.Space20)
         ) {
             EmployeeField(
                 employeeName = uiState.employeeName

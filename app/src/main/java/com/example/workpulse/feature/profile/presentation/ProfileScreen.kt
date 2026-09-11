@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -66,6 +67,8 @@ import com.example.workpulse.feature.profile.presentation.components.LogoutCard
 import com.example.workpulse.feature.profile.presentation.components.PersonalInformationCard
 import com.example.workpulse.feature.profile.presentation.components.ProfileHeader
 import java.io.File
+import com.example.workpulse.core.ui.theme.AdaptiveLayout
+import com.example.workpulse.core.ui.theme.Dimens
 
 @Composable
 fun ProfileScreen(
@@ -96,9 +99,9 @@ fun ProfileScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
 
-            contentPadding = PaddingValues(16.dp),
+            contentPadding = PaddingValues(Dimens.Space16),
 
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(Dimens.Space16)
 
         ) {
 

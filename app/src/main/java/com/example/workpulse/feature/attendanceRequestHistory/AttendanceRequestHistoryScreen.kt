@@ -25,6 +25,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.unit.dp
 import com.example.workpulse.feature.attendanceRequestHistory.components.AttendanceRequestHistoryCard
+import com.example.workpulse.core.ui.theme.Dimens
+import com.example.workpulse.core.ui.theme.AdaptiveLayout
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,8 +99,8 @@ fun AttendanceRequestHistoryScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    horizontal = 20.dp,
-                    vertical = 12.dp
+                    horizontal = Dimens.Space20,
+                    vertical = Dimens.Space12
                 )
         )
 
@@ -126,7 +128,7 @@ fun AttendanceRequestHistoryScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(32.dp),
+                        .padding(Dimens.Space32),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -148,11 +150,11 @@ fun AttendanceRequestHistoryScreen(
                     modifier = Modifier.fillMaxSize(),
 
                     contentPadding = PaddingValues(
-                        horizontal = 20.dp,
-                        vertical = 8.dp
+                        horizontal = Dimens.Space20,
+                        vertical = Dimens.Space8
                     ),
 
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(Dimens.Space12)
                 ) {
 
                     items(

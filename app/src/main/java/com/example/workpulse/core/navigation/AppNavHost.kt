@@ -1,6 +1,7 @@
 package com.example.workpulse.core.navigation
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -36,6 +37,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.example.workpulse.core.ui.theme.AppElevation
+import com.example.workpulse.core.ui.theme.AdaptiveLayout
 import com.example.workpulse.core.ui.theme.Dimens
 import com.example.workpulse.core.navigation.Screen.Splash
 import com.example.workpulse.feature.attendanceRequest.AttendanceRequestRoute
@@ -392,16 +394,25 @@ private fun FloatingBottomNavigationBar(
     selectedDestination: NavDestination?,
     onDestinationSelected: (String) -> Unit
 ) {
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
-            .navigationBarsPadding()
-            .padding(start = Dimens.Space16, top = Dimens.Space8, end = Dimens.Space16, bottom = Dimens.Space12),
+            .navigationBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
+        val isShortHeight = maxHeight < AdaptiveLayout.LandscapeNavigationBreakpoint
+        val verticalPadding = if (isShortHeight) Dimens.Space4 else Dimens.Space8
+        val bottomPadding = if (isShortHeight) Dimens.Space4 else Dimens.Space12
+
         Surface(
             modifier = Modifier
-                .widthIn(max = 640.dp)
+                .padding(
+                    start = Dimens.Space16,
+                    top = verticalPadding,
+                    end = Dimens.Space16,
+                    bottom = bottomPadding
+                )
+                .widthIn(max = AdaptiveLayout.BottomNavigationMaxWidth)
                 .fillMaxWidth(),
             shape = RoundedCornerShape(Dimens.Radius28),
             color = MaterialTheme.colorScheme.surfaceContainer,
@@ -418,28 +429,32 @@ private fun FloatingBottomNavigationBar(
                     icon = Icons.Outlined.Home,
                     route = Screen.Home.route,
                     selectedDestination = selectedDestination,
-                    onDestinationSelected = onDestinationSelected
+                    onDestinationSelected = onDestinationSelected,
+                    alwaysShowLabel = !isShortHeight
                 )
                 FloatingNavigationItem(
                     label = "Attendance",
                     icon = Icons.Outlined.History,
                     route = Screen.AttendanceHistory.route,
                     selectedDestination = selectedDestination,
-                    onDestinationSelected = onDestinationSelected
+                    onDestinationSelected = onDestinationSelected,
+                    alwaysShowLabel = !isShortHeight
                 )
                 FloatingNavigationItem(
                     label = "Leave",
                     icon = Icons.AutoMirrored.Outlined.EventNote,
                     route = Screen.LeaveHistory.route,
                     selectedDestination = selectedDestination,
-                    onDestinationSelected = onDestinationSelected
+                    onDestinationSelected = onDestinationSelected,
+                    alwaysShowLabel = !isShortHeight
                 )
                 FloatingNavigationItem(
                     label = "Profile",
                     icon = Icons.Outlined.Person,
                     route = Screen.Profile.route,
                     selectedDestination = selectedDestination,
-                    onDestinationSelected = onDestinationSelected
+                    onDestinationSelected = onDestinationSelected,
+                    alwaysShowLabel = !isShortHeight
                 )
             }
         }
@@ -452,7 +467,8 @@ private fun RowScope.FloatingNavigationItem(
     icon: ImageVector,
     route: String,
     selectedDestination: NavDestination?,
-    onDestinationSelected: (String) -> Unit
+    onDestinationSelected: (String) -> Unit,
+    alwaysShowLabel: Boolean
 ) {
     NavigationBarItem(
         selected = selectedDestination?.hierarchy?.any { it.route == route } == true,
@@ -470,6 +486,6 @@ private fun RowScope.FloatingNavigationItem(
                 maxLines = 1
             )
         },
-        alwaysShowLabel = true
+        alwaysShowLabel = alwaysShowLabel
     )
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,6 +32,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import com.example.workpulse.core.components.InformationCard
 import com.example.workpulse.core.components.TopBarWithTwoFunctions
+import com.example.workpulse.core.ui.theme.AdaptiveLayout
+import com.example.workpulse.core.ui.theme.Dimens
 
 
 @Composable
@@ -94,8 +97,9 @@ private fun CompOffApplicationContent(
             .padding(paddingValues)
             .navigationBarsPadding()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+            .padding(Dimens.Space16)
+            .widthIn(max = AdaptiveLayout.HistoryContentMaxWidth),
+        verticalArrangement = Arrangement.spacedBy(Dimens.Space20)
     ) {
 
 //        uiState.successMessage?.let { message ->

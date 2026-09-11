@@ -42,6 +42,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import com.example.workpulse.core.ui.theme.AppColors
 import com.example.workpulse.core.ui.theme.Dimens
+import com.example.workpulse.core.ui.theme.WorkPulseShapes
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.Instant
@@ -49,6 +50,8 @@ import java.time.Instant
 
 @Composable
 fun AttendanceCard(
+
+    modifier: Modifier = Modifier,
 
     attendanceState: AttendanceState,
 
@@ -64,9 +67,9 @@ fun AttendanceCard(
 
     Card(
 
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
 
-        shape = RoundedCornerShape(Dimens.cardCornerRadius),
+        shape = WorkPulseShapes.large,
 
         elevation = CardDefaults.cardElevation(
             defaultElevation = Dimens.cardElevation
@@ -79,7 +82,7 @@ fun AttendanceCard(
     ) {
 
         Column(
-            modifier = Modifier.padding(24.dp)
+            modifier = Modifier.padding(Dimens.Space24)
         ) {
 
             AttendanceHeader(

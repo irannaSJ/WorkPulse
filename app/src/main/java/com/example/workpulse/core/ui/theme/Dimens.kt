@@ -1,6 +1,7 @@
 package com.example.workpulse.core.ui.theme
 
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 
 /**
  * Application spacing, sizes and corner radius.
@@ -104,4 +105,22 @@ object Dimens {
      *--------------------------------------------------*/
 
     val DividerThickness = 1.dp
+}
+
+/** Window and content constraints used by adaptive layouts. */
+object AdaptiveLayout {
+    val MediumBreakpoint: Dp = 600.dp
+    val ExpandedBreakpoint: Dp = 840.dp
+    val DateTimeStackBreakpoint: Dp = 360.dp
+    val LandscapeNavigationBreakpoint: Dp = 480.dp
+    val HomeContentMaxWidth: Dp = 1120.dp
+    val HomeColumnMaxWidth: Dp = 560.dp
+    val DrawerWidth: Dp = 320.dp
+    val BottomNavigationMaxWidth: Dp = 640.dp
+    val HistoryContentMaxWidth: Dp = 960.dp
+    val SplashFeatureMaxWidth: Dp = 360.dp
+    val SplashFeatureIcon: Dp = 80.dp
+    val SplashCircleLarge: Dp = 260.dp
+    val SplashCircleMedium: Dp = 220.dp
+    val SplashCircleSmall: Dp = 180.dp
 }

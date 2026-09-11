@@ -12,11 +12,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.workpulse.core.ui.theme.Dimens
+import com.example.workpulse.core.ui.theme.WorkPulseShapes
 import com.example.workpulse.feature.leave.LeaveSummaryUiState
 import com.example.workpulse.feature.leave.components.LeaveTypeBreakdown
 
 @Composable
 fun LeaveSummaryCard(
+
+    modifier: Modifier = Modifier,
 
     remainingLeaves: Int,
     leaveUiState : LeaveSummaryUiState
@@ -25,9 +28,9 @@ fun LeaveSummaryCard(
 
     Card(
 
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
 
-        shape = RoundedCornerShape(28.dp),
+        shape = WorkPulseShapes.extraLarge,
 
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -40,7 +43,7 @@ fun LeaveSummaryCard(
     ) {
 
         Column(
-            modifier = Modifier.padding(24.dp)
+            modifier = Modifier.padding(Dimens.Space24)
         ) {
 
             Row(

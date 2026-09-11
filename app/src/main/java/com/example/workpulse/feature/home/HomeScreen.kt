@@ -2,6 +2,10 @@ package com.example.workpulse.feature.home.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,6 +47,8 @@ import com.example.workpulse.feature.home.HomeViewModel
 import com.example.workpulse.feature.home.presentation.components.drawerRelated.LogoutDialog
 import com.example.workpulse.feature.home.presentation.components.drawerRelated.NavigationDrawerContent
 import com.example.workpulse.feature.leave.LeaveSummaryUiState
+import com.example.workpulse.core.ui.theme.AdaptiveLayout
+import com.example.workpulse.core.ui.theme.Dimens
 import kotlinx.coroutines.launch
 
 enum class AttendanceState {
@@ -161,13 +167,21 @@ fun HomeScreen(
 
     ) {
 
-    Column(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp)
     ) {
+        val isWide = maxWidth >= AdaptiveLayout.MediumBreakpoint
+        val horizontalPadding = if (isWide) Dimens.Space24 else Dimens.Space16
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = horizontalPadding, vertical = Dimens.Space16)
+                .widthIn(max = AdaptiveLayout.HomeContentMaxWidth)
+                .verticalScroll(rememberScrollState())
+        ) {
 
         HomeTopBar(
             uiState = uiState,
@@ -178,30 +192,49 @@ fun HomeScreen(
             }
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(Dimens.Space20))
 
         DateTimeCard()
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(Dimens.Space20))
 
-        AttendanceCard(
-            attendanceState = uiState.attendanceState,
-            workingSeconds = uiState.workingSeconds,
-            punchInTime = uiState.punchInTime,
-            punchOutTime = uiState.punchOutTime,
-            onAttendanceClick = onAttendanceClick
-        )
+        if (isWide) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(Dimens.Space20)
+            ) {
+                AttendanceCard(
+                    modifier = Modifier.weight(1f).widthIn(max = AdaptiveLayout.HomeColumnMaxWidth),
+                    attendanceState = uiState.attendanceState,
+                    workingSeconds = uiState.workingSeconds,
+                    punchInTime = uiState.punchInTime,
+                    punchOutTime = uiState.punchOutTime,
+                    onAttendanceClick = onAttendanceClick
+                )
+                LeaveSummaryCard(
+                    modifier = Modifier.weight(1f).widthIn(max = AdaptiveLayout.HomeColumnMaxWidth),
+                    remainingLeaves = uiState.remainingLeaves,
+                    leaveUiState = leaveUiState
+                )
+            }
+        } else {
+            AttendanceCard(
+                attendanceState = uiState.attendanceState,
+                workingSeconds = uiState.workingSeconds,
+                punchInTime = uiState.punchInTime,
+                punchOutTime = uiState.punchOutTime,
+                onAttendanceClick = onAttendanceClick
+            )
+            Spacer(modifier = Modifier.height(Dimens.Space20))
+            LeaveSummaryCard(
+                remainingLeaves = uiState.remainingLeaves,
+                leaveUiState = leaveUiState
+            )
+        }
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        LeaveSummaryCard(
-            remainingLeaves = uiState.remainingLeaves,
-            leaveUiState = leaveUiState
-        )
 
 
-
-    }
+        }
 
         if (showLogoutDialog){
             LogoutDialog(
@@ -215,6 +248,8 @@ fun HomeScreen(
             )
         }
     }
+
+}
 
 }
 

@@ -1,6 +1,8 @@
 package com.example.workpulse.feature.attendance
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +32,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.workpulse.core.ui.theme.Dimens
+import com.example.workpulse.core.ui.theme.AdaptiveLayout
+import com.example.workpulse.core.ui.theme.WorkPulseShapes
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -54,7 +58,7 @@ fun DateTimeCard(
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = WorkPulseShapes.large,
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
         ),
@@ -63,16 +67,24 @@ fun DateTimeCard(
         )
     ) {
 
-        Row(
-            modifier = Modifier
+        BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+            val contentModifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    horizontal = 20.dp,
-                    vertical = 18.dp
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
+                .padding(horizontal = Dimens.Space20, vertical = Dimens.Space16)
+            if (maxWidth < AdaptiveLayout.DateTimeStackBreakpoint) {
+                Column(
+                    modifier = contentModifier,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(Dimens.Space12)
+                ) {
+                    DateContent()
+                    TimeContent(currentTime)
+                }
+            } else Row(
+                modifier = contentModifier,
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
 
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -85,7 +97,7 @@ fun DateTimeCard(
                     modifier = Modifier.size(Dimens.Icon28)
                 )
 
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(Dimens.Space8))
 
                 Text(
                     text = getCurrentDate(),
@@ -97,8 +109,8 @@ fun DateTimeCard(
 
             Divider(
                 modifier = Modifier
-                    .height(28.dp)
-                    .width(1.dp),
+                    .height(Dimens.Space32)
+                    .width(Dimens.DividerThickness),
                 color = MaterialTheme.colorScheme.outlineVariant
             )
 
@@ -113,7 +125,7 @@ fun DateTimeCard(
                     modifier = Modifier.size(Dimens.Icon28)
                 )
 
-                Spacer(modifier = Modifier.width(10.dp))
+                Spacer(modifier = Modifier.width(Dimens.Space8))
 
                 Text(
                     text = currentTime,
@@ -123,10 +135,25 @@ fun DateTimeCard(
                 )
             }
 
+            }
         }
 
     }
 
+}
+
+@Composable
+private fun DateContent() = Row(verticalAlignment = Alignment.CenterVertically) {
+    Icon(Icons.Outlined.CalendarMonth, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(Dimens.Icon28))
+    Spacer(modifier = Modifier.width(Dimens.Space8))
+    Text(getCurrentDate(), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
+}
+
+@Composable
+private fun TimeContent(currentTime: String) = Row(verticalAlignment = Alignment.CenterVertically) {
+    Icon(Icons.Outlined.AccessTime, null, tint = Color(0xFF22C55E), modifier = Modifier.size(Dimens.Icon28))
+    Spacer(modifier = Modifier.width(Dimens.Space8))
+    Text(currentTime, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
 }
 
 

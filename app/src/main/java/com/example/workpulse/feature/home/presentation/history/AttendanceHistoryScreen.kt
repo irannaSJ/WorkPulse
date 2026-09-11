@@ -24,6 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.widthIn
+import com.example.workpulse.core.ui.theme.AdaptiveLayout
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -166,6 +168,7 @@ private fun MonthlySummaryCard(
 
         modifier = Modifier
             .fillMaxWidth()
+            .widthIn(max = AdaptiveLayout.HistoryContentMaxWidth)
             .padding(horizontal = 16.dp),
 
         shape = RoundedCornerShape(24.dp),

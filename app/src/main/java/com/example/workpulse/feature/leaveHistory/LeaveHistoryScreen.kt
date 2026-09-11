@@ -2,10 +2,13 @@ package com.example.workpulse.feature.leaveHistory
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.workpulse.core.ui.theme.AdaptiveLayout
+import com.example.workpulse.core.ui.theme.Dimens
 import com.example.workpulse.feature.leaveHistory.components.LeaveFilter
 import com.example.workpulse.feature.leaveHistory.components.LeaveHistoryCard
 
@@ -58,12 +63,16 @@ fun LeaveHistoryScreen(
         LeaveHistoryTopBar(
             onBackClick = onBackClick
         )
+        BoxWithConstraints(modifier = Modifier.weight(1f)) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         LazyColumn(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .widthIn(max = AdaptiveLayout.HistoryContentMaxWidth),
 
-            contentPadding = PaddingValues(16.dp),
+            contentPadding = PaddingValues(Dimens.Space16),
 
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(Dimens.Space16)
 
         ) {
 
@@ -152,6 +161,8 @@ fun LeaveHistoryScreen(
             }
 
         }
+        }
+        }
 
     }
 
@@ -169,7 +180,7 @@ fun EmptySearchResult(
 
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 64.dp),
+            .padding(vertical = Dimens.Space64),
 
         horizontalAlignment = Alignment.CenterHorizontally,
 
@@ -183,13 +194,13 @@ fun EmptySearchResult(
 
             contentDescription = null,
 
-            modifier = Modifier.size(72.dp),
+            modifier = Modifier.size(Dimens.Icon56),
 
             tint = MaterialTheme.colorScheme.outline
 
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(Dimens.Space20))
 
         Text(
 
@@ -201,7 +212,7 @@ fun EmptySearchResult(
 
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimens.Space8))
 
         Text(
 

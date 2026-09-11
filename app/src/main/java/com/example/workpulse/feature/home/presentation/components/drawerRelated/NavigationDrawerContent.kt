@@ -26,6 +26,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import com.example.workpulse.core.ui.theme.AdaptiveLayout
 
 @Composable
 fun NavigationDrawerContent(
@@ -59,7 +62,7 @@ fun NavigationDrawerContent(
     ModalDrawerSheet(
 
         modifier = Modifier
-            .width(320.dp)
+            .width(AdaptiveLayout.DrawerWidth)
             .fillMaxHeight(),
 
         drawerContainerColor = MaterialTheme.colorScheme.surface,
@@ -73,8 +76,9 @@ fun NavigationDrawerContent(
 
         Column(
             modifier = Modifier
-                .fillMaxHeight()
+                .fillMaxWidth()
                 .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
 
             Spacer(
