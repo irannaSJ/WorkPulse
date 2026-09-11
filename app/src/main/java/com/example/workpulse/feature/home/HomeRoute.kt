@@ -166,7 +166,7 @@ fun HomeRoute(
         onLogoutClick = {
             viewModel.logout()
         },
-        leaveUiState = leaveUiState
+        leaveUiState = leaveUiState,
     )
 
 

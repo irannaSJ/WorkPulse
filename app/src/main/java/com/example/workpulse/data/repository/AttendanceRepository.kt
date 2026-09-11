@@ -1,5 +1,6 @@
 package com.example.workpulse.data.repository
 
+import android.companion.DeviceId
 import android.util.Log
 import com.example.workpulse.core.datastore.SessionManager
 import com.example.workpulse.core.location.LocationManager
@@ -48,6 +49,421 @@ class AttendanceRepository @Inject constructor(
                 getTodayDate()
             )
             .firstOrNull()
+    }
+
+    suspend fun fetchEmployeeCheckins(employeeId: String) {
+
+        try {
+
+            val fields =
+                """["name","employee","time","log_type","device_id"]"""
+
+            val filters =
+                """[["employee","=","$employeeId"]]"""
+
+            val response = attendanceApi.getEmployeeCheckins(
+                fields = fields,
+                filters = filters
+            )
+
+            if (!response.isSuccessful) {
+
+                Log.e(
+                    "AttendanceHistory",
+                    "API failed: ${response.code()} ${response.message()}"
+                )
+
+                Log.e(
+                    "AttendanceHistory",
+                    "Error: ${response.errorBody()?.string()}"
+                )
+
+                return
+            }
+
+            val checkins = response.body()?.data.orEmpty()
+
+            Log.d(
+                "AttendanceHistory",
+                "Fetched ${checkins.size} employee checkIns"
+            )
+
+            if (checkins.isEmpty()) {
+                Log.d(
+                    "AttendanceHistory",
+                    "No check-ins found"
+                )
+                return
+            }
+
+            // ------------------------------------------------------------
+            // Parse and sort check-ins
+            // ------------------------------------------------------------
+
+            val dateTimeFormatter =
+                SimpleDateFormat(
+                    "yyyy-MM-dd HH:mm:ss",
+                    Locale.getDefault()
+                )
+
+            val sortedCheckins = checkins
+                .mapNotNull { checkin ->
+
+                    try {
+
+                        val date = dateTimeFormatter.parse(checkin.time)
+
+                        if (date == null) {
+
+                            Log.e(
+                                "AttendanceCalculation",
+                                "Could not parse time: ${checkin.time}"
+                            )
+
+                            null
+
+                        } else {
+
+                            ParsedCheckin(
+                                name = checkin.name,
+                                employee = checkin.employee,
+                                time = checkin.time,
+                                date = date,
+                                logType = checkin.logType?.uppercase(),
+                                deviceId = checkin.deviceId
+                            )
+                        }
+
+                    } catch (e: Exception) {
+
+                        Log.e(
+                            "AttendanceCalculation",
+                            "Invalid time: ${checkin.time}",
+                            e
+                        )
+
+                        null
+                    }
+
+                }
+                .sortedBy { it.date }
+
+            // ------------------------------------------------------------
+            // Group by employee + date
+            // ------------------------------------------------------------
+
+            val groupedCheckins =
+                sortedCheckins.groupBy { checkin ->
+
+                    val attendanceDate =
+                        SimpleDateFormat(
+                            "yyyy-MM-dd",
+                            Locale.getDefault()
+                        ).format(checkin.date)
+
+                    "${checkin.employee}|$attendanceDate"
+                }
+
+            // ------------------------------------------------------------
+            // Calculate each day's attendance
+            // ------------------------------------------------------------
+
+            groupedCheckins.forEach { (groupKey, dailyCheckins) ->
+
+                val employee =
+                    dailyCheckins.first().employee
+
+                val attendanceDate =
+                    groupKey.substringAfter("|")
+
+                var openInTime: Date? = null
+
+                var firstInTime: Date? = null
+                var lastOutTime: Date? = null
+
+                var totalWorkingSeconds = 0L
+                var completedPairs = 0
+
+
+                Log.d(
+                    "AttendanceCalculation",
+                    "========================================"
+                )
+
+                Log.d(
+                    "AttendanceCalculation",
+                    "Employee = $employee"
+                )
+
+                Log.d(
+                    "AttendanceCalculation",
+                    "Date = $attendanceDate"
+                )
+
+                // --------------------------------------------------------
+                // Process IN / OUT sequence
+                // --------------------------------------------------------
+
+                dailyCheckins
+                    .sortedBy { it.date }
+                    .forEach { checkin ->
+
+                        when (checkin.logType) {
+
+                            "IN" -> {
+
+                                if (openInTime == null) {
+
+                                    openInTime = checkin.date
+
+                                    if (firstInTime == null) {
+                                        firstInTime = checkin.date
+                                    }
+
+                                    Log.d(
+                                        "AttendanceCalculation",
+                                        "IN  = ${checkin.time}"
+                                    )
+
+                                } else {
+
+                                    Log.w(
+                                        "AttendanceCalculation",
+                                        "Duplicate IN ignored = ${checkin.time}"
+                                    )
+                                }
+                            }
+
+                            "OUT" -> {
+
+                                if (openInTime != null) {
+
+                                    val workedMilliseconds =
+                                        checkin.date.time - openInTime!!.time
+
+                                    val workedSeconds =
+                                        workedMilliseconds / 1000
+
+                                    if (workedSeconds >= 0) {
+
+                                        totalWorkingSeconds += workedSeconds
+                                        completedPairs++
+
+                                        lastOutTime = checkin.date
+
+                                        Log.d(
+                                            "AttendanceCalculation",
+                                            "OUT = ${checkin.time}"
+                                        )
+
+                                        Log.d(
+                                            "AttendanceCalculation",
+                                            "Session = ${formatDuration(workedSeconds)}"
+                                        )
+
+                                        openInTime = null
+
+                                    } else {
+
+                                        Log.w(
+                                            "AttendanceCalculation",
+                                            "Invalid OUT before IN = ${checkin.time}"
+                                        )
+                                    }
+
+                                } else {
+
+                                    Log.w(
+                                        "AttendanceCalculation",
+                                        "Unmatched OUT ignored = ${checkin.time}"
+                                    )
+                                }
+                            }
+
+                            else -> {
+
+                                Log.w(
+                                    "AttendanceCalculation",
+                                    "Unknown log type = ${checkin.logType}"
+                                )
+                            }
+                        }
+                    }
+
+                // --------------------------------------------------------
+                // Determine status
+                // --------------------------------------------------------
+
+                val status =
+                    when {
+
+                        openInTime != null ->
+                            AttendanceStatus.PUNCHED_IN
+
+                        completedPairs > 0 ->
+                            AttendanceStatus.PUNCHED_OUT
+
+                        else ->
+                            AttendanceStatus.NOT_PUNCHED_IN
+                    }
+
+                val sourceDeviceInfo =
+                    dailyCheckins
+                        .mapNotNull { it.deviceId }
+                        .firstOrNull { it.isNotBlank() }
+
+                val parsedDeviceInfo =
+                    parseDeviceInfo(sourceDeviceInfo)
+
+                val punchInMillis = firstInTime?.time
+                val punchOutMillis = lastOutTime?.time
+
+                val existingAttendance =
+                    attendanceDao.getAttendanceForDate(
+                        employeeId = employee,
+                        attendanceDate = attendanceDate
+                    )
+
+                val attendance = if (existingAttendance != null) {
+
+                    existingAttendance.copy(
+                        punchInTime = punchInMillis,
+                        punchOutTime = punchOutMillis,
+                        workingSeconds = totalWorkingSeconds,
+                        status = status,
+
+                        punchInSyncStatus = SyncStatus.SYNCED,
+
+                        punchOutSyncStatus =
+                            if (punchOutMillis != null) {
+                                SyncStatus.SYNCED
+                            } else {
+                                SyncStatus.NOT_REQUIRED
+                            },
+
+                        deviceId = parsedDeviceInfo.deviceId,
+                        location = parsedDeviceInfo.location,
+
+                        updatedAt = System.currentTimeMillis()
+                    )
+
+                } else {
+
+                    AttendanceEntity(
+                        employeeId = employee,
+                        attendanceDate = attendanceDate,
+                        punchInTime = punchInMillis,
+                        punchOutTime = punchOutMillis,
+                        workingSeconds = totalWorkingSeconds,
+                        status = status,
+
+                        punchInSyncStatus = SyncStatus.SYNCED,
+
+                        punchOutSyncStatus =
+                            if (punchOutMillis != null) {
+                                SyncStatus.SYNCED
+                            } else {
+                                SyncStatus.NOT_REQUIRED
+                            },
+
+                        deviceId = parsedDeviceInfo.deviceId,
+                        location = parsedDeviceInfo.location
+                    )
+                }
+
+
+                if (existingAttendance != null) {
+                    attendanceDao.updateAttendance(attendance)
+                } else {
+                    attendanceDao.insertAttendance(attendance)
+                }
+
+                // --------------------------------------------------------
+                // Final result
+                // --------------------------------------------------------
+
+                Log.d(
+                    "AttendanceCalculation",
+                    "----------------------------------------"
+                )
+
+                Log.d(
+                    "AttendanceCalculation",
+                    "FINAL RESULT"
+                )
+
+                Log.d(
+                    "AttendanceCalculation",
+                    "Employee      = $employee"
+                )
+
+                Log.d(
+                    "AttendanceCalculation",
+                    "Date          = $attendanceDate"
+                )
+
+                Log.d(
+                    "AttendanceCalculation",
+                    "First IN      = ${
+                        firstInTime?.let {
+                            dateTimeFormatter.format(it)
+                        } ?: "null"
+                    }"
+                )
+
+                Log.d(
+                    "AttendanceCalculation",
+                    "Last OUT      = ${
+                        lastOutTime?.let {
+                            dateTimeFormatter.format(it)
+                        } ?: "null"
+                    }"
+                )
+
+                Log.d(
+                    "AttendanceCalculation",
+                    "Pairs         = $completedPairs"
+                )
+
+                Log.d(
+                    "AttendanceCalculation",
+                    "Working Sec   = $totalWorkingSeconds"
+                )
+
+                Log.d(
+                    "AttendanceCalculation",
+                    "Working Time  = ${formatDuration(totalWorkingSeconds)}"
+                )
+
+                Log.d(
+                    "AttendanceCalculation",
+                    "Status        = $status"
+                )
+
+                if (openInTime != null) {
+
+                    Log.d(
+                        "AttendanceCalculation",
+                        "Open IN       = ${
+                            dateTimeFormatter.format(openInTime!!)
+                        }"
+                    )
+                }
+
+                Log.d(
+                    "AttendanceCalculation",
+                    "========================================"
+                )
+            }
+
+        } catch (e: Exception) {
+
+            Log.e(
+                "AttendanceCalculation",
+                "Calculation failed",
+                e
+            )
+        }
     }
 
 
@@ -438,6 +854,14 @@ class AttendanceRepository @Inject constructor(
             }
         }
     }
+
+
+    private fun formatDuration(totalSeconds : Long) : String{
+        val hours = totalSeconds / 3600
+        val minutes = (totalSeconds % 3600) / 60
+        val seconds = totalSeconds % 60
+        return "${hours}h ${minutes}m ${seconds}s"
+    }
     private fun formatDateTime(timeInMillis: Long): String {
 
         return SimpleDateFormat(
@@ -447,6 +871,61 @@ class AttendanceRepository @Inject constructor(
     }
 
 
+    private data class ParsedCheckin(
+        val name: String,
+        val employee : String,
+        val time : String,
+        val date: Date,
+        val logType : String?,
+        val deviceId : String?
+    )
 
+
+
+    private data class ParsedDeviceInfo(
+        val location: String,
+        val deviceId: String
+    )
+
+    private fun parseDeviceInfo(deviceInfo: String?): ParsedDeviceInfo {
+
+        if (deviceInfo.isNullOrBlank()) {
+            return ParsedDeviceInfo(
+                location = "",
+                deviceId = ""
+            )
+        }
+
+        val parts = deviceInfo.split("|")
+
+        var location = ""
+        var deviceId = ""
+
+        parts.forEach { part ->
+
+            val trimmed = part.trim()
+
+            when {
+                trimmed.startsWith("Location=", ignoreCase = true) -> {
+                    location = trimmed
+                        .substringAfter("=", "")
+                        .trim()
+                }
+
+                trimmed.startsWith("Device=", ignoreCase = true) -> {
+                    deviceId = trimmed
+                        .substringAfter("=", "")
+                        .removePrefix("Device=")
+                        .trim()
+                }
+            }
+        }
+
+        return ParsedDeviceInfo(
+            location = location,
+            deviceId = deviceId
+        )
+    }
 
 }
+

@@ -12,9 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 
 import androidx.compose.runtime.Composable
@@ -36,6 +38,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.workpulse.feature.home.HomeViewModel
 import com.example.workpulse.feature.home.presentation.components.drawerRelated.LogoutDialog
 import com.example.workpulse.feature.home.presentation.components.drawerRelated.NavigationDrawerContent
 import com.example.workpulse.feature.leave.LeaveSummaryUiState
@@ -59,7 +63,7 @@ fun HomeScreen(
     onAttendanceRequestHistoryClick:() -> Unit,
     onCompOffApplicationClick : () -> Unit,
     onLogoutClick : () -> Unit,
-    leaveUiState : LeaveSummaryUiState
+    leaveUiState : LeaveSummaryUiState,
 ) {
     val drawerState = rememberDrawerState(
         initialValue = DrawerValue.Closed
