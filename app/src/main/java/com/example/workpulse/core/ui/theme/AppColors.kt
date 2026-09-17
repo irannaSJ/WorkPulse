@@ -8,6 +8,6 @@ object AppColors {
     val Error = Color(0xFFEF4444)
 
     val Attendance = BrandBlue
-    val PunchIn = Success
-    val PunchOut = Error
+//    val PunchIn = Success
+//    val PunchOut = Error
 }

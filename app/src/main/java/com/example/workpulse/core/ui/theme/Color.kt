@@ -26,7 +26,7 @@ val LightOnSecondary = Color.White
 val LightOnBackground = Color(0xFF1E293B)
 val LightOnSurface = Color(0xFF1E293B)
 
-val LightBorder = Color(0xFFE2E8F0)
+//val LightBorder = Color(0xFFE2E8F0)
 
 val LightSuccess = Color(0xFF10B981)
 val LightWarning = Color(0xFFF59E0B)
@@ -48,8 +48,8 @@ val DarkOnSecondary = Color.White
 val DarkOnBackground = Color.White
 val DarkOnSurface = Color.White
 
-val DarkBorder = Color(0xFF334155)
-
-val DarkSuccess = Color(0xFF34D399)
-val DarkWarning = Color(0xFFFBBF24)
+//val DarkBorder = Color(0xFF334155)
+//
+//val DarkSuccess = Color(0xFF34D399)
+//val DarkWarning = Color(0xFFFBBF24)
 val DarkError = Color(0xFFF87171)
