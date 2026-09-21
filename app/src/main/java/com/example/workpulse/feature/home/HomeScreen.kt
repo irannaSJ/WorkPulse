@@ -49,6 +49,7 @@ import com.example.workpulse.feature.home.presentation.components.drawerRelated.
 import com.example.workpulse.feature.leave.LeaveSummaryUiState
 import com.example.workpulse.core.ui.theme.AdaptiveLayout
 import com.example.workpulse.core.ui.theme.Dimens
+import com.example.workpulse.feature.config.domain.NavigationItem
 import kotlinx.coroutines.launch
 
 enum class AttendanceState {
@@ -61,13 +62,8 @@ enum class AttendanceState {
 fun HomeScreen(
     uiState: HomeUiState,
     onAttendanceClick: () -> Unit,
-    onProfileClick : () -> Unit,
-    onLeaveClick : () -> Unit,
-    onAttendanceHistoryClick : () -> Unit,
-    onAttendanceRequestClick : () -> Unit,
-    onLeaveHistoryClick : () -> Unit,
-    onAttendanceRequestHistoryClick:() -> Unit,
-    onCompOffApplicationClick : () -> Unit,
+    navigationItems :List<NavigationItem>,
+    onNavigationItemClick : (String) -> Unit,
     onLogoutClick : () -> Unit,
     leaveUiState : LeaveSummaryUiState,
 ) {
@@ -93,74 +89,22 @@ fun HomeScreen(
 
                 designation = uiState.designation,
                 company = uiState.company,
+                navigationItems = navigationItems,
 
-                selectedRoute = "home",
+                selectedRoute = "HOME",
 
-                onHomeClick = {
+                onNavigationItemClick = { navigationKey ->
                     scope.launch {
                         drawerState.close()
+                        onNavigationItemClick(navigationKey)
                     }
                 },
-
-                onProfileClick = {
-                    scope.launch {
-                        drawerState.close()
-                        onProfileClick()
-                    }
-
-                },
-
-                onLeaveClick = {
-                    scope.launch {
-                        drawerState.close()
-                        onLeaveClick()
-                    }
-
-                },
-
-                onAttendanceHistoryClick = {
-                    scope.launch {
-                        drawerState.close()
-                        onAttendanceHistoryClick()
-                    }
-
-                },
-
-                onAttendanceRequestClick = {
-                    scope.launch {
-                        drawerState.close()
-                        onAttendanceRequestClick()
-                    }
-                },
-
-                onLeaveHistoryClick = {
-                    scope.launch {
-                        drawerState.close()
-                        onLeaveHistoryClick()
-                    }
-                },
-
-                onAttendanceRequestHistoryClick = {
-                    scope.launch {
-                        drawerState.close()
-                        onAttendanceRequestHistoryClick()
-                    }
-                },
-                onCompOffApplicationClick = {
-                    scope.launch {
-                        drawerState.close()
-                        onCompOffApplicationClick()
-                    }
-                },
-
                 onLogoutClick = {
                     scope.launch {
                         drawerState.close()
                         showLogoutDialog = true
                     }
-
                 }
-
             )
 
         }

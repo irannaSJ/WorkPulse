@@ -14,6 +14,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
+import com.example.workpulse.feature.config.domain.NavigationItem
 import com.example.workpulse.feature.home.domain.model.AttendanceResult
 import com.example.workpulse.feature.leave.LeaveSummaryViewModel
 
@@ -24,14 +25,11 @@ fun HomeRoute(
     onFaceVerificationConsumed: () -> Unit,
     onFaceVerificationRequired: () -> Unit,
     onFaceRegistrationRequired: () -> Unit,
-    onProfileClick : () -> Unit,
-    onLeaveClick : () -> Unit,
-    onAttendanceHistoryClick : () -> Unit,
-    onAttendanceRequestClick : () -> Unit,
-    onLeaveHistoryClick : () -> Unit,
-    onAttendanceRequestHistoryClick : () -> Unit,
-    onCompOffApplicationClick : () -> Unit,
-    onLogoutSuccess : () -> Unit,
+
+    navigationItems: List<NavigationItem>,
+    onNavigationItemClick : (String) -> Unit,
+    onLogoutSuccess: () -> Unit,
+
     viewModel: HomeViewModel = hiltViewModel(),
     leaveViewModel : LeaveSummaryViewModel = hiltViewModel()
 ){
@@ -156,13 +154,8 @@ fun HomeRoute(
     HomeScreen(
         uiState = uiState,
         onAttendanceClick = onFaceVerificationRequired,
-        onProfileClick = onProfileClick,
-        onLeaveClick = onLeaveClick,
-        onAttendanceHistoryClick = onAttendanceHistoryClick,
-        onAttendanceRequestClick = onAttendanceRequestClick,
-        onLeaveHistoryClick = onLeaveHistoryClick,
-        onAttendanceRequestHistoryClick = onAttendanceRequestHistoryClick,
-        onCompOffApplicationClick = onCompOffApplicationClick,
+        navigationItems = navigationItems,
+        onNavigationItemClick = onNavigationItemClick,
         onLogoutClick = {
             viewModel.logout()
         },

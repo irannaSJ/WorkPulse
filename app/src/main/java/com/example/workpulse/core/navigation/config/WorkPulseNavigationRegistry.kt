@@ -2,8 +2,12 @@ package com.example.workpulse.core.navigation.config
 
 import android.graphics.drawable.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Assignment
 import androidx.compose.material.icons.automirrored.outlined.EventNote
+import androidx.compose.material.icons.outlined.AddBox
+import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.HistoryToggleOff
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -37,7 +41,30 @@ object WorkPulseNavigationRegistry{
             navigationKey = "PROFILE",
             route = Screen.Profile.route,
             icon = Icons.Outlined.Person
+        ),
+        "LEAVE_APPLICATION" to WorkPulseNavigationDestination(
+            navigationKey = "LEAVE_APPLICATION",
+            route = Screen.LeaveApplication.route,
+            icon = Icons.Outlined.Event
+        ),
+        "ATTENDANCE_REQUEST" to WorkPulseNavigationDestination(
+            navigationKey = "ATTENDANCE_REQUEST",
+            route = Screen.AttendanceRequest.route,
+            icon = Icons.AutoMirrored.Outlined.Assignment
+        ),
+        "ATTENDANCE_REQUEST_HISTORY" to WorkPulseNavigationDestination(
+            navigationKey = "ATTENDANCE_REQUEST_HISTORY",
+            route = Screen.AttendanceRequestHistory.route,
+            icon = Icons.Outlined.HistoryToggleOff
+        ),
+
+        "COMPOFF_APPLICATION" to WorkPulseNavigationDestination(
+            navigationKey = "COMPOFF_APPLICATION",
+            route = Screen.CompOffApplication.route,
+            icon = Icons.Outlined.AddBox
         )
+
+
     )
 
     fun resolve(

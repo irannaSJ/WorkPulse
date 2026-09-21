@@ -28,7 +28,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import com.example.workpulse.core.navigation.config.WorkPulseNavigationRegistry
 import com.example.workpulse.core.ui.theme.AdaptiveLayout
+import com.example.workpulse.feature.config.domain.NavigationItem
 
 @Composable
 fun NavigationDrawerContent(
@@ -38,26 +40,14 @@ fun NavigationDrawerContent(
     designation: String,
     company : String,
 
-    onHomeClick: () -> Unit,
-
-    onProfileClick: () -> Unit,
-
-    onLeaveClick: () -> Unit,
-
-    onAttendanceHistoryClick: () -> Unit,
-
-    onAttendanceRequestClick: () -> Unit,
-
-    onLeaveHistoryClick: () -> Unit,
-
-    onAttendanceRequestHistoryClick : () -> Unit,
-    onCompOffApplicationClick : () -> Unit,
-
     onLogoutClick: () -> Unit,
 
-    selectedRoute: String
+    selectedRoute: String,
+    navigationItems: List<NavigationItem>,
+    onNavigationItemClick:(String) -> Unit
 
-) {
+
+    ) {
 
     ModalDrawerSheet(
 
@@ -101,61 +91,20 @@ fun NavigationDrawerContent(
                 modifier = Modifier.height(12.dp)
             )
 
-            DrawerMenuItem(
-                title = "Home",
-                icon = Icons.Outlined.Home,
-                selected = selectedRoute == "home",
-                onClick = onHomeClick
-            )
 
-            DrawerMenuItem(
-                title = "Profile",
-                icon = Icons.Outlined.Person,
-                selected = selectedRoute == "profile",
-                onClick = onProfileClick
-            )
-
-            DrawerMenuItem(
-                title = "Leave Application",
-                icon = Icons.Outlined.Event,
-                selected = selectedRoute == "leave",
-                onClick = onLeaveClick
-            )
-
-            DrawerMenuItem(
-                title = "Leave History",
-                icon = Icons.Outlined.Settings,
-                selected = selectedRoute == "settings",
-                onClick = onLeaveHistoryClick
-            )
-
-            DrawerMenuItem(
-                title = "Attendance History",
-                icon = Icons.Outlined.History,
-                selected = selectedRoute == "attendance_history",
-                onClick = onAttendanceHistoryClick
-            )
-
-            DrawerMenuItem(
-                title = "Attendance Request",
-                icon = Icons.AutoMirrored.Outlined.Assignment,
-                selected = selectedRoute == "attendance_request",
-                onClick = onAttendanceRequestClick
-            )
-
-            DrawerMenuItem(
-                title = "Attendance Request History",
-                icon = Icons.Outlined.HistoryToggleOff,
-                selected = selectedRoute == "attendance_request_history",
-                onClick = onAttendanceRequestHistoryClick
-            )
-
-            DrawerMenuItem(
-                title = "Compensatory Off Request",
-                icon = Icons.Outlined.AddBox,
-                selected = selectedRoute == "compoff_application",
-                onClick = onCompOffApplicationClick
-            )
+            navigationItems.forEach{item->
+                val destination = WorkPulseNavigationRegistry.resolve(item.navigationKey)
+                if (destination != null){
+                    DrawerMenuItem(
+                        title = item.label,
+                        icon = destination.icon,
+                        selected = selectedRoute == item.navigationKey,
+                        onClick = {
+                            onNavigationItemClick(item.navigationKey)
+                        }
+                    )
+                }
+            }
 
 
             Spacer(

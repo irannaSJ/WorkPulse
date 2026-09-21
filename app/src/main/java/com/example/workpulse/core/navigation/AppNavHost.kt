@@ -82,6 +82,17 @@ fun AppNavHost(
         ?.sortedBy { it.order }
         .orEmpty()
 
+    val configuredDrawerNavigation = configuration
+        ?.navigation
+        ?.filter {
+            it.enabled && (
+                    it.location.equals("Drawer", ignoreCase = true) ||
+                    it.location.equals("Both", ignoreCase = true)
+                    )
+        }
+        ?.sortedBy { it.order }
+        .orEmpty()
+
     val resolvedBottomNavigation: List<Pair<String, WorkPulseNavigationDestination>> =
         configuredBottomNavigation.mapNotNull { item ->
             WorkPulseNavigationRegistry
@@ -248,37 +259,38 @@ fun AppNavHost(
                         launchSingleTop = true
                     }
                 },
-                onProfileClick = {
-                    navController.navigateToBottomDestination(Screen.Profile.route)
-                },
-                onLeaveClick = {
-                    navController.navigate(Screen.LeaveApplication.route)
-                },
-                onAttendanceHistoryClick = {
-                    navController.navigateToBottomDestination(Screen.AttendanceHistory.route)
-                },
-                onAttendanceRequestClick = {
-                    navController.navigate(Screen.AttendanceRequest.route)
-                },
-                onLeaveHistoryClick = {
-                    navController.navigateToBottomDestination(Screen.LeaveHistory.route)
-                },
-                onAttendanceRequestHistoryClick = {
-                    navController.navigateToBottomDestination(Screen.AttendanceRequestHistory.route )
-                },
 
-                onCompOffApplicationClick = {
-                    navController.navigateToBottomDestination(Screen.CompOffApplication.route)
+                navigationItems = configuredDrawerNavigation,
+                onNavigationItemClick =  {navigationKey ->
+                    val destination = WorkPulseNavigationRegistry.resolve(navigationKey)
+                    if (destination != null){
+                        when(destination.route){
+                            Screen.Home.route,
+                                Screen.AttendanceHistory.route,
+                                Screen.LeaveHistory.route,
+                                Screen.Profile.route -> {
+                                    navController.navigateToBottomDestination(
+                                        destination.route
+                                    )
+                                }
+                            else -> {
+                                navController.navigate(
+                                    destination.route
+                                )
+                            }
+                        }
+                    }
                 },
-
                 onLogoutSuccess = {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(navController.graph.id) {
-                            inclusive = true
+                    navController.navigate(Screen.Login.route){
+                        popUpTo(navController.graph.id){
+                            inclusive= true
                         }
                         launchSingleTop = true
                     }
                 }
+
+
             )
         }
 
