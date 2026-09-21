@@ -48,6 +48,7 @@ import com.example.workpulse.feature.attendanceRequestHistory.AttendanceRequestH
 import com.example.workpulse.feature.compOffApplication.CompOffApplicationRoute
 import com.example.workpulse.feature.compOffApplicationsHistory.CompOffApplicationHistoryRoute
 import com.example.workpulse.feature.config.domain.NavigationItem
+import com.example.workpulse.feature.config.domain.QuickAction
 import com.example.workpulse.feature.faceRecognition.model.FaceRecognitionMode
 import com.example.workpulse.feature.faceRecognition.presentation.FaceRecognitionScreen
 import com.example.workpulse.feature.home.presentation.HomeRoute
@@ -92,6 +93,23 @@ fun AppNavHost(
         }
         ?.sortedBy { it.order }
         .orEmpty()
+
+    val supportedQuickActions = configuration
+        ?.quickActions
+        ?.filter { it.enabled && WorkPulseNavigationRegistry.resolve(it.actionKey) != null }
+        ?.sortedBy { it.order }
+        .orEmpty()
+
+    val effectiveQuickActions = if (supportedQuickActions.isNotEmpty()) {
+        supportedQuickActions
+    } else {
+        listOf(
+            QuickAction("ATTENDANCE_HISTORY", "Attendance History", null, true, 1, null, false),
+            QuickAction("LEAVE_HISTORY", "Leave History", null, true, 2, null, false),
+            QuickAction("COMPOFF_HISTORY", "Comp Off History", null, true, 3, null, false),
+            QuickAction("LEAVE_APPLICATION", "Leave Application", null, true, 4, null, false)
+        )
+    }
 
     val resolvedBottomNavigation: List<Pair<String, WorkPulseNavigationDestination>> =
         configuredBottomNavigation.mapNotNull { item ->
@@ -261,25 +279,14 @@ fun AppNavHost(
                 },
 
                 navigationItems = configuredDrawerNavigation,
+                quickActions = effectiveQuickActions,
+                onQuickActionClick = { actionKey ->
+                    WorkPulseNavigationRegistry.resolve(actionKey)
+                        ?.let(navController::navigateToWorkPulseDestination)
+                },
                 onNavigationItemClick =  {navigationKey ->
-                    val destination = WorkPulseNavigationRegistry.resolve(navigationKey)
-                    if (destination != null){
-                        when(destination.route){
-                            Screen.Home.route,
-                                Screen.AttendanceHistory.route,
-                                Screen.LeaveHistory.route,
-                                Screen.Profile.route -> {
-                                    navController.navigateToBottomDestination(
-                                        destination.route
-                                    )
-                                }
-                            else -> {
-                                navController.navigate(
-                                    destination.route
-                                )
-                            }
-                        }
-                    }
+                    WorkPulseNavigationRegistry.resolve(navigationKey)
+                        ?.let(navController::navigateToWorkPulseDestination)
                 },
                 onLogoutSuccess = {
                     navController.navigate(Screen.Login.route){
@@ -459,6 +466,16 @@ private fun NavController.navigateToBottomDestination(route: String) {
     }
 }
 
+private fun NavController.navigateToWorkPulseDestination(
+    destination: WorkPulseNavigationDestination
+) {
+    if (destination.route in bottomNavigationRoutes) {
+        navigateToBottomDestination(destination.route)
+    } else {
+        navigate(destination.route)
+    }
+}
+
 @Composable
 private fun FloatingBottomNavigationBar(
     items: List<Pair<String, WorkPulseNavigationDestination>>,
@@ -545,4 +562,3 @@ private fun FloatingBottomNavigationBar(
             alwaysShowLabel = alwaysShowLabel
         )
     }
-

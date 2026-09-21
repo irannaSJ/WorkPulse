@@ -1,6 +1,5 @@
 package com.example.workpulse.core.navigation.config
 
-import android.graphics.drawable.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Assignment
 import androidx.compose.material.icons.automirrored.outlined.EventNote
@@ -62,6 +61,11 @@ object WorkPulseNavigationRegistry{
             navigationKey = "COMPOFF_APPLICATION",
             route = Screen.CompOffApplication.route,
             icon = Icons.Outlined.AddBox
+        ),
+        "COMPOFF_HISTORY" to WorkPulseNavigationDestination(
+            navigationKey = "COMPOFF_HISTORY",
+            route = Screen.CompOffApplicationHistory.route,
+            icon = Icons.Outlined.HistoryToggleOff
         )
 
 

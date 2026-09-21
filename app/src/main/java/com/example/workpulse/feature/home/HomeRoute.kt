@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import com.example.workpulse.feature.config.domain.NavigationItem
+import com.example.workpulse.feature.config.domain.QuickAction
 import com.example.workpulse.feature.home.domain.model.AttendanceResult
 import com.example.workpulse.feature.leave.LeaveSummaryViewModel
 
@@ -28,6 +29,8 @@ fun HomeRoute(
 
     navigationItems: List<NavigationItem>,
     onNavigationItemClick : (String) -> Unit,
+    quickActions: List<QuickAction>,
+    onQuickActionClick: (String) -> Unit,
     onLogoutSuccess: () -> Unit,
 
     viewModel: HomeViewModel = hiltViewModel(),
@@ -156,6 +159,8 @@ fun HomeRoute(
         onAttendanceClick = onFaceVerificationRequired,
         navigationItems = navigationItems,
         onNavigationItemClick = onNavigationItemClick,
+        quickActions = quickActions,
+        onQuickActionClick = onQuickActionClick,
         onLogoutClick = {
             viewModel.logout()
         },

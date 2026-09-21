@@ -1,9 +1,10 @@
 package com.example.workpulse.feature.home.presentation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
 
@@ -50,6 +51,8 @@ import com.example.workpulse.feature.leave.LeaveSummaryUiState
 import com.example.workpulse.core.ui.theme.AdaptiveLayout
 import com.example.workpulse.core.ui.theme.Dimens
 import com.example.workpulse.feature.config.domain.NavigationItem
+import com.example.workpulse.feature.config.domain.QuickAction
+import com.example.workpulse.feature.home.presentation.components.QuickActionCard
 import kotlinx.coroutines.launch
 
 enum class AttendanceState {
@@ -66,6 +69,8 @@ fun HomeScreen(
     onNavigationItemClick : (String) -> Unit,
     onLogoutClick : () -> Unit,
     leaveUiState : LeaveSummaryUiState,
+    quickActions: List<QuickAction>,
+    onQuickActionClick: (String) -> Unit,
 ) {
     val drawerState = rememberDrawerState(
         initialValue = DrawerValue.Closed
@@ -155,6 +160,42 @@ fun HomeScreen(
                     punchOutTime = uiState.punchOutTime,
                     onAttendanceClick = onAttendanceClick
                 )
+                if (quickActions.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = androidx.compose.ui.Alignment.Bottom,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Quick Actions",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(Dimens.Space12))
+
+                    quickActions
+                        .chunked(2)
+                        .forEach { rowActions ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(Dimens.Space12)
+                            ) {
+                                rowActions.forEach { action ->
+                                    QuickActionCard(
+                                        action = action,
+                                        modifier = Modifier.weight(1f),
+                                        supportingText = actionSupportingText(action.actionKey),
+                                        onClick = { onQuickActionClick(action.actionKey) }
+                                    )
+                                }
+                                if (rowActions.size == 1) {
+                                    Spacer(modifier = Modifier.weight(1f))
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(Dimens.Space12))
+                        }
+                }
                 LeaveSummaryCard(
                     modifier = Modifier.weight(1f).widthIn(max = AdaptiveLayout.HomeColumnMaxWidth),
                     remainingLeaves = uiState.remainingLeaves,
@@ -170,11 +211,54 @@ fun HomeScreen(
                 onAttendanceClick = onAttendanceClick
             )
             Spacer(modifier = Modifier.height(Dimens.Space20))
+
+            if (quickActions.isNotEmpty()) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = androidx.compose.ui.Alignment.Bottom,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Quick Actions",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(Dimens.Space12))
+
+                quickActions
+                    .chunked(2)
+                    .forEach { rowActions ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(Dimens.Space12)
+                        ) {
+                            rowActions.forEach { action ->
+                                QuickActionCard(
+                                    action = action,
+                                    modifier = Modifier.weight(1f),
+                                    supportingText = actionSupportingText(action.actionKey),
+                                    onClick = { onQuickActionClick(action.actionKey) }
+                                )
+                            }
+                            if (rowActions.size == 1) {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(Dimens.Space12))
+                    }
+            }
+            Spacer(modifier = Modifier.height(Dimens.Space20))
             LeaveSummaryCard(
                 remainingLeaves = uiState.remainingLeaves,
                 leaveUiState = leaveUiState
             )
+            Spacer(modifier = Modifier.height(Dimens.Space20))
         }
+
+
+
+
 
 
 
@@ -195,6 +279,14 @@ fun HomeScreen(
 
 }
 
+}
+
+private fun actionSupportingText(actionKey: String): String? = when (actionKey) {
+    "ATTENDANCE_HISTORY" -> "View your records"
+    "LEAVE_HISTORY" -> "Review leave activity"
+    "COMPOFF_HISTORY" -> "Track comp off requests"
+    "LEAVE_APPLICATION" -> "Submit a new request"
+    else -> null
 }
 
 fun formatWorkingTime(seconds: Long): String {
