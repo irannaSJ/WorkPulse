@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.workpulse.data.remote.dto.response.WorkPulseConfigDto
 import com.example.workpulse.data.repository.WorkPulseConfigRepository
+import com.example.workpulse.feature.config.domain.ConfigurationManager
 import com.example.workpulse.feature.config.domain.WorkPulseConfig
 import com.example.workpulse.feature.config.mapper.toDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +28,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WorkPulseConfigTestViewModel @Inject constructor(
-    private val repository: WorkPulseConfigRepository
+    private val configurationManager : ConfigurationManager
 ) : ViewModel() {
 
     var isLoading by mutableStateOf(false)
@@ -39,52 +40,17 @@ class WorkPulseConfigTestViewModel @Inject constructor(
     var errorMessage by mutableStateOf<String?>(null)
         private set
 
-    fun fetchConfiguration() {
-        viewModelScope.launch {
-            isLoading = true
-            errorMessage = null
-
-            try {
-                val remoteConfig = repository.fetchConfiguration()
-                repository.saveConfiguration(remoteConfig)
-
-//                val result = remoteConfig.toDomain()
-//                configuration = result
-                val cachedConfig = repository.getCachedConfiguration()
-                configuration = cachedConfig
-
-//                Log.d(
-//                    "WorkPulseConfig",
-//                    "Configuration received: $result"
-//                )
-            } catch (e: Exception) {
-                errorMessage = e.message ?: "Unknown error"
-
-                Log.e(
-                    "WorkPulseConfig",
-                    "Failed to fetch configuration",
-                    e
-                )
-            } finally {
-                isLoading = false
-            }
-        }
-    }
-
     fun loadCachedConfiguration() {
         viewModelScope.launch {
             isLoading = true
             errorMessage = null
 
             try {
-                val cachedConfig = repository.getCachedConfiguration()
+                configurationManager.loadFromCache()
 
-                configuration = cachedConfig
+                configuration = configurationManager.configuration.value
 
-                Log.d(
-                    "WorkPulseConfig",
-                    "Cached configuration: $cachedConfig"
-                )
+                Log.d("WorkPulseConfig","Loaded through ConfigurationManager : $configuration")
             } catch (e: Exception) {
                 errorMessage = e.message ?: "Failed to load cached configuration"
 
@@ -96,6 +62,36 @@ class WorkPulseConfigTestViewModel @Inject constructor(
             } finally {
                 isLoading = false
             }
+        }
+    }
+
+    fun syncConfiguration() {
+        viewModelScope.launch {
+            isLoading = true
+            errorMessage = null
+
+             try {
+//                 val result  = repository.syncConfiguration()
+//                 configuration = result
+//                 Log.d("WorkPulseConfig","Synced Configuration: $result")
+
+                 configurationManager.sync()
+                 configuration = configurationManager.configuration.value
+                 Log.d(
+                     "WorkPulseConfig",
+                     "Synced through ConfigurationManager: $configuration"
+                 )
+             }catch (e: Exception) {
+                 errorMessage = e.message ?: "Configuration sync failed"
+
+                 Log.e(
+                     "WorkPulseConfig",
+                     "Configuration sync failed",
+                     e
+                 )
+             } finally {
+                 isLoading = false
+             }
         }
     }
 }
@@ -117,14 +113,14 @@ fun TestingScreen(
             text = "WorkPulse Configuration Test"
         )
 
-        Button(
-            onClick = {
-                viewModel.fetchConfiguration()
-            },
-            enabled = !viewModel.isLoading
-        ) {
-            Text("Fetch Configuration")
-        }
+//        Button(
+//            onClick = {
+//                viewModel.fetchConfiguration()
+//            },
+//            enabled = !viewModel.isLoading
+//        ) {
+//            Text("Fetch Configuration")
+//        }
 
         Button(
             onClick = {
@@ -133,6 +129,10 @@ fun TestingScreen(
             enabled = !viewModel.isLoading
         ) {
             Text("Load Cached Configuration")
+        }
+
+        Button(onClick = {viewModel.syncConfiguration()}, enabled = !viewModel.isLoading) {
+            Text("Sync Configuration")
         }
 
         if (viewModel.isLoading) {

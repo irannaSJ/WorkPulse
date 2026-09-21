@@ -41,10 +41,13 @@ import com.example.workpulse.core.ui.theme.AppElevation
 import com.example.workpulse.core.ui.theme.AdaptiveLayout
 import com.example.workpulse.core.ui.theme.Dimens
 import com.example.workpulse.core.navigation.Screen.Splash
+import com.example.workpulse.core.navigation.config.WorkPulseNavigationDestination
+import com.example.workpulse.core.navigation.config.WorkPulseNavigationRegistry
 import com.example.workpulse.feature.attendanceRequest.AttendanceRequestRoute
 import com.example.workpulse.feature.attendanceRequestHistory.AttendanceRequestHistoryRoute
 import com.example.workpulse.feature.compOffApplication.CompOffApplicationRoute
 import com.example.workpulse.feature.compOffApplicationsHistory.CompOffApplicationHistoryRoute
+import com.example.workpulse.feature.config.domain.NavigationItem
 import com.example.workpulse.feature.faceRecognition.model.FaceRecognitionMode
 import com.example.workpulse.feature.faceRecognition.presentation.FaceRecognitionScreen
 import com.example.workpulse.feature.home.presentation.HomeRoute
@@ -56,15 +59,61 @@ import com.example.workpulse.feature.login.presentation.LoginRoute
 import com.example.workpulse.feature.profile.presentation.ProfileRoute
 //import com.example.workpulse.feature.profile.presentation.ProfileRoute
 import com.example.workpulse.feature.splash.presentation.SplashRoute
+import com.example.workpulse.feature.config.domain.WorkPulseConfig
 
 @Composable
 fun AppNavHost(
     navController : NavHostController,
+    configuration : WorkPulseConfig?,
     modifier: Modifier = Modifier
 ) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
-    val showBottomNavigation = currentRoute in bottomNavigationRoutes
+
+    val configuredBottomNavigation = configuration
+        ?.navigation
+        ?.filter {
+            it.enabled &&
+                    (
+                            it.location.equals("Bottom Navigation", ignoreCase = true) ||
+                                    it.location.equals("Both", ignoreCase = true)
+                            )
+        }
+        ?.sortedBy { it.order }
+        .orEmpty()
+
+    val resolvedBottomNavigation: List<Pair<String, WorkPulseNavigationDestination>> =
+        configuredBottomNavigation.mapNotNull { item ->
+            WorkPulseNavigationRegistry
+                .resolve(item.navigationKey)
+                ?.let { destination ->
+                    item.label to destination
+                }
+        }
+
+    val effectiveBottomNavigation:
+            List<Pair<String, WorkPulseNavigationDestination>> =
+        if (configuration == null) {
+            listOf(
+                "HOME",
+                "ATTENDANCE_HISTORY",
+                "LEAVE_HISTORY",
+                "PROFILE"
+            ).mapNotNull { key ->
+                WorkPulseNavigationRegistry
+                    .resolve(key)
+                    ?.let { destination ->
+                        destination.navigationKey to destination
+                    }
+            }
+        } else {
+            resolvedBottomNavigation
+        }
+
+    val showBottomNavigation =
+        effectiveBottomNavigation.any {
+            it.second.route == currentRoute
+        }
 
     val WORKPULSE_CONFIG_TEST = "workpulse_config_test"
 
@@ -73,6 +122,7 @@ fun AppNavHost(
         bottomBar = {
             if (showBottomNavigation) {
                 FloatingBottomNavigationBar(
+                    items = effectiveBottomNavigation,
                     selectedDestination = currentBackStackEntry?.destination,
                     onDestinationSelected = navController::navigateToBottomDestination
                 )
@@ -81,8 +131,8 @@ fun AppNavHost(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-//            startDestination = Screen.Splash.route,
-            startDestination = "workpulse_config_test",
+            startDestination = Screen.Splash.route,
+//            startDestination = "workpulse_config_test",
             modifier = modifier
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding),
@@ -399,6 +449,7 @@ private fun NavController.navigateToBottomDestination(route: String) {
 
 @Composable
 private fun FloatingBottomNavigationBar(
+    items: List<Pair<String, WorkPulseNavigationDestination>>,
     selectedDestination: NavDestination?,
     onDestinationSelected: (String) -> Unit
 ) {
@@ -408,9 +459,14 @@ private fun FloatingBottomNavigationBar(
             .navigationBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
-        val isShortHeight = maxHeight < AdaptiveLayout.LandscapeNavigationBreakpoint
-        val verticalPadding = if (isShortHeight) Dimens.Space4 else Dimens.Space8
-        val bottomPadding = if (isShortHeight) Dimens.Space4 else Dimens.Space12
+        val isShortHeight =
+            maxHeight < AdaptiveLayout.LandscapeNavigationBreakpoint
+
+        val verticalPadding =
+            if (isShortHeight) Dimens.Space4 else Dimens.Space8
+
+        val bottomPadding =
+            if (isShortHeight) Dimens.Space4 else Dimens.Space12
 
         Surface(
             modifier = Modifier
@@ -432,68 +488,49 @@ private fun FloatingBottomNavigationBar(
                 tonalElevation = AppElevation.None,
                 windowInsets = WindowInsets(0, 0, 0, 0)
             ) {
-                FloatingNavigationItem(
-                    label = "Home",
-                    icon = Icons.Outlined.Home,
-                    route = Screen.Home.route,
-                    selectedDestination = selectedDestination,
-                    onDestinationSelected = onDestinationSelected,
-                    alwaysShowLabel = !isShortHeight
-                )
-                FloatingNavigationItem(
-                    label = "Attendance",
-                    icon = Icons.Outlined.History,
-                    route = Screen.AttendanceHistory.route,
-                    selectedDestination = selectedDestination,
-                    onDestinationSelected = onDestinationSelected,
-                    alwaysShowLabel = !isShortHeight
-                )
-                FloatingNavigationItem(
-                    label = "Leave",
-                    icon = Icons.AutoMirrored.Outlined.EventNote,
-                    route = Screen.LeaveHistory.route,
-                    selectedDestination = selectedDestination,
-                    onDestinationSelected = onDestinationSelected,
-                    alwaysShowLabel = !isShortHeight
-                )
-                FloatingNavigationItem(
-                    label = "Profile",
-                    icon = Icons.Outlined.Person,
-                    route = Screen.Profile.route,
-                    selectedDestination = selectedDestination,
-                    onDestinationSelected = onDestinationSelected,
-                    alwaysShowLabel = !isShortHeight
-                )
+
+                items.forEach { (label, destination) ->
+
+                    FloatingNavigationItem(
+                        label = label,
+                        icon = destination.icon,
+                        route = destination.route,
+                        selectedDestination = selectedDestination,
+                        onDestinationSelected = onDestinationSelected,
+                        alwaysShowLabel = !isShortHeight
+                    )
+                }
             }
         }
     }
 }
 
-@Composable
-private fun RowScope.FloatingNavigationItem(
-    label: String,
-    icon: ImageVector,
-    route: String,
-    selectedDestination: NavDestination?,
-    onDestinationSelected: (String) -> Unit,
-    alwaysShowLabel: Boolean
-) {
-    NavigationBarItem(
-        selected = selectedDestination?.hierarchy?.any { it.route == route } == true,
-        onClick = { onDestinationSelected(route) },
-        icon = {
-            Icon(
-                imageVector = icon,
-                contentDescription = label
-            )
-        },
-        label = {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelMedium,
-                maxLines = 1
-            )
-        },
-        alwaysShowLabel = alwaysShowLabel
-    )
-}
+    @Composable
+    private fun RowScope.FloatingNavigationItem(
+        label: String,
+        icon: ImageVector,
+        route: String,
+        selectedDestination: NavDestination?,
+        onDestinationSelected: (String) -> Unit,
+        alwaysShowLabel: Boolean
+    ) {
+        NavigationBarItem(
+            selected = selectedDestination?.hierarchy?.any { it.route == route } == true,
+            onClick = { onDestinationSelected(route) },
+            icon = {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = label
+                )
+            },
+            label = {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelMedium,
+                    maxLines = 1
+                )
+            },
+            alwaysShowLabel = alwaysShowLabel
+        )
+    }
+

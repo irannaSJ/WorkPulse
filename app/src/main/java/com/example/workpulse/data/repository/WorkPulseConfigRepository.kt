@@ -1,5 +1,6 @@
 package com.example.workpulse.data.repository
 
+import android.util.Log
 import androidx.room.withTransaction
 import com.example.workpulse.data.local.dao.config.FeatureDao
 import com.example.workpulse.data.local.dao.config.HomeSectionDao
@@ -100,5 +101,33 @@ class WorkPulseConfigRepository @Inject constructor(
                 config.features.map { it.toEntity() }
             )
         }
+    }
+
+
+    suspend fun syncConfiguration() : WorkPulseConfig?{
+        val remoteConfig = fetchConfiguration()
+        val cachedConfig =configDao.getConfig()
+        val shouldUpdate =
+            cachedConfig == null ||
+                    cachedConfig.configurationName != remoteConfig.configurationName ||
+                    remoteConfig.version > cachedConfig.version
+
+        if(shouldUpdate){
+            saveConfiguration(remoteConfig)
+            Log.d(
+                "WorkPulseConfig",
+                "Configuration updated: ${remoteConfig.configurationName}, " +
+                        "version=${remoteConfig.version}"
+            )
+        }
+        else{
+            Log.d(
+                "WorkPulseConfig",
+                "Configuration already up to date: " +
+                        "${cachedConfig.configurationName}, " +
+                        "version=${cachedConfig.version}"
+            )
+        }
+        return getCachedConfiguration()
     }
 }
