@@ -36,6 +36,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.example.workpulse.TestingScreen
 import com.example.workpulse.core.ui.theme.AppElevation
 import com.example.workpulse.core.ui.theme.AdaptiveLayout
 import com.example.workpulse.core.ui.theme.Dimens
@@ -65,6 +66,8 @@ fun AppNavHost(
     val currentRoute = currentBackStackEntry?.destination?.route
     val showBottomNavigation = currentRoute in bottomNavigationRoutes
 
+    val WORKPULSE_CONFIG_TEST = "workpulse_config_test"
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
@@ -78,8 +81,8 @@ fun AppNavHost(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Splash.route,
-//            startDestination = "face_camera_test",
+//            startDestination = Screen.Splash.route,
+            startDestination = "workpulse_config_test",
             modifier = modifier
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding),
@@ -115,6 +118,11 @@ fun AppNavHost(
             )
 
         }
+
+//
+            composable("workpulse_config_test") {
+                TestingScreen()
+            }
 
         composable(
             route = Screen.Login.route,
