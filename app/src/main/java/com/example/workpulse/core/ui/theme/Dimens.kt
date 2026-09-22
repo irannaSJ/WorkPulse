@@ -89,6 +89,7 @@ object Dimens {
      *--------------------------------------------------*/
 
     val CardMinHeight = 140.dp
+    val QuickActionMinWidth = 160.dp
     val AttendanceCardHeight = 220.dp
     val cardCornerRadius = 28.dp
     val cardElevation = 8.dp

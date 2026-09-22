@@ -47,6 +47,8 @@ import com.example.workpulse.feature.attendanceRequest.AttendanceRequestRoute
 import com.example.workpulse.feature.attendanceRequestHistory.AttendanceRequestHistoryRoute
 import com.example.workpulse.feature.compOffApplication.CompOffApplicationRoute
 import com.example.workpulse.feature.compOffApplicationsHistory.CompOffApplicationHistoryRoute
+import com.example.workpulse.feature.config.WorkPulseHomeSectionRegistry
+import com.example.workpulse.feature.config.domain.HomeSection
 import com.example.workpulse.feature.config.domain.NavigationItem
 import com.example.workpulse.feature.config.domain.QuickAction
 import com.example.workpulse.feature.faceRecognition.model.FaceRecognitionMode
@@ -94,6 +96,40 @@ fun AppNavHost(
         ?.sortedBy { it.order }
         .orEmpty()
 
+    val configurationHomeSections = configuration?.home?.sections.orEmpty()
+
+    val configurationSupportedHomeSections =
+        configurationHomeSections.filter { section ->
+            WorkPulseHomeSectionRegistry.isSupported(section.sectionType)
+        }
+
+    val supportedHomeSections = configurationHomeSections
+        ?.filter { section ->
+            section.enabled &&
+                    WorkPulseHomeSectionRegistry.isSupported(section.sectionType) &&
+                    isHomeSectionFeatureEnabled(
+                        configuration = configuration!!,
+                        featureKey = section.featureKey
+                    )
+        }
+        ?.sortedBy { it.order }
+        .orEmpty()
+
+    val effectiveHomeSections = when{
+        configuration == null -> {
+            defaultHomeSections()
+        }
+        configurationHomeSections.isEmpty() -> {
+            defaultHomeSections()
+        }
+        configurationSupportedHomeSections.isEmpty() -> {
+            defaultHomeSections()
+        }
+        else ->{
+            supportedHomeSections
+        }
+    }
+
     val supportedQuickActions = configuration
         ?.quickActions
         ?.filter { action ->
@@ -107,9 +143,14 @@ fun AppNavHost(
         ?.sortedBy { it.order }
         .orEmpty()
 
-    val effectiveQuickActions = if (supportedQuickActions.isNotEmpty()) {
+
+
+//    val effectiveQuickActions = if (supportedQuickActions.isNotEmpty()) {
+//        supportedQuickActions
+//    } else {
+    val effectiveQuickActions = if(configuration != null){
         supportedQuickActions
-    } else {
+    }else{
         listOf(
             QuickAction("ATTENDANCE_HISTORY", "Attendance History", null, true, 1, null, false),
             QuickAction("LEAVE_HISTORY", "Leave History", null, true, 2, null, false),
@@ -295,6 +336,7 @@ fun AppNavHost(
                     WorkPulseNavigationRegistry.resolve(navigationKey)
                         ?.let(navController::navigateToWorkPulseDestination)
                 },
+                homeSections = effectiveHomeSections,
                 onLogoutSuccess = {
                     navController.navigate(Screen.Login.route){
                         popUpTo(navController.graph.id){
@@ -579,4 +621,64 @@ private fun isQuickActionFeatureEnabled(
         return true
     }
     return configuration.features.firstOrNull{it.featureKey == featureKey}?.enabled == true
+}
+
+private fun isHomeSectionFeatureEnabled(
+    configuration: WorkPulseConfig,
+    featureKey : String?
+): Boolean{
+    if (featureKey.isNullOrBlank()){
+        return true
+    }
+    return configuration.features
+        .firstOrNull{it.featureKey == featureKey}
+        ?.enabled == true
+}
+
+
+private fun defaultHomeSections() : List<HomeSection>{
+    return (
+            listOf(
+                HomeSection(
+                    sectionKey = "DATE_TIME",
+                    title = "Date & Time",
+                    sectionType = WorkPulseHomeSectionRegistry.DATE_TIME,
+                    enabled = true,
+                    order = 1,
+                    featureKey = null,
+                    permissionRequired = false,
+                    configuration = null
+                ),
+                HomeSection(
+                    sectionKey = "ATTENDANCE",
+                    title = "Attendance",
+                    sectionType = WorkPulseHomeSectionRegistry.ATTENDANCE,
+                    enabled = true,
+                    order = 2,
+                    featureKey = null,
+                    permissionRequired = false,
+                    configuration = null
+                ),
+                HomeSection(
+                    sectionKey = "QUICK_ACTIONS",
+                    title = "Quick Actions",
+                    sectionType = WorkPulseHomeSectionRegistry.QUICK_ACTIONS,
+                    enabled = true,
+                    order = 3,
+                    featureKey = null,
+                    permissionRequired = false,
+                    configuration = null
+                ),
+                HomeSection(
+                    sectionKey = "LEAVE_SUMMARY",
+                    title = "Leave Summary",
+                    sectionType = WorkPulseHomeSectionRegistry.LEAVE_SUMMARY,
+                    enabled = true,
+                    order = 4,
+                    featureKey = null,
+                    permissionRequired = false,
+                    configuration = null
+                )
+            )
+            )
 }

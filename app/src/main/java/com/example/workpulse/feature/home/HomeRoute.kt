@@ -14,6 +14,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
+import com.example.workpulse.feature.config.domain.HomeSection
 import com.example.workpulse.feature.config.domain.NavigationItem
 import com.example.workpulse.feature.config.domain.QuickAction
 import com.example.workpulse.feature.home.domain.model.AttendanceResult
@@ -31,6 +32,7 @@ fun HomeRoute(
     onNavigationItemClick : (String) -> Unit,
     quickActions: List<QuickAction>,
     onQuickActionClick: (String) -> Unit,
+    homeSections : List<HomeSection>,
     onLogoutSuccess: () -> Unit,
 
     viewModel: HomeViewModel = hiltViewModel(),
@@ -161,6 +163,7 @@ fun HomeRoute(
         onNavigationItemClick = onNavigationItemClick,
         quickActions = quickActions,
         onQuickActionClick = onQuickActionClick,
+        homeSections = homeSections,
         onLogoutClick = {
             viewModel.logout()
         },
