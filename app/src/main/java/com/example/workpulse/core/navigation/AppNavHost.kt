@@ -96,7 +96,14 @@ fun AppNavHost(
 
     val supportedQuickActions = configuration
         ?.quickActions
-        ?.filter { it.enabled && WorkPulseNavigationRegistry.resolve(it.actionKey) != null }
+        ?.filter { action ->
+            action.enabled &&
+            WorkPulseNavigationRegistry.resolve(action.actionKey) != null &&
+            isQuickActionFeatureEnabled(
+                configuration = configuration,
+                featureKey = action.featureKey
+            )
+        }
         ?.sortedBy { it.order }
         .orEmpty()
 
@@ -562,3 +569,14 @@ private fun FloatingBottomNavigationBar(
             alwaysShowLabel = alwaysShowLabel
         )
     }
+
+
+private fun isQuickActionFeatureEnabled(
+    configuration: WorkPulseConfig,
+    featureKey : String?
+): Boolean{
+    if(featureKey.isNullOrBlank()){
+        return true
+    }
+    return configuration.features.firstOrNull{it.featureKey == featureKey}?.enabled == true
+}
