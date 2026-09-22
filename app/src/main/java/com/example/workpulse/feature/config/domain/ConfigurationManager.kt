@@ -1,6 +1,7 @@
 package com.example.workpulse.feature.config.domain
 
 import com.example.workpulse.data.repository.WorkPulseConfigRepository
+import com.example.workpulse.feature.config.WorkPulseFeatureRegistry
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -57,16 +58,24 @@ class ConfigurationManager @Inject constructor(
     }
 
     fun isFeatureEnabled(featureKey: String): Boolean {
-        return _configuration.value
-            ?.features
-            ?.firstOrNull { it.featureKey == featureKey }
-            ?.enabled
-            ?: false
+        return getFeature(featureKey)?.enabled == true
     }
 
+    fun isFeatureVisible(featureKey : String?): Boolean
+    {
+        if(featureKey.isNullOrBlank()){
+            return true
+        }
+        return isFeatureEnabled(featureKey)
+    }
     fun getFeature(featureKey: String): Feature? {
-        return _configuration.value
-            ?.features
-            ?.firstOrNull { it.featureKey == featureKey }
+        if (!WorkPulseFeatureRegistry.isSupported(featureKey)){
+            return null
+            }
+            return _configuration.value
+                ?.features
+                ?.firstOrNull {
+                    it.featureKey.equals(featureKey, ignoreCase = true)
+                }
     }
 }
