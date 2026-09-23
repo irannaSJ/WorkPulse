@@ -155,7 +155,8 @@ fun AppNavHost(
             QuickAction("ATTENDANCE_HISTORY", "Attendance History", null, true, 1, null, false),
             QuickAction("LEAVE_HISTORY", "Leave History", null, true, 2, null, false),
             QuickAction("COMPOFF_HISTORY", "Comp Off History", null, true, 3, null, false),
-            QuickAction("LEAVE_APPLICATION", "Leave Application", null, true, 4, null, false)
+            QuickAction("LEAVE_APPLICATION", "Leave Application", null, true, 4, null, false),
+            QuickAction("COMPOFF_APPLICATION", "Comp Off Application", null, true, 5, null, false)
         )
     }
 
@@ -173,6 +174,9 @@ fun AppNavHost(
         if (configuration == null) {
             listOf(
                 "HOME",
+                "ATTENDANCE_HISTORY",
+                "LEAVE_HISTORY",
+                "PROFILE",
                 "ATTENDANCE_HISTORY",
                 "LEAVE_HISTORY",
                 "PROFILE"

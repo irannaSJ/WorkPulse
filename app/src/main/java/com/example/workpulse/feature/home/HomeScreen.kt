@@ -589,6 +589,8 @@ private fun actionSupportingText(
 
         "LEAVE_APPLICATION" ->
             "Submit a new request"
+        "COMPOFF_APPLICATION" ->
+            "Submit a new request"
 
         else ->
             null
