@@ -47,7 +47,7 @@ import com.example.workpulse.feature.attendance.data.local.entity.AttendanceEnti
         HomeSectionEntity::class,
         FeatureEntity::class,
     ],
-    version = 28,
+    version = 29,
     exportSchema = true
 )
 @TypeConverters(RoomConverters::class)

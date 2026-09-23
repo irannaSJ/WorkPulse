@@ -19,6 +19,7 @@ import com.example.workpulse.data.local.database.MIGRATION_24_25
 import com.example.workpulse.data.local.database.MIGRATION_25_26
 import com.example.workpulse.data.local.database.MIGRATION_26_27
 import com.example.workpulse.data.local.database.MIGRATION_27_28
+import com.example.workpulse.data.local.database.MIGRATION_28_29
 import com.example.workpulse.data.local.database.WorkPulseDatabase
 import com.example.workpulse.feature.attendance.data.local.dao.AttendanceDao
 import dagger.Module
@@ -48,7 +49,8 @@ object DatabaseModule {
                 MIGRATION_24_25,
                 MIGRATION_25_26,
                 MIGRATION_26_27,
-                MIGRATION_27_28
+                MIGRATION_27_28,
+                MIGRATION_28_29
             )            .build()
     }
 

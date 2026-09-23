@@ -20,6 +20,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.time.LocalDate
 
 import kotlinx.coroutines.flow.emitAll
@@ -39,6 +41,7 @@ class AttendanceRepository @Inject constructor(
     private val syncScheduler: SyncScheduler,
     private val reverseGeocoder: ReverseGeocoder
 ){
+    private val attendanceMutationMutex = Mutex()
     suspend fun getTodayAttendance(): AttendanceEntity? {
 
         val employee = getCurrentEmployee() ?: return null
@@ -497,7 +500,11 @@ class AttendanceRepository @Inject constructor(
     /**
      * Punch In
      */
-    suspend fun punchIn() : AttendanceResult {
+    suspend fun punchIn() : AttendanceResult = attendanceMutationMutex.withLock {
+        punchInInternal()
+    }
+
+    private suspend fun punchInInternal() : AttendanceResult {
         val employee = employeeDao.getEmployeeOnce()?: return AttendanceResult.Error("Employee not Found")
 
         if (!locationManager.hasLocationPermission()) {
@@ -576,7 +583,11 @@ class AttendanceRepository @Inject constructor(
     /**
      * Punch Out
      */
-    suspend fun punchOut() : AttendanceResult{
+    suspend fun punchOut() : AttendanceResult = attendanceMutationMutex.withLock {
+        punchOutInternal()
+    }
+
+    private suspend fun punchOutInternal() : AttendanceResult{
         val employee = employeeDao.getEmployeeOnce()
             ?: return AttendanceResult.Error("Employee not found")
 
@@ -928,4 +939,3 @@ class AttendanceRepository @Inject constructor(
     }
 
 }
-

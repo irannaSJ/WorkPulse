@@ -21,10 +21,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.isActive
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -39,8 +36,6 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HomeUiState())
 
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
-
-    private var timerJob: Job? = null
 
 
     init {
@@ -110,7 +105,6 @@ class HomeViewModel @Inject constructor(
 
 
     private fun observeTodayAttendance(){
-        stopWorkingTimer()
         viewModelScope.launch {
             attendanceRepository.observeTodayAttendance().collectLatest { attendance ->
                 if(attendance== null){
@@ -127,19 +121,14 @@ class HomeViewModel @Inject constructor(
                     attendanceState = when (attendance.status) {
 
                         AttendanceStatus.NOT_PUNCHED_IN ->{
-                            stopWorkingTimer()
                             AttendanceState.NOT_PUNCHED_IN
                         }
 
                         AttendanceStatus.PUNCHED_IN -> {
-                            attendance.punchInTime?.let {
-                                startWorkingTimer(it)
-                            }
                             AttendanceState.PUNCHED_IN
                         }
 
                         AttendanceStatus.PUNCHED_OUT -> {
-                            stopWorkingTimer()
                             AttendanceState.PUNCHED_OUT
                         }
                     },
@@ -147,8 +136,7 @@ class HomeViewModel @Inject constructor(
                     workingSeconds =
                         if (attendance.status == AttendanceStatus.PUNCHED_OUT)
                             attendance.workingSeconds
-                        else
-                            _uiState.value.workingSeconds,
+                        else 0L,
 
                     punchInTime = attendance.punchInTime,
 
@@ -156,31 +144,6 @@ class HomeViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    private fun startWorkingTimer(punchInTime: Long) {
-
-        timerJob?.cancel()
-
-        timerJob = viewModelScope.launch {
-
-            while (isActive) {
-
-                val workingSeconds =
-                    ((System.currentTimeMillis() - punchInTime) / 1000)
-
-                _uiState.value = _uiState.value.copy(
-                    workingSeconds = workingSeconds
-                )
-
-                delay(1000)
-            }
-        }
-    }
-
-    private fun stopWorkingTimer() {
-        timerJob?.cancel()
-        timerJob = null
     }
 
     fun onAttendanceClick(){

@@ -9,7 +9,8 @@ import com.example.workpulse.data.local.entity.LocationStatus
     tableName = "attendance",
     indices = [
         Index(value = ["employeeId"]),
-        Index(value = ["attendanceDate"])
+        Index(value = ["attendanceDate"]),
+        Index(value = ["employeeId", "attendanceDate"], unique = true)
     ]
 )
 data class AttendanceEntity(
@@ -58,5 +59,4 @@ enum class SyncStatus {
     FAILED,
     NOT_REQUIRED
 }
-
 

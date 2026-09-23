@@ -25,6 +25,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -222,6 +228,20 @@ private fun PunchedInContent(
     punchInTime: Long?,
     onAttendanceClick: () -> Unit
 ) {
+    var elapsedSeconds by remember(punchInTime) {
+        mutableLongStateOf(
+            punchInTime?.let { ((System.currentTimeMillis() - it) / 1000).coerceAtLeast(0) } ?: 0L
+        )
+    }
+
+    LaunchedEffect(punchInTime) {
+        while (punchInTime != null) {
+            punchInTime?.let {
+                elapsedSeconds = ((System.currentTimeMillis() - it) / 1000).coerceAtLeast(0)
+            }
+            delay(1000)
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -247,7 +267,7 @@ private fun PunchedInContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = formatWorkingTime(workingSeconds),
+            text = formatWorkingTime(elapsedSeconds),
             style = MaterialTheme.typography.displaySmall,
             fontWeight = FontWeight.Bold,
             color = AppColors.Attendance
