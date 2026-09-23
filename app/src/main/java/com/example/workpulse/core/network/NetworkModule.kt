@@ -18,6 +18,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+import com.example.workpulse.BuildConfig
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -26,7 +27,11 @@ object NetworkModule {
     @Singleton
     fun provideLoggingInterceptor() : HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = if (BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BASIC
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
         }
     }
 
@@ -124,4 +129,3 @@ object NetworkModule {
         return Gson()
     }
 }
-

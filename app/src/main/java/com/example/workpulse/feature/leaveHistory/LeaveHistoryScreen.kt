@@ -2,7 +2,6 @@ package com.example.workpulse.feature.leaveHistory
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -63,7 +62,7 @@ fun LeaveHistoryScreen(
         LeaveHistoryTopBar(
             onBackClick = onBackClick
         )
-        BoxWithConstraints(modifier = Modifier.weight(1f)) {
+        Box(modifier = Modifier.weight(1f)) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         LazyColumn(
             modifier = Modifier

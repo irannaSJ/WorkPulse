@@ -206,3 +206,24 @@ val MIGRATION_27_28 = object : Migration(27, 28) {
         )
     }
 }
+
+val MIGRATION_28_29 = object : Migration(28, 29) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        // Older versions could create duplicate rows during rapid punch-in attempts.
+        // Keep the newest local row for each employee/date before enforcing uniqueness.
+        db.execSQL(
+            """
+            DELETE FROM attendance
+            WHERE id NOT IN (
+                SELECT MAX(id)
+                FROM attendance
+                GROUP BY employeeId, attendanceDate
+            )
+            """.trimIndent()
+        )
+        db.execSQL(
+            "CREATE UNIQUE INDEX IF NOT EXISTS index_attendance_employeeId_attendanceDate " +
+                "ON attendance(employeeId, attendanceDate)"
+        )
+    }
+}

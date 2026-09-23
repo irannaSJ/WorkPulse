@@ -1,0 +1,1094 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 29,
+    "identityHash": "94463d1949ee1c40fae6924df00caa32",
+    "entities": [
+      {
+        "tableName": "employee",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`employeeId` TEXT NOT NULL, `userId` TEXT NOT NULL, `employeeName` TEXT NOT NULL, `company` TEXT, `department` TEXT, `designation` TEXT, `companyEmail` TEXT, `personalEmail` TEXT, `mobileNumber` TEXT, `dateOfJoining` TEXT, `currentAddress` TEXT, `profileImage` TEXT, `updatedAt` INTEGER NOT NULL, `leaveApprover` TEXT, PRIMARY KEY(`employeeId`))",
+        "fields": [
+          {
+            "fieldPath": "employeeId",
+            "columnName": "employeeId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "employeeName",
+            "columnName": "employeeName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "company",
+            "columnName": "company",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "department",
+            "columnName": "department",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "designation",
+            "columnName": "designation",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "companyEmail",
+            "columnName": "companyEmail",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "personalEmail",
+            "columnName": "personalEmail",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "mobileNumber",
+            "columnName": "mobileNumber",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "dateOfJoining",
+            "columnName": "dateOfJoining",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "currentAddress",
+            "columnName": "currentAddress",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "profileImage",
+            "columnName": "profileImage",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "leaveApprover",
+            "columnName": "leaveApprover",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "employeeId"
+          ]
+        }
+      },
+      {
+        "tableName": "attendance",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `employeeId` TEXT NOT NULL, `attendanceDate` TEXT NOT NULL, `punchInTime` INTEGER, `punchOutTime` INTEGER, `workingSeconds` INTEGER NOT NULL, `status` TEXT NOT NULL, `punchInSyncStatus` TEXT NOT NULL, `punchOutSyncStatus` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `latitude` REAL, `logitude` REAL, `accuracy` REAL, `deviceId` TEXT NOT NULL, `locationStatus` TEXT NOT NULL, `location` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "employeeId",
+            "columnName": "employeeId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "attendanceDate",
+            "columnName": "attendanceDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "punchInTime",
+            "columnName": "punchInTime",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "punchOutTime",
+            "columnName": "punchOutTime",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "workingSeconds",
+            "columnName": "workingSeconds",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "punchInSyncStatus",
+            "columnName": "punchInSyncStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "punchOutSyncStatus",
+            "columnName": "punchOutSyncStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "logitude",
+            "columnName": "logitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "accuracy",
+            "columnName": "accuracy",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "deviceId",
+            "columnName": "deviceId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "locationStatus",
+            "columnName": "locationStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_attendance_employeeId",
+            "unique": false,
+            "columnNames": [
+              "employeeId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_attendance_employeeId` ON `${TABLE_NAME}` (`employeeId`)"
+          },
+          {
+            "name": "index_attendance_attendanceDate",
+            "unique": false,
+            "columnNames": [
+              "attendanceDate"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_attendance_attendanceDate` ON `${TABLE_NAME}` (`attendanceDate`)"
+          },
+          {
+            "name": "index_attendance_employeeId_attendanceDate",
+            "unique": true,
+            "columnNames": [
+              "employeeId",
+              "attendanceDate"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_attendance_employeeId_attendanceDate` ON `${TABLE_NAME}` (`employeeId`, `attendanceDate`)"
+          }
+        ]
+      },
+      {
+        "tableName": "attendance_request",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `erpNextId` TEXT, `employeeId` TEXT NOT NULL, `attendanceDate` TEXT NOT NULL, `fromDate` INTEGER, `toDate` INTEGER, `reason` TEXT NOT NULL, `requestType` TEXT NOT NULL, `includeHolidays` INTEGER NOT NULL, `sourceAttendanceId` INTEGER, `requestStatus` TEXT NOT NULL, `syncStatus` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `location` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "erpNextId",
+            "columnName": "erpNextId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "employeeId",
+            "columnName": "employeeId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "attendanceDate",
+            "columnName": "attendanceDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fromDate",
+            "columnName": "fromDate",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "toDate",
+            "columnName": "toDate",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "reason",
+            "columnName": "reason",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "requestType",
+            "columnName": "requestType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "includeHolidays",
+            "columnName": "includeHolidays",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceAttendanceId",
+            "columnName": "sourceAttendanceId",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "requestStatus",
+            "columnName": "requestStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "syncStatus",
+            "columnName": "syncStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_attendance_request_employeeId",
+            "unique": false,
+            "columnNames": [
+              "employeeId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_attendance_request_employeeId` ON `${TABLE_NAME}` (`employeeId`)"
+          },
+          {
+            "name": "index_attendance_request_attendanceDate",
+            "unique": false,
+            "columnNames": [
+              "attendanceDate"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_attendance_request_attendanceDate` ON `${TABLE_NAME}` (`attendanceDate`)"
+          },
+          {
+            "name": "index_attendance_request_erpNextId",
+            "unique": true,
+            "columnNames": [
+              "erpNextId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_attendance_request_erpNextId` ON `${TABLE_NAME}` (`erpNextId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "leave_balance",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`employeeId` TEXT NOT NULL, `employeeName` TEXT NOT NULL, `department` TEXT, `casualLeave` REAL NOT NULL, `compensatoryOff` REAL NOT NULL, `leaveWithoutPay` REAL NOT NULL, `privilegeLeave` REAL NOT NULL, `sickLeave` REAL NOT NULL, `lastSynced` INTEGER NOT NULL, PRIMARY KEY(`employeeId`))",
+        "fields": [
+          {
+            "fieldPath": "employeeId",
+            "columnName": "employeeId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "employeeName",
+            "columnName": "employeeName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "department",
+            "columnName": "department",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "casualLeave",
+            "columnName": "casualLeave",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "compensatoryOff",
+            "columnName": "compensatoryOff",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "leaveWithoutPay",
+            "columnName": "leaveWithoutPay",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "privilegeLeave",
+            "columnName": "privilegeLeave",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sickLeave",
+            "columnName": "sickLeave",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastSynced",
+            "columnName": "lastSynced",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "employeeId"
+          ]
+        }
+      },
+      {
+        "tableName": "leave_application",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `erpNextId` TEXT, `employeeId` TEXT NOT NULL, `leaveType` TEXT NOT NULL, `fromDate` INTEGER NOT NULL, `toDate` INTEGER NOT NULL, `requestedDays` INTEGER NOT NULL, `description` TEXT NOT NULL, `applicationStatus` TEXT NOT NULL, `syncStatus` TEXT NOT NULL, `leaveApprover` TEXT, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "erpNextId",
+            "columnName": "erpNextId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "employeeId",
+            "columnName": "employeeId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "leaveType",
+            "columnName": "leaveType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fromDate",
+            "columnName": "fromDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "toDate",
+            "columnName": "toDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "requestedDays",
+            "columnName": "requestedDays",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "applicationStatus",
+            "columnName": "applicationStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "syncStatus",
+            "columnName": "syncStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "leaveApprover",
+            "columnName": "leaveApprover",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "compOff_application",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `erpNextId` TEXT, `employeeId` TEXT NOT NULL, `leaveType` TEXT NOT NULL, `reason` TEXT NOT NULL, `fromDate` INTEGER NOT NULL, `toDate` INTEGER NOT NULL, `syncStatus` TEXT NOT NULL, `syncErrorMessage` TEXT, `compOffApplicationStatus` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "erpNextId",
+            "columnName": "erpNextId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "employeeId",
+            "columnName": "employeeId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "leaveType",
+            "columnName": "leaveType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "reason",
+            "columnName": "reason",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fromDate",
+            "columnName": "fromDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "toDate",
+            "columnName": "toDate",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "syncStatus",
+            "columnName": "syncStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "syncErrorMessage",
+            "columnName": "syncErrorMessage",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "compOffApplicationStatus",
+            "columnName": "compOffApplicationStatus",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "face_embedding",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`employeeId` TEXT NOT NULL, `embedding` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `modelVersion` INTEGER NOT NULL, PRIMARY KEY(`employeeId`))",
+        "fields": [
+          {
+            "fieldPath": "employeeId",
+            "columnName": "employeeId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "embedding",
+            "columnName": "embedding",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modelVersion",
+            "columnName": "modelVersion",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "employeeId"
+          ]
+        }
+      },
+      {
+        "tableName": "workpulse_config",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `configurationName` TEXT NOT NULL, `version` INTEGER NOT NULL, `syncedAt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "configurationName",
+            "columnName": "configurationName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "syncedAt",
+            "columnName": "syncedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "workpulse_theme",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`configId` INTEGER NOT NULL, `themeMode` TEXT NOT NULL, `primaryColor` TEXT, `secondaryColor` TEXT, `accentColor` TEXT, `backgroundColor` TEXT, `surfaceColor` TEXT, `primaryTextColor` TEXT, `secondaryTextColor` TEXT, `darkBackgroundColor` TEXT, `darkSurfaceColor` TEXT, `darkPrimaryTextColor` TEXT, `darkSecondaryTextColor` TEXT, `cornerRadius` REAL NOT NULL, PRIMARY KEY(`configId`))",
+        "fields": [
+          {
+            "fieldPath": "configId",
+            "columnName": "configId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "themeMode",
+            "columnName": "themeMode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "primaryColor",
+            "columnName": "primaryColor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "secondaryColor",
+            "columnName": "secondaryColor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "accentColor",
+            "columnName": "accentColor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "backgroundColor",
+            "columnName": "backgroundColor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "surfaceColor",
+            "columnName": "surfaceColor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "primaryTextColor",
+            "columnName": "primaryTextColor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "secondaryTextColor",
+            "columnName": "secondaryTextColor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "darkBackgroundColor",
+            "columnName": "darkBackgroundColor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "darkSurfaceColor",
+            "columnName": "darkSurfaceColor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "darkPrimaryTextColor",
+            "columnName": "darkPrimaryTextColor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "darkSecondaryTextColor",
+            "columnName": "darkSecondaryTextColor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "cornerRadius",
+            "columnName": "cornerRadius",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "configId"
+          ]
+        }
+      },
+      {
+        "tableName": "workpulse_navigation",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `configId` INTEGER NOT NULL, `navigationKey` TEXT NOT NULL, `label` TEXT NOT NULL, `icon` TEXT, `location` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `order` INTEGER NOT NULL, `featureKey` TEXT, `permissionRequired` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "configId",
+            "columnName": "configId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "navigationKey",
+            "columnName": "navigationKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "label",
+            "columnName": "label",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "icon",
+            "columnName": "icon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "enabled",
+            "columnName": "enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "order",
+            "columnName": "order",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "featureKey",
+            "columnName": "featureKey",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "permissionRequired",
+            "columnName": "permissionRequired",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_workpulse_navigation_configId",
+            "unique": false,
+            "columnNames": [
+              "configId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_workpulse_navigation_configId` ON `${TABLE_NAME}` (`configId`)"
+          },
+          {
+            "name": "index_workpulse_navigation_navigationKey",
+            "unique": false,
+            "columnNames": [
+              "navigationKey"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_workpulse_navigation_navigationKey` ON `${TABLE_NAME}` (`navigationKey`)"
+          }
+        ]
+      },
+      {
+        "tableName": "workpulse_quick_actions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `configId` INTEGER NOT NULL, `actionKey` TEXT NOT NULL, `label` TEXT NOT NULL, `icon` TEXT, `enabled` INTEGER NOT NULL, `order` INTEGER NOT NULL, `featureKey` TEXT, `permissionRequired` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "configId",
+            "columnName": "configId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "actionKey",
+            "columnName": "actionKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "label",
+            "columnName": "label",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "icon",
+            "columnName": "icon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "enabled",
+            "columnName": "enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "order",
+            "columnName": "order",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "featureKey",
+            "columnName": "featureKey",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "permissionRequired",
+            "columnName": "permissionRequired",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_workpulse_quick_actions_configId",
+            "unique": false,
+            "columnNames": [
+              "configId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_workpulse_quick_actions_configId` ON `${TABLE_NAME}` (`configId`)"
+          },
+          {
+            "name": "index_workpulse_quick_actions_actionKey",
+            "unique": false,
+            "columnNames": [
+              "actionKey"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_workpulse_quick_actions_actionKey` ON `${TABLE_NAME}` (`actionKey`)"
+          }
+        ]
+      },
+      {
+        "tableName": "workpulse_home_sections",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `configId` INTEGER NOT NULL, `sectionKey` TEXT NOT NULL, `title` TEXT NOT NULL, `sectionType` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `order` INTEGER NOT NULL, `featureKey` TEXT, `permissionRequired` INTEGER NOT NULL, `configuration` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "configId",
+            "columnName": "configId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sectionKey",
+            "columnName": "sectionKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sectionType",
+            "columnName": "sectionType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "enabled",
+            "columnName": "enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "order",
+            "columnName": "order",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "featureKey",
+            "columnName": "featureKey",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "permissionRequired",
+            "columnName": "permissionRequired",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "configuration",
+            "columnName": "configuration",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_workpulse_home_sections_configId",
+            "unique": false,
+            "columnNames": [
+              "configId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_workpulse_home_sections_configId` ON `${TABLE_NAME}` (`configId`)"
+          },
+          {
+            "name": "index_workpulse_home_sections_sectionKey",
+            "unique": false,
+            "columnNames": [
+              "sectionKey"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_workpulse_home_sections_sectionKey` ON `${TABLE_NAME}` (`sectionKey`)"
+          }
+        ]
+      },
+      {
+        "tableName": "workpulse_features",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `configId` INTEGER NOT NULL, `featureKey` TEXT NOT NULL, `displayName` TEXT NOT NULL, `enabled` INTEGER NOT NULL, `order` INTEGER NOT NULL, `configuration` TEXT, `permissionRequired` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "configId",
+            "columnName": "configId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "featureKey",
+            "columnName": "featureKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "enabled",
+            "columnName": "enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "order",
+            "columnName": "order",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "configuration",
+            "columnName": "configuration",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "permissionRequired",
+            "columnName": "permissionRequired",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_workpulse_features_configId",
+            "unique": false,
+            "columnNames": [
+              "configId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_workpulse_features_configId` ON `${TABLE_NAME}` (`configId`)"
+          },
+          {
+            "name": "index_workpulse_features_featureKey",
+            "unique": false,
+            "columnNames": [
+              "featureKey"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_workpulse_features_featureKey` ON `${TABLE_NAME}` (`featureKey`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '94463d1949ee1c40fae6924df00caa32')"
+    ]
+  }
+}
