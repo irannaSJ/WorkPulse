@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.workpulse.R
 import com.example.workpulse.core.ui.theme.Dimens
+import com.example.workpulse.core.ui.theme.AdaptiveLayout
 import com.example.workpulse.feature.home.presentation.HomeUiState
 import java.io.File
 import java.util.Calendar
@@ -61,7 +63,9 @@ fun HomeTopBar(
 
     }
 
-    Column {
+    BoxWithConstraints {
+        val topSpacing = if (maxWidth >= AdaptiveLayout.MediumBreakpoint) Dimens.Space32 else Dimens.Space20
+        Column {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -86,7 +90,7 @@ fun HomeTopBar(
             )
         }
 
-        Spacer(modifier = Modifier.height(Dimens.Space20))
+        Spacer(modifier = Modifier.height(topSpacing))
 
         Text(
             text = greeting,
@@ -102,7 +106,7 @@ fun HomeTopBar(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
+        }
     }
 
 }
-

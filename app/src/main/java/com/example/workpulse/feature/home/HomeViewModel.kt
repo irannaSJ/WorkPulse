@@ -48,6 +48,7 @@ class HomeViewModel @Inject constructor(
         observeTodayAttendance()
         observeLeaveBalance()
         checkFaceEnrollment()
+        testFetchEmployeeCheckins()
         syncScheduler.scheduleLeaveSync()
         syncScheduler.scheduleCompOffSync()
 
@@ -235,4 +236,17 @@ class HomeViewModel @Inject constructor(
     }
 
     private companion object { const val TAG = "HomeViewModel" }
+
+
+
+    fun testFetchEmployeeCheckins(){
+        viewModelScope.launch {
+            val employeeId = sessionManager.getEmployeeId()
+            if(employeeId == null){
+                Log.e("Attendance History : ", " Employee Id not found ")
+                return@launch
+            }
+            attendanceRepository.fetchEmployeeCheckins(employeeId)
+        }
+    }
 }

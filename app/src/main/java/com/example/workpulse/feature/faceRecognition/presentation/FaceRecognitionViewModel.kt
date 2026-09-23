@@ -175,6 +175,6 @@ class FaceRecognitionViewModel @Inject constructor(
         const val EMBEDDING_SIZE = 192
         /** Tune from collected genuine/impostor validation data before release. */
         const val RECOGNITION_THRESHOLD = .78f
-        const val REQUIRED_VERIFICATION_SAMPLES = 3
+        const val REQUIRED_VERIFICATION_SAMPLES = 5
     }
 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -21,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.workpulse.core.ui.components.WorkPulseTopBar
 import com.example.workpulse.feature.attendanceRequest.components.AttendanceRequestCard
+import com.example.workpulse.core.ui.theme.Dimens
+import com.example.workpulse.core.ui.theme.AdaptiveLayout
 
 @Composable
 fun AttendanceRequestScreen(
@@ -131,9 +134,10 @@ private fun AttendanceRequestContent(
             .padding(paddingValues)
             .navigationBarsPadding()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+            .padding(Dimens.Space16)
+            .widthIn(max = AdaptiveLayout.HistoryContentMaxWidth),
 
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.Space20)
 
     ) {
 

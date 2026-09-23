@@ -15,7 +15,11 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun CompOffApplicationRoute(onBackClick : () -> Unit, onButtonClick : () -> Unit) {
+fun CompOffApplicationRoute(
+    onBackClick : () -> Unit,
+    onButtonClick : () -> Unit,
+    onSaved: () -> Unit = {}
+) {
     val viewModel : CompOffApplicationViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -31,6 +35,7 @@ fun CompOffApplicationRoute(onBackClick : () -> Unit, onButtonClick : () -> Unit
             delay(3000)
 
             viewModel.clearSuccessMessage()
+            onSaved()
         }
     }
 

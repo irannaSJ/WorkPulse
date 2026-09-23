@@ -14,6 +14,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
+import com.example.workpulse.feature.config.domain.HomeSection
+import com.example.workpulse.feature.config.domain.NavigationItem
+import com.example.workpulse.feature.config.domain.QuickAction
 import com.example.workpulse.feature.home.domain.model.AttendanceResult
 import com.example.workpulse.feature.leave.LeaveSummaryViewModel
 
@@ -24,14 +27,14 @@ fun HomeRoute(
     onFaceVerificationConsumed: () -> Unit,
     onFaceVerificationRequired: () -> Unit,
     onFaceRegistrationRequired: () -> Unit,
-    onProfileClick : () -> Unit,
-    onLeaveClick : () -> Unit,
-    onAttendanceHistoryClick : () -> Unit,
-    onAttendanceRequestClick : () -> Unit,
-    onLeaveHistoryClick : () -> Unit,
-    onAttendanceRequestHistoryClick : () -> Unit,
-    onCompOffApplicationClick : () -> Unit,
-    onLogoutSuccess : () -> Unit,
+
+    navigationItems: List<NavigationItem>,
+    onNavigationItemClick : (String) -> Unit,
+    quickActions: List<QuickAction>,
+    onQuickActionClick: (String) -> Unit,
+    homeSections : List<HomeSection>,
+    onLogoutSuccess: () -> Unit,
+
     viewModel: HomeViewModel = hiltViewModel(),
     leaveViewModel : LeaveSummaryViewModel = hiltViewModel()
 ){
@@ -153,21 +156,18 @@ fun HomeRoute(
         }
 
     }
-
     HomeScreen(
         uiState = uiState,
         onAttendanceClick = onFaceVerificationRequired,
-        onProfileClick = onProfileClick,
-        onLeaveClick = onLeaveClick,
-        onAttendanceHistoryClick = onAttendanceHistoryClick,
-        onAttendanceRequestClick = onAttendanceRequestClick,
-        onLeaveHistoryClick = onLeaveHistoryClick,
-        onAttendanceRequestHistoryClick = onAttendanceRequestHistoryClick,
-        onCompOffApplicationClick = onCompOffApplicationClick,
+        navigationItems = navigationItems,
+        onNavigationItemClick = onNavigationItemClick,
+        quickActions = quickActions,
+        onQuickActionClick = onQuickActionClick,
+        homeSections = homeSections,
         onLogoutClick = {
             viewModel.logout()
         },
-        leaveUiState = leaveUiState
+        leaveUiState = leaveUiState,
     )
 
 

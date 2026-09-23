@@ -8,10 +8,17 @@ import com.example.workpulse.data.local.dao.EmployeeDao
 import com.example.workpulse.data.local.dao.FaceEmbeddingDao
 import com.example.workpulse.data.local.dao.LeaveApplicationDao
 import com.example.workpulse.data.local.dao.LeaveBalanceDao
+import com.example.workpulse.data.local.dao.config.FeatureDao
+import com.example.workpulse.data.local.dao.config.HomeSectionDao
+import com.example.workpulse.data.local.dao.config.NavigationItemDao
+import com.example.workpulse.data.local.dao.config.QuickActionDao
+import com.example.workpulse.data.local.dao.config.WorkPulseConfigDao
+import com.example.workpulse.data.local.dao.config.WorkPulseThemeDao
 import com.example.workpulse.data.local.database.MIGRATION_23_24
 import com.example.workpulse.data.local.database.MIGRATION_24_25
 import com.example.workpulse.data.local.database.MIGRATION_25_26
 import com.example.workpulse.data.local.database.MIGRATION_26_27
+import com.example.workpulse.data.local.database.MIGRATION_27_28
 import com.example.workpulse.data.local.database.WorkPulseDatabase
 import com.example.workpulse.feature.attendance.data.local.dao.AttendanceDao
 import dagger.Module
@@ -36,8 +43,13 @@ object DatabaseModule {
             WorkPulseDatabase::class.java,
             "workpulse_database"
         )
-            .addMigrations(MIGRATION_23_24, MIGRATION_24_25, MIGRATION_25_26, MIGRATION_26_27)
-            .build()
+            .addMigrations(
+                MIGRATION_23_24,
+                MIGRATION_24_25,
+                MIGRATION_25_26,
+                MIGRATION_26_27,
+                MIGRATION_27_28
+            )            .build()
     }
 
     @Provides
@@ -96,5 +108,53 @@ object DatabaseModule {
         database: WorkPulseDatabase
     ): FaceEmbeddingDao {
         return database.faceEmbeddingDao()
+    }
+
+    //Related to Configuration of WorkPulse from ERPNext
+    @Provides
+    @Singleton
+    fun provideWorkPulseConfigDao(
+        database: WorkPulseDatabase
+    ): WorkPulseConfigDao {
+        return database.workPulseConfigDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkPulseThemeDao(
+        database: WorkPulseDatabase
+    ): WorkPulseThemeDao {
+        return database.workPulseThemeDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkPulseNavigationDao(
+        database : WorkPulseDatabase
+    ): NavigationItemDao {
+        return database.navigationItemDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkPulseQuickActionDao(
+        database: WorkPulseDatabase
+    ): QuickActionDao {
+        return database.quickActionDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkPulseHomeSectionDao(
+        database : WorkPulseDatabase
+    ): HomeSectionDao {
+        return database.homeSectionDao()
+    }
+    @Provides
+    @Singleton
+    fun provideWorkPulseFeatureDao(
+        database: WorkPulseDatabase
+    ): FeatureDao {
+        return database.featureDao()
     }
 }

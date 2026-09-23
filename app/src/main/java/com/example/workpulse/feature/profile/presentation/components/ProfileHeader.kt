@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -33,6 +35,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.workpulse.feature.profile.presentation.ProfileUiState
+import com.example.workpulse.core.ui.theme.Dimens
+import com.example.workpulse.core.ui.theme.WorkPulseShapes
+import com.example.workpulse.core.ui.theme.AdaptiveLayout
 import java.io.File
 
 @Composable
@@ -43,8 +48,11 @@ fun ProfileHeader(
 
     Card(
         modifier = modifier
-            .padding(40.dp, 0.dp),
-        shape = RoundedCornerShape(24.dp),
+            .fillMaxWidth()
+            .wrapContentWidth(Alignment.CenterHorizontally)
+            .widthIn(max = AdaptiveLayout.HomeColumnMaxWidth)
+            .padding(horizontal = Dimens.Space16),
+        shape = WorkPulseShapes.large,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -58,15 +66,15 @@ fun ProfileHeader(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    horizontal = 24.dp,
-                    vertical = 32.dp
+                    horizontal = Dimens.Space24,
+                    vertical = Dimens.Space32
                 ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
 
             Surface(
-                modifier = Modifier.size(96.dp),
+                modifier = Modifier.size(Dimens.ProfileAvatar),
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.surfaceVariant
             ) {
@@ -78,7 +86,7 @@ fun ProfileHeader(
                         model = File(uiState.employeeImage),
                         contentDescription = "Profile",
                         modifier = Modifier
-                            .size(120.dp)
+                            .size(Dimens.ProfileAvatar)
                             .clip(CircleShape),
                         contentScale = ContentScale.Crop
                     )
@@ -90,7 +98,7 @@ fun ProfileHeader(
                         imageVector = Icons.Outlined.Person,
                         contentDescription = "Profile Picture",
                         modifier = Modifier
-                            .padding(20.dp)
+                            .padding(Dimens.Space20)
                             .clip(CircleShape),
                         tint = MaterialTheme.colorScheme.primary
                     )
@@ -99,7 +107,7 @@ fun ProfileHeader(
 
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(Dimens.Space20))
 
             Text(
                 text = uiState.employeeName,
@@ -108,7 +116,7 @@ fun ProfileHeader(
                 color = MaterialTheme.colorScheme.onSurface
             )
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(Dimens.Space4))
 
             Text(
                 text = uiState.designation,
@@ -116,7 +124,7 @@ fun ProfileHeader(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Dimens.Space16))
 
             AssistChip(
                 onClick = {},

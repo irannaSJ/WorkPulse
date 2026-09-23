@@ -23,6 +23,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.workpulse.core.ui.components.StatusChip
+import com.example.workpulse.core.ui.theme.Dimens
+import com.example.workpulse.core.ui.theme.WorkPulseShapes
 import com.example.workpulse.feature.leaveHistory.LeaveHistoryCardUi
 
 @Composable
@@ -42,7 +44,7 @@ fun LeaveHistoryCard(
             .fillMaxWidth()
             .clickable { onClick() },
 
-        shape = RoundedCornerShape(24.dp),
+        shape = WorkPulseShapes.large,
 
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp
@@ -58,7 +60,7 @@ fun LeaveHistoryCard(
 
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(Dimens.Space20),
 
             verticalAlignment = Alignment.CenterVertically
 
@@ -68,7 +70,7 @@ fun LeaveHistoryCard(
                 leaveType = leave.leaveType
             )
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(Dimens.Space16))
 
             Column(
                 modifier = Modifier.weight(1f)
@@ -84,7 +86,7 @@ fun LeaveHistoryCard(
 
                 )
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(Dimens.Space4))
 
                 Text(
 
@@ -96,7 +98,7 @@ fun LeaveHistoryCard(
 
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(Dimens.Space4))
 
                 Text(
 
@@ -108,7 +110,7 @@ fun LeaveHistoryCard(
 
                 )
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(Dimens.Space4))
 
                 Text(
 
@@ -124,7 +126,7 @@ fun LeaveHistoryCard(
 
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(Dimens.Space12))
 
             Column(
 

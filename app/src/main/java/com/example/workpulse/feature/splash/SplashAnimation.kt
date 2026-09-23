@@ -74,6 +74,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -95,6 +96,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.workpulse.R
 import kotlinx.coroutines.delay
+import com.example.workpulse.core.ui.theme.AdaptiveLayout
+import com.example.workpulse.core.ui.theme.Dimens
+import com.example.workpulse.core.ui.theme.WorkPulseShapes
 
 private data class SplashFeature(
     val icon: Int,
@@ -192,8 +196,10 @@ fun SplashAnimation(onFinished : () -> Unit) {
     ) { feature ->
 
         Card(
-            modifier = Modifier.width(300.dp),    // <-- Fixed width
-            shape = RoundedCornerShape(24.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .widthIn(max = AdaptiveLayout.SplashFeatureMaxWidth),
+            shape = WorkPulseShapes.large,
             colors = CardDefaults.cardColors(
                 containerColor = Color.White.copy(alpha = 0.15f)
             ),
@@ -216,7 +222,7 @@ fun SplashAnimation(onFinished : () -> Unit) {
                 Image(
                     painter = painterResource(feature.icon),
                     contentDescription = feature.title,
-                    modifier = Modifier.size(80.dp)
+                    modifier = Modifier.size(AdaptiveLayout.SplashFeatureIcon)
                 )
 
                 Text(

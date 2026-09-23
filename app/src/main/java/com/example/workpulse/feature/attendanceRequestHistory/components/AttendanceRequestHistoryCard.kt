@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.workpulse.data.local.entity.AttendanceRequestStatus
 import com.example.workpulse.feature.attendanceRequestHistory.AttendanceRequestHistoryCardUi
+import com.example.workpulse.core.ui.theme.Dimens
 
 
 @Composable
@@ -40,9 +41,9 @@ fun AttendanceRequestHistoryCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(Dimens.Space16),
 
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(Dimens.Space8)
         ) {
 
             // --------------------------------
@@ -57,7 +58,8 @@ fun AttendanceRequestHistoryCard(
                 Text(
                     text = request.requestType.displayName,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.weight(1f)
                 )
 
                 AttendanceRequestStatusChip(
@@ -66,7 +68,7 @@ fun AttendanceRequestHistoryCard(
             }
 
             Spacer(
-                modifier = Modifier.height(4.dp)
+                modifier = Modifier.height(Dimens.Space4)
             )
 
             // --------------------------------

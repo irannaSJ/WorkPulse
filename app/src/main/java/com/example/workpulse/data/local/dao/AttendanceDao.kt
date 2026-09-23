@@ -70,6 +70,15 @@ interface AttendanceDao {
     """)
     suspend fun getPendingAttendance(): List<AttendanceEntity>
 
+
+
+    @Query("""
+        SELECT * FROM attendance
+        WHERE employeeId = :employeeId
+        AND attendanceDate = :attendanceDate
+        LIMIT 1
+    """)
+    suspend fun getAttendanceForDate(employeeId: String,attendanceDate : String): AttendanceEntity?
     /**
      * Delete all attendance of an employee
      * (used during logout)

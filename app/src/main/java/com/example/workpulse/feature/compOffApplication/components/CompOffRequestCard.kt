@@ -17,6 +17,8 @@ import com.example.workpulse.feature.attendanceRequest.components.EmployeeField
 import com.example.workpulse.feature.attendanceRequest.components.ExplanationField
 import com.example.workpulse.feature.attendanceRequest.components.RequestTypeDropDown
 import com.example.workpulse.feature.compOffApplication.CompOffApplicationUiState
+import com.example.workpulse.core.ui.theme.Dimens
+import com.example.workpulse.core.ui.theme.WorkPulseShapes
 
 @Composable
 fun CompOffRequestCard(
@@ -29,7 +31,7 @@ fun CompOffRequestCard(
 
     ElevatedCard(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = WorkPulseShapes.large,
         elevation = CardDefaults.elevatedCardElevation(
             defaultElevation = 4.dp
         ),
@@ -40,8 +42,8 @@ fun CompOffRequestCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                .padding(Dimens.Space20),
+            verticalArrangement = Arrangement.spacedBy(Dimens.Space20)
         ) {
             EmployeeField(employeeName = uiState.employeeName)
             DateRangeSection(

@@ -5,6 +5,7 @@ import com.example.workpulse.data.remote.AttendanceRequestApi
 import com.example.workpulse.data.remote.AuthApi
 import com.example.workpulse.data.remote.CompOffApi
 import com.example.workpulse.data.remote.LeaveApi
+import com.example.workpulse.data.remote.WorkPulseConfigApi
 import com.google.gson.Gson
 
 import dagger.Module
@@ -107,6 +108,15 @@ object NetworkModule {
     ): CompOffApi{
         return retrofit.create(CompOffApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideWorkPulseConfigApi(
+        retrofit: Retrofit
+    ): WorkPulseConfigApi {
+        return retrofit.create(WorkPulseConfigApi::class.java)
+    }
+
 
     @Provides
     @Singleton

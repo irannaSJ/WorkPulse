@@ -34,6 +34,7 @@ import com.example.workpulse.R
 import com.example.workpulse.core.ui.components.SplashLoadingIndicator
 import com.example.workpulse.core.ui.theme.AppGradients
 import com.example.workpulse.core.ui.theme.Dimens
+import com.example.workpulse.core.ui.theme.AdaptiveLayout
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
@@ -238,19 +239,19 @@ fun SplashScreen(
 fun SplashBackground(){
     Box(modifier = Modifier.fillMaxSize()){
         DecorativeCircle(
-            size = 220f,
+            size = AdaptiveLayout.SplashCircleMedium,
             alpha = 0.05f,
             alignment = Alignment.TopStart
         )
 
         DecorativeCircle(
-            size = 180f,
+            size = AdaptiveLayout.SplashCircleSmall,
             alpha = 0.04f,
             alignment = Alignment.CenterEnd
         )
 
         DecorativeCircle(
-            size = 260f,
+            size = AdaptiveLayout.SplashCircleLarge,
             alpha = 0.03f,
             alignment = Alignment.BottomStart
         )
@@ -259,7 +260,7 @@ fun SplashBackground(){
 
 @Composable
 private fun DecorativeCircle(
-    size : Float,
+    size : androidx.compose.ui.unit.Dp,
     alpha : Float,
     alignment: Alignment
 ) {
@@ -273,7 +274,7 @@ private fun DecorativeCircle(
             BrandBlue.copy(alpha = alpha)
         }
         Box(
-            modifier = Modifier.size(size.dp).clip(CircleShape)
+                modifier = Modifier.size(size).clip(CircleShape)
                 .background(circleColor)
         )
     }

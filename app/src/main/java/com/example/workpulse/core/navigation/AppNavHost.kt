@@ -1,6 +1,7 @@
 package com.example.workpulse.core.navigation
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -35,13 +36,21 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.example.workpulse.TestingScreen
 import com.example.workpulse.core.ui.theme.AppElevation
+import com.example.workpulse.core.ui.theme.AdaptiveLayout
 import com.example.workpulse.core.ui.theme.Dimens
 import com.example.workpulse.core.navigation.Screen.Splash
+import com.example.workpulse.core.navigation.config.WorkPulseNavigationDestination
+import com.example.workpulse.core.navigation.config.WorkPulseNavigationRegistry
 import com.example.workpulse.feature.attendanceRequest.AttendanceRequestRoute
 import com.example.workpulse.feature.attendanceRequestHistory.AttendanceRequestHistoryRoute
 import com.example.workpulse.feature.compOffApplication.CompOffApplicationRoute
 import com.example.workpulse.feature.compOffApplicationsHistory.CompOffApplicationHistoryRoute
+import com.example.workpulse.feature.config.WorkPulseHomeSectionRegistry
+import com.example.workpulse.feature.config.domain.HomeSection
+import com.example.workpulse.feature.config.domain.NavigationItem
+import com.example.workpulse.feature.config.domain.QuickAction
 import com.example.workpulse.feature.faceRecognition.model.FaceRecognitionMode
 import com.example.workpulse.feature.faceRecognition.presentation.FaceRecognitionScreen
 import com.example.workpulse.feature.home.presentation.HomeRoute
@@ -53,21 +62,144 @@ import com.example.workpulse.feature.login.presentation.LoginRoute
 import com.example.workpulse.feature.profile.presentation.ProfileRoute
 //import com.example.workpulse.feature.profile.presentation.ProfileRoute
 import com.example.workpulse.feature.splash.presentation.SplashRoute
+import com.example.workpulse.feature.config.domain.WorkPulseConfig
 
 @Composable
 fun AppNavHost(
     navController : NavHostController,
+    configuration : WorkPulseConfig?,
     modifier: Modifier = Modifier
 ) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
-    val showBottomNavigation = currentRoute in bottomNavigationRoutes
+
+    val configuredBottomNavigation = configuration
+        ?.navigation
+        ?.filter {
+            it.enabled &&
+                    (
+                            it.location.equals("Bottom Navigation", ignoreCase = true) ||
+                                    it.location.equals("Both", ignoreCase = true)
+                            )
+        }
+        ?.sortedBy { it.order }
+        .orEmpty()
+
+    val configuredDrawerNavigation = configuration
+        ?.navigation
+        ?.filter {
+            it.enabled && (
+                    it.location.equals("Drawer", ignoreCase = true) ||
+                    it.location.equals("Both", ignoreCase = true)
+                    )
+        }
+        ?.sortedBy { it.order }
+        .orEmpty()
+
+    val configurationHomeSections = configuration?.home?.sections.orEmpty()
+
+    val configurationSupportedHomeSections =
+        configurationHomeSections.filter { section ->
+            WorkPulseHomeSectionRegistry.isSupported(section.sectionType)
+        }
+
+    val supportedHomeSections = configurationHomeSections
+        ?.filter { section ->
+            section.enabled &&
+                    WorkPulseHomeSectionRegistry.isSupported(section.sectionType) &&
+                    isHomeSectionFeatureEnabled(
+                        configuration = configuration!!,
+                        featureKey = section.featureKey
+                    )
+        }
+        ?.sortedBy { it.order }
+        .orEmpty()
+
+    val effectiveHomeSections = when{
+        configuration == null -> {
+            defaultHomeSections()
+        }
+        configurationHomeSections.isEmpty() -> {
+            defaultHomeSections()
+        }
+        configurationSupportedHomeSections.isEmpty() -> {
+            defaultHomeSections()
+        }
+        else ->{
+            supportedHomeSections
+        }
+    }
+
+    val supportedQuickActions = configuration
+        ?.quickActions
+        ?.filter { action ->
+            action.enabled &&
+            WorkPulseNavigationRegistry.resolve(action.actionKey) != null &&
+            isQuickActionFeatureEnabled(
+                configuration = configuration,
+                featureKey = action.featureKey
+            )
+        }
+        ?.sortedBy { it.order }
+        .orEmpty()
+
+
+
+//    val effectiveQuickActions = if (supportedQuickActions.isNotEmpty()) {
+//        supportedQuickActions
+//    } else {
+    val effectiveQuickActions = if(configuration != null){
+        supportedQuickActions
+    }else{
+        listOf(
+            QuickAction("ATTENDANCE_HISTORY", "Attendance History", null, true, 1, null, false),
+            QuickAction("LEAVE_HISTORY", "Leave History", null, true, 2, null, false),
+            QuickAction("COMPOFF_HISTORY", "Comp Off History", null, true, 3, null, false),
+            QuickAction("LEAVE_APPLICATION", "Leave Application", null, true, 4, null, false)
+        )
+    }
+
+    val resolvedBottomNavigation: List<Pair<String, WorkPulseNavigationDestination>> =
+        configuredBottomNavigation.mapNotNull { item ->
+            WorkPulseNavigationRegistry
+                .resolve(item.navigationKey)
+                ?.let { destination ->
+                    item.label to destination
+                }
+        }
+
+    val effectiveBottomNavigation:
+            List<Pair<String, WorkPulseNavigationDestination>> =
+        if (configuration == null) {
+            listOf(
+                "HOME",
+                "ATTENDANCE_HISTORY",
+                "LEAVE_HISTORY",
+                "PROFILE"
+            ).mapNotNull { key ->
+                WorkPulseNavigationRegistry
+                    .resolve(key)
+                    ?.let { destination ->
+                        destination.navigationKey to destination
+                    }
+            }
+        } else {
+            resolvedBottomNavigation
+        }
+
+    val showBottomNavigation =
+        effectiveBottomNavigation.any {
+            it.second.route == currentRoute
+        }
+
+    val WORKPULSE_CONFIG_TEST = "workpulse_config_test"
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             if (showBottomNavigation) {
                 FloatingBottomNavigationBar(
+                    items = effectiveBottomNavigation,
                     selectedDestination = currentBackStackEntry?.destination,
                     onDestinationSelected = navController::navigateToBottomDestination
                 )
@@ -77,7 +209,7 @@ fun AppNavHost(
         NavHost(
             navController = navController,
             startDestination = Screen.Splash.route,
-//            startDestination = "face_camera_test",
+//            startDestination = "workpulse_config_test",
             modifier = modifier
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding),
@@ -113,6 +245,11 @@ fun AppNavHost(
             )
 
         }
+
+//
+            composable("workpulse_config_test") {
+                TestingScreen()
+            }
 
         composable(
             route = Screen.Login.route,
@@ -188,37 +325,28 @@ fun AppNavHost(
                         launchSingleTop = true
                     }
                 },
-                onProfileClick = {
-                    navController.navigateToBottomDestination(Screen.Profile.route)
-                },
-                onLeaveClick = {
-                    navController.navigate(Screen.LeaveApplication.route)
-                },
-                onAttendanceHistoryClick = {
-                    navController.navigateToBottomDestination(Screen.AttendanceHistory.route)
-                },
-                onAttendanceRequestClick = {
-                    navController.navigate(Screen.AttendanceRequest.route)
-                },
-                onLeaveHistoryClick = {
-                    navController.navigateToBottomDestination(Screen.LeaveHistory.route)
-                },
-                onAttendanceRequestHistoryClick = {
-                    navController.navigateToBottomDestination(Screen.AttendanceRequestHistory.route )
-                },
 
-                onCompOffApplicationClick = {
-                    navController.navigateToBottomDestination(Screen.CompOffApplication.route)
+                navigationItems = configuredDrawerNavigation,
+                quickActions = effectiveQuickActions,
+                onQuickActionClick = { actionKey ->
+                    WorkPulseNavigationRegistry.resolve(actionKey)
+                        ?.let(navController::navigateToWorkPulseDestination)
                 },
-
+                onNavigationItemClick =  {navigationKey ->
+                    WorkPulseNavigationRegistry.resolve(navigationKey)
+                        ?.let(navController::navigateToWorkPulseDestination)
+                },
+                homeSections = effectiveHomeSections,
                 onLogoutSuccess = {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(navController.graph.id) {
-                            inclusive = true
+                    navController.navigate(Screen.Login.route){
+                        popUpTo(navController.graph.id){
+                            inclusive= true
                         }
                         launchSingleTop = true
                     }
                 }
+
+
             )
         }
 
@@ -262,6 +390,12 @@ fun AppNavHost(
             AttendanceRequestRoute(
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onSaved = {
+                    navController.navigate(Screen.AttendanceRequestHistory.route) {
+                        popUpTo(Screen.AttendanceRequest.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -304,6 +438,12 @@ fun AppNavHost(
             LeaveApplicationRoute(
                 onBackClick ={
                     navController.popBackStack()
+                },
+                onSaved = {
+                    navController.navigate(Screen.LeaveHistory.route) {
+                        popUpTo(Screen.LeaveApplication.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -320,6 +460,12 @@ fun AppNavHost(
                     },
                     onButtonClick = {
                         navController.navigate(Screen.CompOffApplicationHistory.route)
+                    },
+                    onSaved = {
+                        navController.navigate(Screen.CompOffApplicationHistory.route) {
+                            popUpTo(Screen.CompOffApplication.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
@@ -369,21 +515,46 @@ private fun NavController.navigateToBottomDestination(route: String) {
     }
 }
 
+private fun NavController.navigateToWorkPulseDestination(
+    destination: WorkPulseNavigationDestination
+) {
+    if (destination.route in bottomNavigationRoutes) {
+        navigateToBottomDestination(destination.route)
+    } else {
+        navigate(destination.route)
+    }
+}
+
 @Composable
 private fun FloatingBottomNavigationBar(
+    items: List<Pair<String, WorkPulseNavigationDestination>>,
     selectedDestination: NavDestination?,
     onDestinationSelected: (String) -> Unit
 ) {
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
-            .navigationBarsPadding()
-            .padding(start = Dimens.Space16, top = Dimens.Space8, end = Dimens.Space16, bottom = Dimens.Space12),
+            .navigationBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
+        val isShortHeight =
+            maxHeight < AdaptiveLayout.LandscapeNavigationBreakpoint
+
+        val verticalPadding =
+            if (isShortHeight) Dimens.Space4 else Dimens.Space8
+
+        val bottomPadding =
+            if (isShortHeight) Dimens.Space4 else Dimens.Space12
+
         Surface(
             modifier = Modifier
-                .widthIn(max = 640.dp)
+                .padding(
+                    start = Dimens.Space16,
+                    top = verticalPadding,
+                    end = Dimens.Space16,
+                    bottom = bottomPadding
+                )
+                .widthIn(max = AdaptiveLayout.BottomNavigationMaxWidth)
                 .fillMaxWidth(),
             shape = RoundedCornerShape(Dimens.Radius28),
             color = MaterialTheme.colorScheme.surfaceContainer,
@@ -395,63 +566,119 @@ private fun FloatingBottomNavigationBar(
                 tonalElevation = AppElevation.None,
                 windowInsets = WindowInsets(0, 0, 0, 0)
             ) {
-                FloatingNavigationItem(
-                    label = "Home",
-                    icon = Icons.Outlined.Home,
-                    route = Screen.Home.route,
-                    selectedDestination = selectedDestination,
-                    onDestinationSelected = onDestinationSelected
-                )
-                FloatingNavigationItem(
-                    label = "Attendance",
-                    icon = Icons.Outlined.History,
-                    route = Screen.AttendanceHistory.route,
-                    selectedDestination = selectedDestination,
-                    onDestinationSelected = onDestinationSelected
-                )
-                FloatingNavigationItem(
-                    label = "Leave",
-                    icon = Icons.AutoMirrored.Outlined.EventNote,
-                    route = Screen.LeaveHistory.route,
-                    selectedDestination = selectedDestination,
-                    onDestinationSelected = onDestinationSelected
-                )
-                FloatingNavigationItem(
-                    label = "Profile",
-                    icon = Icons.Outlined.Person,
-                    route = Screen.Profile.route,
-                    selectedDestination = selectedDestination,
-                    onDestinationSelected = onDestinationSelected
-                )
+
+                items.forEach { (label, destination) ->
+
+                    FloatingNavigationItem(
+                        label = label,
+                        icon = destination.icon,
+                        route = destination.route,
+                        selectedDestination = selectedDestination,
+                        onDestinationSelected = onDestinationSelected,
+                        alwaysShowLabel = !isShortHeight
+                    )
+                }
             }
         }
     }
 }
 
-@Composable
-private fun RowScope.FloatingNavigationItem(
-    label: String,
-    icon: ImageVector,
-    route: String,
-    selectedDestination: NavDestination?,
-    onDestinationSelected: (String) -> Unit
-) {
-    NavigationBarItem(
-        selected = selectedDestination?.hierarchy?.any { it.route == route } == true,
-        onClick = { onDestinationSelected(route) },
-        icon = {
-            Icon(
-                imageVector = icon,
-                contentDescription = label
+    @Composable
+    private fun RowScope.FloatingNavigationItem(
+        label: String,
+        icon: ImageVector,
+        route: String,
+        selectedDestination: NavDestination?,
+        onDestinationSelected: (String) -> Unit,
+        alwaysShowLabel: Boolean
+    ) {
+        NavigationBarItem(
+            selected = selectedDestination?.hierarchy?.any { it.route == route } == true,
+            onClick = { onDestinationSelected(route) },
+            icon = {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = label
+                )
+            },
+            label = {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelMedium,
+                    maxLines = 1
+                )
+            },
+            alwaysShowLabel = alwaysShowLabel
+        )
+    }
+
+
+private fun isQuickActionFeatureEnabled(
+    configuration: WorkPulseConfig,
+    featureKey : String?
+): Boolean{
+    if(featureKey.isNullOrBlank()){
+        return true
+    }
+    return configuration.features.firstOrNull{it.featureKey == featureKey}?.enabled == true
+}
+
+private fun isHomeSectionFeatureEnabled(
+    configuration: WorkPulseConfig,
+    featureKey : String?
+): Boolean{
+    if (featureKey.isNullOrBlank()){
+        return true
+    }
+    return configuration.features
+        .firstOrNull{it.featureKey == featureKey}
+        ?.enabled == true
+}
+
+
+private fun defaultHomeSections() : List<HomeSection>{
+    return (
+            listOf(
+                HomeSection(
+                    sectionKey = "DATE_TIME",
+                    title = "Date & Time",
+                    sectionType = WorkPulseHomeSectionRegistry.DATE_TIME,
+                    enabled = true,
+                    order = 1,
+                    featureKey = null,
+                    permissionRequired = false,
+                    configuration = null
+                ),
+                HomeSection(
+                    sectionKey = "ATTENDANCE",
+                    title = "Attendance",
+                    sectionType = WorkPulseHomeSectionRegistry.ATTENDANCE,
+                    enabled = true,
+                    order = 2,
+                    featureKey = null,
+                    permissionRequired = false,
+                    configuration = null
+                ),
+                HomeSection(
+                    sectionKey = "QUICK_ACTIONS",
+                    title = "Quick Actions",
+                    sectionType = WorkPulseHomeSectionRegistry.QUICK_ACTIONS,
+                    enabled = true,
+                    order = 3,
+                    featureKey = null,
+                    permissionRequired = false,
+                    configuration = null
+                ),
+                HomeSection(
+                    sectionKey = "LEAVE_SUMMARY",
+                    title = "Leave Summary",
+                    sectionType = WorkPulseHomeSectionRegistry.LEAVE_SUMMARY,
+                    enabled = true,
+                    order = 4,
+                    featureKey = null,
+                    permissionRequired = false,
+                    configuration = null
+                )
             )
-        },
-        label = {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelMedium,
-                maxLines = 1
             )
-        },
-        alwaysShowLabel = true
-    )
 }

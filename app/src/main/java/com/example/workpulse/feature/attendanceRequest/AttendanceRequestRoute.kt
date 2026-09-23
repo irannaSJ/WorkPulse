@@ -13,7 +13,8 @@ import com.example.workpulse.feature.attendanceRequest.components.AttendanceRequ
 @Composable
 fun AttendanceRequestRoute(
 
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onSaved: () -> Unit = {}
 
 ) {
 
@@ -35,6 +36,7 @@ fun AttendanceRequestRoute(
             ).show()
 
             viewModel.clearSuccessMessage()
+            onSaved()
 
         }
 
