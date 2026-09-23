@@ -1,13 +1,21 @@
 package com.example.workpulse.core.navigation
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -528,6 +536,126 @@ private fun NavController.navigateToWorkPulseDestination(
         navigate(destination.route)
     }
 }
+
+
+//@Composable
+//private fun FloatingBottomNavigationBar(
+//    items: List<Pair<String, WorkPulseNavigationDestination>>,
+//    selectedDestination: NavDestination?,
+//    onDestinationSelected: (String) -> Unit
+//) {
+//    Box(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .navigationBarsPadding()
+//            .padding(
+//                start = Dimens.Space16,
+//                end = Dimens.Space16,
+//                bottom = Dimens.Space8
+//            ),
+//        contentAlignment = Alignment.Center
+//    ) {
+//
+//        Surface(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .widthIn(
+//                    max = AdaptiveLayout.BottomNavigationMaxWidth
+//                )
+//                .height(64.dp),
+//            shape = RoundedCornerShape(12.dp),
+//            color = MaterialTheme.colorScheme.surfaceContainer,
+//            tonalElevation = 0.dp,
+////            shadowElevation = 8.dp
+//        ) {
+//
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .padding(horizontal = 12.dp),
+//                horizontalArrangement = Arrangement.SpaceEvenly,
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//
+//                items.forEach { (label, destination) ->
+//
+//                    FloatingNavigationItem(
+//                        label = label,
+//                        icon = destination.icon,
+//                        route = destination.route,
+//                        selectedDestination = selectedDestination,
+//                        onDestinationSelected = onDestinationSelected
+//                    )
+//                }
+//            }
+//        }
+//    }
+//}
+//@Composable
+//private fun RowScope.FloatingNavigationItem(
+//    label: String,
+//    icon: ImageVector,
+//    route: String,
+//    selectedDestination: NavDestination?,
+//    onDestinationSelected: (String) -> Unit
+//) {
+//    val selected =
+//        selectedDestination?.hierarchy
+//            ?.any { it.route == route } == true
+//
+//    Box(
+//        modifier = Modifier
+//            .weight(1f)
+//            .fillMaxHeight()
+//            .clickable {
+//                onDestinationSelected(route)
+//            },
+//        contentAlignment = Alignment.Center
+//    ) {
+//
+//        if (selected) {
+//
+//            Surface(
+//                shape = RoundedCornerShape(12.dp),
+//                color = MaterialTheme.colorScheme.primaryContainer
+//            ) {
+//
+//                Row(
+//                    modifier = Modifier
+//                        .padding(
+//                            horizontal = 18.dp,
+//                            vertical = 8.dp
+//                        ),
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//
+//                    Icon(
+//                        imageVector = icon,
+//                        contentDescription = label,
+//                        tint = MaterialTheme.colorScheme.primary
+//                    )
+//
+//                    Spacer(modifier = Modifier.run { width(8.dp) })
+//
+//                    Text(
+//                        text = label,
+//                        style = MaterialTheme.typography.labelMedium,
+//                        color = MaterialTheme.colorScheme.primary,
+//                        maxLines = 1
+//                    )
+//                }
+//            }
+//
+//        } else {
+//
+//            Icon(
+//                imageVector = icon,
+//                contentDescription = label,
+//                tint = MaterialTheme.colorScheme.onSurfaceVariant
+//            )
+//        }
+//    }
+//}
 
 @Composable
 private fun FloatingBottomNavigationBar(
