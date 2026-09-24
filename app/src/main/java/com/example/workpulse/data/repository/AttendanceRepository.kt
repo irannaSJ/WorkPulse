@@ -777,17 +777,22 @@ class AttendanceRepository @Inject constructor(
                         Log.d("Attendance", "Room PunchIn = ${attendance.punchInTime}")
                         Log.d("Attendance", "Formatted = ${formatDateTime(attendance.punchInTime!!)}")
 
-                        val punchInRequest = EmployeeCheckinRequest(
-                            employee = attendance.employeeId,
-                            time = formatDateTime(punchInTime),
-                            logType = "IN",
-                            deviceId = updatedAttendance.deviceId,
-                            latitude = attendance.latitude,
-                            longitude = attendance.logitude
-                        )
+//                        val punchInRequest = EmployeeCheckinRequest(
+//                            employee = attendance.employeeId,
+//                            time = formatDateTime(punchInTime),
+//                            logType = "IN",
+//                            deviceId = updatedAttendance.deviceId,
+//                            latitude = attendance.latitude,
+//                            longitude = attendance.logitude
+//                        )
 
                         val response =
-                            attendanceApi.createEmployeeCheckin(punchInRequest)
+                            attendanceApi.punchIn(
+                                punchTime = formatDateTime(punchInTime),
+                                deviceId = updatedAttendance.deviceId,
+                                latitude = attendance.latitude,
+                                longitude = attendance.logitude
+                            )
 
                         if (response.isSuccessful) {
 
@@ -820,17 +825,22 @@ class AttendanceRepository @Inject constructor(
                     updatedAttendance.punchOutSyncStatus == SyncStatus.PENDING
                 ) {
 
-                    val punchOutRequest = EmployeeCheckinRequest(
-                        employee = updatedAttendance.employeeId,
-                        time = formatDateTime(updatedAttendance.punchOutTime!!),
-                        logType = "OUT",
-                        deviceId = updatedAttendance.deviceId,
-                        latitude = updatedAttendance.latitude,
-                        longitude = updatedAttendance.logitude
-                    )
+//                    val punchOutRequest = EmployeeCheckinRequest(
+//                        employee = updatedAttendance.employeeId,
+//                        time = formatDateTime(updatedAttendance.punchOutTime!!),
+//                        logType = "OUT",
+//                        deviceId = updatedAttendance.deviceId,
+//                        latitude = updatedAttendance.latitude,
+//                        longitude = updatedAttendance.logitude
+//                    )
 
                     val response =
-                        attendanceApi.createEmployeeCheckin(punchOutRequest)
+                        attendanceApi.punchOut(
+                            punchTime = formatDateTime(updatedAttendance.punchOutTime),
+                            deviceId = updatedAttendance.deviceId,
+                            latitude = updatedAttendance.latitude,
+                            longitude = updatedAttendance.logitude
+                        )
 
                     if (response.isSuccessful) {
 
