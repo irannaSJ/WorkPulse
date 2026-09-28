@@ -204,7 +204,7 @@ fun AppNavHost(
             it.second.route == currentRoute
         }
 
-    val WORKPULSE_CONFIG_TEST = "workpulse_config_test"
+    val WebViewTest = "web_view_test"
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -220,8 +220,8 @@ fun AppNavHost(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Splash.route,
-//            startDestination = "workpulse_config_test",
+//            startDestination = Screen.Splash.route,
+            startDestination = "web_view_test",
             modifier = modifier
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding),
@@ -259,7 +259,7 @@ fun AppNavHost(
         }
 
 //
-            composable("workpulse_config_test") {
+            composable("web_view_test") {
                 TestingScreen()
             }
 
@@ -315,7 +315,7 @@ fun AppNavHost(
         }
 
 
-        //screen upgrading from here we changed the profile navigation here
+        //screen upgrading from here I changed the profile navigation here
         composable(
             route = Screen.Home.route,
             enterTransition = NavTransitions.bottomEnter,
@@ -537,125 +537,6 @@ private fun NavController.navigateToWorkPulseDestination(
     }
 }
 
-
-//@Composable
-//private fun FloatingBottomNavigationBar(
-//    items: List<Pair<String, WorkPulseNavigationDestination>>,
-//    selectedDestination: NavDestination?,
-//    onDestinationSelected: (String) -> Unit
-//) {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .navigationBarsPadding()
-//            .padding(
-//                start = Dimens.Space16,
-//                end = Dimens.Space16,
-//                bottom = Dimens.Space8
-//            ),
-//        contentAlignment = Alignment.Center
-//    ) {
-//
-//        Surface(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .widthIn(
-//                    max = AdaptiveLayout.BottomNavigationMaxWidth
-//                )
-//                .height(64.dp),
-//            shape = RoundedCornerShape(12.dp),
-//            color = MaterialTheme.colorScheme.surfaceContainer,
-//            tonalElevation = 0.dp,
-////            shadowElevation = 8.dp
-//        ) {
-//
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .padding(horizontal = 12.dp),
-//                horizontalArrangement = Arrangement.SpaceEvenly,
-//                verticalAlignment = Alignment.CenterVertically
-//            ) {
-//
-//                items.forEach { (label, destination) ->
-//
-//                    FloatingNavigationItem(
-//                        label = label,
-//                        icon = destination.icon,
-//                        route = destination.route,
-//                        selectedDestination = selectedDestination,
-//                        onDestinationSelected = onDestinationSelected
-//                    )
-//                }
-//            }
-//        }
-//    }
-//}
-//@Composable
-//private fun RowScope.FloatingNavigationItem(
-//    label: String,
-//    icon: ImageVector,
-//    route: String,
-//    selectedDestination: NavDestination?,
-//    onDestinationSelected: (String) -> Unit
-//) {
-//    val selected =
-//        selectedDestination?.hierarchy
-//            ?.any { it.route == route } == true
-//
-//    Box(
-//        modifier = Modifier
-//            .weight(1f)
-//            .fillMaxHeight()
-//            .clickable {
-//                onDestinationSelected(route)
-//            },
-//        contentAlignment = Alignment.Center
-//    ) {
-//
-//        if (selected) {
-//
-//            Surface(
-//                shape = RoundedCornerShape(12.dp),
-//                color = MaterialTheme.colorScheme.primaryContainer
-//            ) {
-//
-//                Row(
-//                    modifier = Modifier
-//                        .padding(
-//                            horizontal = 18.dp,
-//                            vertical = 8.dp
-//                        ),
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//
-//                    Icon(
-//                        imageVector = icon,
-//                        contentDescription = label,
-//                        tint = MaterialTheme.colorScheme.primary
-//                    )
-//
-//                    Spacer(modifier = Modifier.run { width(8.dp) })
-//
-//                    Text(
-//                        text = label,
-//                        style = MaterialTheme.typography.labelMedium,
-//                        color = MaterialTheme.colorScheme.primary,
-//                        maxLines = 1
-//                    )
-//                }
-//            }
-//
-//        } else {
-//
-//            Icon(
-//                imageVector = icon,
-//                contentDescription = label,
-//                tint = MaterialTheme.colorScheme.onSurfaceVariant
-//            )
-//        }
-//    }
-//}
 
 @Composable
 private fun FloatingBottomNavigationBar(

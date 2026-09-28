@@ -22,6 +22,7 @@ import com.example.workpulse.data.repository.WorkPulseConfigRepository
 import com.example.workpulse.feature.config.domain.ConfigurationManager
 import com.example.workpulse.feature.config.domain.WorkPulseConfig
 import com.example.workpulse.feature.config.mapper.toDomain
+import com.example.workpulse.feature.webview.presentation.WebViewTestScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -98,82 +99,84 @@ class WorkPulseConfigTestViewModel @Inject constructor(
 
 @Composable
 fun TestingScreen(
-    viewModel: WorkPulseConfigTestViewModel = hiltViewModel()
+//    viewModel: WorkPulseConfigTestViewModel = hiltViewModel()
 ) {
-    val configuration = viewModel.configuration
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-
-        Text(
-            text = "WorkPulse Configuration Test"
-        )
-
+    WebViewTestScreen()
+//    val configuration = viewModel.configuration
+//
+//    Column(
+//        modifier = Modifier
+//            .fillMaxSize()
+//            .padding(24.dp),
+//        verticalArrangement = Arrangement.spacedBy(16.dp)
+//    ) {
+//
+//        Text(
+//            text = "WorkPulse Configuration Test"
+//        )
+//
+////        Button(
+////            onClick = {
+////                viewModel.fetchConfiguration()
+////            },
+////            enabled = !viewModel.isLoading
+////        ) {
+////            Text("Fetch Configuration")
+////        }
+//
 //        Button(
 //            onClick = {
-//                viewModel.fetchConfiguration()
+//                viewModel.loadCachedConfiguration()
 //            },
 //            enabled = !viewModel.isLoading
 //        ) {
-//            Text("Fetch Configuration")
+//            Text("Load Cached Configuration")
 //        }
-
-        Button(
-            onClick = {
-                viewModel.loadCachedConfiguration()
-            },
-            enabled = !viewModel.isLoading
-        ) {
-            Text("Load Cached Configuration")
-        }
-
-        Button(onClick = {viewModel.syncConfiguration()}, enabled = !viewModel.isLoading) {
-            Text("Sync Configuration")
-        }
-
-        if (viewModel.isLoading) {
-            CircularProgressIndicator()
-        }
-
-        viewModel.errorMessage?.let { error ->
-            Text(
-                text = "Error: $error"
-            )
-        }
-
-        configuration?.let { config ->
-
-            Text(
-                text = "Configuration: ${config.configurationName}"
-            )
-
-            Text(
-                text = "Version: ${config.version}"
-            )
-
-            Text(
-                text = "Theme Mode: ${config.theme.themeMode}"
-            )
-
-            Text(
-                text = "Navigation Items: ${config.navigation.size}"
-            )
-
-            Text(
-                text = "Quick Actions: ${config.quickActions.size}"
-            )
-
-            Text(
-                text = "Home Sections: ${config.home.sections.size}"
-            )
-
-            Text(
-                text = "Features: ${config.features.size}"
-            )
-        }
-    }
+//
+//        Button(onClick = {viewModel.syncConfiguration()}, enabled = !viewModel.isLoading) {
+//            Text("Sync Configuration")
+//        }
+//
+//        if (viewModel.isLoading) {
+//            CircularProgressIndicator()
+//        }
+//
+//        viewModel.errorMessage?.let { error ->
+//            Text(
+//                text = "Error: $error"
+//            )
+//        }
+//
+//        configuration?.let { config ->
+//
+//            Text(
+//                text = "Configuration: ${config.configurationName}"
+//            )
+//
+//            Text(
+//                text = "Version: ${config.version}"
+//            )
+//
+//            Text(
+//                text = "Theme Mode: ${config.theme.themeMode}"
+//            )
+//
+//            Text(
+//                text = "Navigation Items: ${config.navigation.size}"
+//            )
+//
+//            Text(
+//                text = "Quick Actions: ${config.quickActions.size}"
+//            )
+//
+//            Text(
+//                text = "Home Sections: ${config.home.sections.size}"
+//            )
+//
+//            Text(
+//                text = "Features: ${config.features.size}"
+//            )
+//        }
+//    }
 }

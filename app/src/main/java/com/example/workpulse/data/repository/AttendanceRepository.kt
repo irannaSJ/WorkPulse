@@ -833,6 +833,16 @@ class AttendanceRepository @Inject constructor(
 //                        latitude = updatedAttendance.latitude,
 //                        longitude = updatedAttendance.logitude
 //                    )
+                    Log.d(
+                        "AttendanceSync",
+                        "Checking OUT: time=${updatedAttendance.punchOutTime}, " +
+                                "status=${updatedAttendance.punchOutSyncStatus}"
+                    )
+                    Log.d(
+                        "AttendanceSync",
+                        "Sending Punch OUT: employee=${updatedAttendance.employeeId}, " +
+                                "time=${formatDateTime(updatedAttendance.punchOutTime!!)}"
+                    )
 
                     val response =
                         attendanceApi.punchOut(
@@ -842,6 +852,11 @@ class AttendanceRepository @Inject constructor(
                             longitude = updatedAttendance.logitude
                         )
 
+                    Log.d(
+                        "AttendanceSync",
+                        "Punch OUT response: code=${response.code()}, " +
+                                "successful=${response.isSuccessful}"
+                    )
                     if (response.isSuccessful) {
 
                         updatedAttendance = updatedAttendance.copy(
@@ -867,6 +882,7 @@ class AttendanceRepository @Inject constructor(
 
                 // No internet / server unavailable.
                 // Keep status as PENDING so WorkManager retries later.
+
                 throw e
 
             } catch (e: Exception) {
