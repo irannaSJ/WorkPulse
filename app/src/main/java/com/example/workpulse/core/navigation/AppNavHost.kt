@@ -220,8 +220,8 @@ fun AppNavHost(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-//            startDestination = Screen.Splash.route,
-            startDestination = "web_view_test",
+            startDestination = Screen.Splash.route,
+//            startDestination = "web_view_test",
             modifier = modifier
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding),
