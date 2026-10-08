@@ -71,6 +71,7 @@ import com.example.workpulse.feature.profile.presentation.ProfileRoute
 //import com.example.workpulse.feature.profile.presentation.ProfileRoute
 import com.example.workpulse.feature.splash.presentation.SplashRoute
 import com.example.workpulse.feature.config.domain.WorkPulseConfig
+import com.example.workpulse.feature.webview.presentation.WebViewTestScreen
 
 @Composable
 fun AppNavHost(
@@ -260,7 +261,16 @@ fun AppNavHost(
 
 //
             composable("web_view_test") {
-                TestingScreen()
+                WebViewTestScreen(
+                    onExit = {
+                        navController.navigate(Screen.Home.route){
+                            popUpTo("web_view_test"){
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                )
             }
 
         composable(
@@ -356,6 +366,10 @@ fun AppNavHost(
                         }
                         launchSingleTop = true
                     }
+                },
+
+                onOpenWebView = {
+                    navController.navigate("web_view_test")
                 }
 
 

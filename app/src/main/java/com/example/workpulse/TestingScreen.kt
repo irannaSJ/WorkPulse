@@ -102,7 +102,7 @@ fun TestingScreen(
 //    viewModel: WorkPulseConfigTestViewModel = hiltViewModel()
 ) {
 
-    WebViewTestScreen()
+//    WebViewTestScreen()
 //    val configuration = viewModel.configuration
 //
 //    Column(

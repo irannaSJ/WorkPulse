@@ -35,6 +35,8 @@ fun HomeRoute(
     homeSections : List<HomeSection>,
     onLogoutSuccess: () -> Unit,
 
+    onOpenWebView : () -> Unit,
+
     viewModel: HomeViewModel = hiltViewModel(),
     leaveViewModel : LeaveSummaryViewModel = hiltViewModel()
 ){
@@ -168,6 +170,7 @@ fun HomeRoute(
             viewModel.logout()
         },
         leaveUiState = leaveUiState,
+        onOpenWebView = onOpenWebView
     )
 
 

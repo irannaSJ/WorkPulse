@@ -42,6 +42,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.Button
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.launch
 import kotlin.math.floor
@@ -81,7 +82,8 @@ fun HomeScreen(
     leaveUiState: LeaveSummaryUiState,
     quickActions: List<QuickAction>,
     onQuickActionClick: (String) -> Unit,
-    homeSections: List<HomeSection>
+    homeSections: List<HomeSection>,
+    onOpenWebView : () -> Unit
 ) {
 
     val drawerState = rememberDrawerState(
@@ -170,6 +172,18 @@ fun HomeScreen(
                         }
                     }
                 )
+
+
+                Spacer(
+                    modifier = Modifier.height(Dimens.Space12)
+                )
+
+                Button(
+                    onClick = onOpenWebView,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Open ERPNext")
+                }
 
                 Spacer(
                     modifier = Modifier.height(Dimens.Space20)

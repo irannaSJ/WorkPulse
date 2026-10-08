@@ -1,5 +1,6 @@
 package com.example.workpulse.data.repository
 
+import android.util.Log
 import com.example.workpulse.core.datastore.CookieStorage
 import com.example.workpulse.core.datastore.SessionManager
 import com.example.workpulse.core.network.CookieManager
@@ -7,6 +8,7 @@ import com.example.workpulse.data.local.entity.EmployeeEntity
 import com.example.workpulse.data.remote.AuthApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import com.example.workpulse.core.webview.WebViewCookieManager
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,7 +18,8 @@ class AuthRepository @Inject constructor(
     private val employeeRepository: EmployeeRepository,
     private val sessionManager: SessionManager,
     private val cookieManager: CookieManager,
-    private val cookieStorage: CookieStorage
+    private val cookieStorage: CookieStorage,
+    private val webViewCookieManager: WebViewCookieManager
 ) {
 
     suspend fun login(
@@ -36,6 +39,13 @@ class AuthRepository @Inject constructor(
                     Exception("Invalid username or password")
                 )
             }
+
+            val sidStored = cookieStorage.getSid().isNotBlank()
+
+            Log.d(
+                "AuthCookieCheck",
+                "ERPNext sid stored: $sidStored"
+            )
 
             val userResponse = authApi.getLoggedUser()
 
@@ -120,6 +130,7 @@ class AuthRepository @Inject constructor(
             sessionManager.clearSession()
             cookieManager.clearCookies()
             cookieStorage.clear()
+            webViewCookieManager.clearCookies()
         }
     }
 }
