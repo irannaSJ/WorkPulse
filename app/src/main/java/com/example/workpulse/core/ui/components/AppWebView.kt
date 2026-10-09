@@ -1,6 +1,7 @@
 package com.example.workpulse.core.ui.components
 
 import android.graphics.Bitmap
+import android.os.Build
 import android.util.Log
 import android.webkit.CookieManager
 import android.webkit.WebResourceError
@@ -8,6 +9,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +30,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 private const val TAG = "AppWebView"
 
 
+@RequiresApi(Build.VERSION_CODES.KITKAT)
 @Composable
 fun AppWebView(
     url: String,
