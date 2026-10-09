@@ -1,7 +1,7 @@
 package com.example.workpulse.core.ui.components
 
 import android.graphics.Bitmap
-import android.net.Uri
+import android.util.Log
 import android.webkit.CookieManager
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -25,6 +25,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 
+private const val TAG = "AppWebView"
+
+
 @Composable
 fun AppWebView(
     url: String,
@@ -32,9 +35,19 @@ fun AppWebView(
     modifier: Modifier = Modifier,
     onExit: () -> Unit
 ) {
-    var webView by remember { mutableStateOf<WebView?>(null) }
-    var isLoading by remember { mutableStateOf(true) }
-    var hasError by remember { mutableStateOf(false) }
+
+    var webView by remember {
+        mutableStateOf<WebView?>(null)
+    }
+
+    var isLoading by remember {
+        mutableStateOf(true)
+    }
+
+    var hasError by remember {
+        mutableStateOf(false)
+    }
+
 
     Box(
         modifier = modifier.fillMaxSize()
@@ -42,16 +55,25 @@ fun AppWebView(
 
         AndroidView(
             modifier = Modifier.fillMaxSize(),
+
             factory = { context ->
 
                 WebView(context).apply {
 
-                    val cookieManager = CookieManager.getInstance()
+                    /* =====================================================
+                       Cookie
+                       ===================================================== */
+
+                    val cookieManager =
+                        CookieManager.getInstance()
 
                     cookieManager.setAcceptCookie(true)
-                    cookieManager.setAcceptThirdPartyCookies(this, true)
 
-                    // Important: no extra space after sid=
+                    cookieManager.setAcceptThirdPartyCookies(
+                        this,
+                        true
+                    )
+
                     cookieManager.setCookie(
                         url,
                         "sid=$sid; Path=/; HttpOnly"
@@ -59,47 +81,102 @@ fun AppWebView(
 
                     cookieManager.flush()
 
+
+                    /* =====================================================
+                       WebView Settings
+                       ===================================================== */
+
                     settings.apply {
+
                         javaScriptEnabled = true
+
                         domStorageEnabled = true
+
                         databaseEnabled = true
                     }
 
-                    webViewClient = object : WebViewClient() {
 
-                        override fun onPageStarted(
-                            view: WebView?,
-                            url: String?,
-                            favicon: Bitmap?
-                        ) {
-                            super.onPageStarted(view, url, favicon)
+                    /* =====================================================
+                       WebView Client
+                       ===================================================== */
 
-                            isLoading = true
-                            hasError = false
-                        }
+                    webViewClient =
+                        object : WebViewClient() {
 
-                        override fun onPageFinished(
-                            view: WebView?,
-                            url: String?
-                        ) {
-                            super.onPageFinished(view, url)
+                            override fun onPageStarted(
+                                view: WebView?,
+                                url: String?,
+                                favicon: Bitmap?
+                            ) {
+                                super.onPageStarted(
+                                    view,
+                                    url,
+                                    favicon
+                                )
 
-                            isLoading = false
-                        }
+                                isLoading = true
+                                hasError = false
 
-                        override fun onReceivedError(
-                            view: WebView?,
-                            request: WebResourceRequest?,
-                            error: WebResourceError?
-                        ) {
-                            super.onReceivedError(view, request, error)
+                                Log.d(
+                                    TAG,
+                                    "Page started: $url"
+                                )
+                            }
 
-                            if (request?.isForMainFrame == true) {
+
+                            override fun onPageFinished(
+                                view: WebView?,
+                                url: String?
+                            ) {
+                                super.onPageFinished(
+                                    view,
+                                    url
+                                )
+
                                 isLoading = false
-                                hasError = true
+
+                                Log.d(
+                                    TAG,
+                                    "Page finished: $url"
+                                )
+                            }
+
+
+                            override fun onReceivedError(
+                                view: WebView?,
+                                request: WebResourceRequest?,
+                                error: WebResourceError?
+                            ) {
+                                super.onReceivedError(
+                                    view,
+                                    request,
+                                    error
+                                )
+
+                                if (
+                                    request?.isForMainFrame == true
+                                ) {
+
+                                    isLoading = false
+                                    hasError = true
+
+                                    Log.e(
+                                        TAG,
+                                        "Main page error: ${error?.description}"
+                                    )
+                                }
                             }
                         }
-                    }
+
+
+                    /* =====================================================
+                       Initial URL
+                       ===================================================== */
+
+                    Log.d(
+                        TAG,
+                        "Loading URL: $url"
+                    )
 
                     loadUrl(url)
 
@@ -108,108 +185,175 @@ fun AppWebView(
             }
         )
 
-        if (isLoading && !hasError) {
+
+        /* =============================================================
+           Loading
+           ============================================================= */
+
+        if (
+            isLoading &&
+            !hasError
+        ) {
+
             CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier.align(
+                    Alignment.Center
+                )
             )
         }
 
+
+        /* =============================================================
+           Error
+           ============================================================= */
+
         if (hasError) {
+
             Column(
-                modifier = Modifier.align(Alignment.Center),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                modifier =
+                    Modifier.align(
+                        Alignment.Center
+                    ),
+
+                horizontalAlignment =
+                    Alignment.CenterHorizontally,
+
+                verticalArrangement =
+                    Arrangement.Center
             ) {
 
                 Text(
                     text = "Unable to load page",
-                    style = MaterialTheme.typography.titleMedium
+                    style =
+                        MaterialTheme.typography.titleMedium
                 )
 
                 Button(
                     onClick = {
+
                         hasError = false
                         isLoading = true
+
                         webView?.reload()
                     }
                 ) {
-                    Text("Retry")
+
+                    Text(
+                        text = "Retry"
+                    )
                 }
             }
         }
     }
 
-    /*
-     * Android system Back handling
-     *
-     * React navigation:
-     *
-     * Home
-     *   ↓
-     * #section/xxxxx
-     *
-     * When Back is pressed:
-     *
-     * #section/xxxxx
-     *        ↓
-     *      Home
-     *
-     * We do NOT use WebView history for this.
-     */
+
+    /* ================================================================
+       Android System Back
+       ================================================================ */
+
     BackHandler {
 
         val currentWebView = webView
 
         if (currentWebView == null) {
-            onExit()
-            return@BackHandler
-        }
 
-        val currentUrl = currentWebView.url
-
-        if (currentUrl == null) {
-            onExit()
-            return@BackHandler
-        }
-
-        val uri = runCatching {
-            Uri.parse(currentUrl)
-        }.getOrNull()
-
-        val fragment = uri?.fragment
-
-        /*
-         * Example:
-         *
-         * http://test.site/dynamic-ui#section/77f9fntmak
-         *
-         * fragment =
-         * section/77f9fntmak
-         */
-        if (!fragment.isNullOrBlank() && fragment.startsWith("section/")) {
-
-            /*
-             * Directly return React to Home.
-             *
-             * This triggers the React hashchange listener:
-             *
-             * selectedSection -> null
-             *
-             * HomePage is rendered again.
-             */
-            currentWebView.evaluateJavascript(
-                "window.location.hash = '';",
-                null
+            Log.d(
+                TAG,
+                "Back -> WebView is null -> Exit"
             )
 
+            onExit()
+
             return@BackHandler
         }
 
+
         /*
-         * No React section is open.
+         * Ask the React application which route
+         * is currently active.
          *
-         * Now Android navigation should leave the WebView screen.
+         * Home:
+         *
+         *     #/
+         *
+         * Form:
+         *
+         *     #/form/xxxxx
+         *
+         * List:
+         *
+         *     #/list/xxxxx
          */
-        onExit()
+
+//        currentWebView.evaluateJavascript(
+//            """
+//            (function() {
+//
+//                const hash = window.location.hash;
+//
+//                if (
+//                    hash &&
+//                    hash !== "#" &&
+//                    hash !== "#/"
+//                ) {
+//                    window.history.back();
+//                    return "ROUTER_BACK";
+//                }
+//
+//                return "EXIT";
+//
+//            })();
+//            """.trimIndent()
+//        ) { result ->
+//
+//            Log.d(
+//                TAG,
+//                "Back JS result: $result"
+//            )
+//
+//            if (
+//                result
+//                    ?.trim()
+//                    ?.removeSurrounding("\"") == "EXIT"
+//            ) {
+//
+//                Log.d(
+//                    TAG,
+//                    "Back -> React Home -> Exit Android"
+//                )
+//
+//                onExit()
+//            }
+//        }
+
+
+        currentWebView.evaluateJavascript(
+            """
+    (function() {
+        const hash = window.location.hash;
+        const isHome = !hash || hash === "#" || hash === "#/";
+        if (!isHome){
+            window.history.back();
+            return "ROUTER_BACK";
+        }
+        return "EXIT";
+    })();
+    """.trimIndent()
+        ) { result ->
+
+            val actions = result
+                ?.trim()
+                ?.removeSurrounding("\"")
+
+            Log.d(
+                TAG,
+                "BACK: $actions"
+            )
+
+            if(actions == "EXIT"){
+                Log.d(TAG, "Back -> Home -> Exit Android")
+                onExit()
+            }
+        }
     }
 }
