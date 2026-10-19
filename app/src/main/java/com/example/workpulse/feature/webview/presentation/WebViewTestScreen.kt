@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.workpulse.core.network.NetworkConstants
 import com.example.workpulse.core.ui.components.AppWebView
 
 @Composable
@@ -20,6 +21,8 @@ fun WebViewTestScreen(
 ) {
 
     val sid by viewModel.sid.collectAsStateWithLifecycle()
+
+    var baseUrl = NetworkConstants.BASE_URL
 
     when {
         sid == null -> {
@@ -44,7 +47,7 @@ fun WebViewTestScreen(
 
         else -> {
             AppWebView(
-                url = "http://10.229.153.19:8000/dynamic-ui",
+                url = "$baseUrl/dynamic-ui",
                 sid = sid!!,
                 onExit = onExit,
                 modifier = Modifier.fillMaxSize()

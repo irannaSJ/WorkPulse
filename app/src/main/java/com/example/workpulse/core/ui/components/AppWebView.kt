@@ -270,77 +270,17 @@ fun AppWebView(
             return@BackHandler
         }
 
-
-        /*
-         * Ask the React application which route
-         * is currently active.
-         *
-         * Home:
-         *
-         *     #/
-         *
-         * Form:
-         *
-         *     #/form/xxxxx
-         *
-         * List:
-         *
-         *     #/list/xxxxx
-         */
-
-//        currentWebView.evaluateJavascript(
-//            """
-//            (function() {
-//
-//                const hash = window.location.hash;
-//
-//                if (
-//                    hash &&
-//                    hash !== "#" &&
-//                    hash !== "#/"
-//                ) {
-//                    window.history.back();
-//                    return "ROUTER_BACK";
-//                }
-//
-//                return "EXIT";
-//
-//            })();
-//            """.trimIndent()
-//        ) { result ->
-//
-//            Log.d(
-//                TAG,
-//                "Back JS result: $result"
-//            )
-//
-//            if (
-//                result
-//                    ?.trim()
-//                    ?.removeSurrounding("\"") == "EXIT"
-//            ) {
-//
-//                Log.d(
-//                    TAG,
-//                    "Back -> React Home -> Exit Android"
-//                )
-//
-//                onExit()
-//            }
-//        }
-
-
         currentWebView.evaluateJavascript(
             """
-    (function() {
-        const hash = window.location.hash;
-        const isHome = !hash || hash === "#" || hash === "#/";
-        if (!isHome){
-            window.history.back();
-            return "ROUTER_BACK";
-        }
-        return "EXIT";
-    })();
+        (function() {
+            const hash = window.location.hash;
+            const isHome = !hash || hash === "#" || hash === "#/";
+            if (!isHome){
+                window.history.back();
+                return "ROUTER_BACK";
+            }
+            return "EXIT";
+        })();
     """.trimIndent()
         ) { result ->
 
