@@ -1,13 +1,21 @@
 package com.example.workpulse.core.navigation
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -63,6 +71,7 @@ import com.example.workpulse.feature.profile.presentation.ProfileRoute
 //import com.example.workpulse.feature.profile.presentation.ProfileRoute
 import com.example.workpulse.feature.splash.presentation.SplashRoute
 import com.example.workpulse.feature.config.domain.WorkPulseConfig
+import com.example.workpulse.feature.webview.presentation.WebViewTestScreen
 
 @Composable
 fun AppNavHost(
@@ -155,7 +164,8 @@ fun AppNavHost(
             QuickAction("ATTENDANCE_HISTORY", "Attendance History", null, true, 1, null, false),
             QuickAction("LEAVE_HISTORY", "Leave History", null, true, 2, null, false),
             QuickAction("COMPOFF_HISTORY", "Comp Off History", null, true, 3, null, false),
-            QuickAction("LEAVE_APPLICATION", "Leave Application", null, true, 4, null, false)
+            QuickAction("LEAVE_APPLICATION", "Leave Application", null, true, 4, null, false),
+            QuickAction("COMPOFF_APPLICATION", "Comp Off Application", null, true, 5, null, false)
         )
     }
 
@@ -175,6 +185,9 @@ fun AppNavHost(
                 "HOME",
                 "ATTENDANCE_HISTORY",
                 "LEAVE_HISTORY",
+                "PROFILE",
+                "ATTENDANCE_HISTORY",
+                "LEAVE_HISTORY",
                 "PROFILE"
             ).mapNotNull { key ->
                 WorkPulseNavigationRegistry
@@ -192,7 +205,7 @@ fun AppNavHost(
             it.second.route == currentRoute
         }
 
-    val WORKPULSE_CONFIG_TEST = "workpulse_config_test"
+    val WebViewTest = "web_view_test"
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -209,7 +222,7 @@ fun AppNavHost(
         NavHost(
             navController = navController,
             startDestination = Screen.Splash.route,
-//            startDestination = "workpulse_config_test",
+//            startDestination = "web_view_test",
             modifier = modifier
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding),
@@ -247,8 +260,17 @@ fun AppNavHost(
         }
 
 //
-            composable("workpulse_config_test") {
-                TestingScreen()
+            composable("web_view_test") {
+                WebViewTestScreen(
+                    onExit = {
+                        navController.navigate(Screen.Home.route){
+                            popUpTo("web_view_test"){
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                )
             }
 
         composable(
@@ -303,7 +325,7 @@ fun AppNavHost(
         }
 
 
-        //screen upgrading from here we changed the profile navigation here
+        //screen upgrading from here I changed the profile navigation here
         composable(
             route = Screen.Home.route,
             enterTransition = NavTransitions.bottomEnter,
@@ -344,6 +366,10 @@ fun AppNavHost(
                         }
                         launchSingleTop = true
                     }
+                },
+
+                onOpenWebView = {
+                    navController.navigate("web_view_test")
                 }
 
 
@@ -524,6 +550,7 @@ private fun NavController.navigateToWorkPulseDestination(
         navigate(destination.route)
     }
 }
+
 
 @Composable
 private fun FloatingBottomNavigationBar(

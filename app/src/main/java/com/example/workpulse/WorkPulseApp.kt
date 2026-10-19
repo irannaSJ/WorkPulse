@@ -22,6 +22,7 @@ class WorkPulseApp : Application(), Configuration.Provider{
     override fun onCreate(){
         super.onCreate()
 
+        SyncScheduler(this).startInternetMonitoring()
         SyncScheduler(this)
             .scheduleAttendanceRequestSync()
     }

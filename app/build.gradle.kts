@@ -54,6 +54,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui)
     implementation(libs.hilt.android)
+
+    implementation(libs.androidx.webkit)
+
     ksp(libs.hilt.compiler)
 
     implementation(libs.room.runtime)

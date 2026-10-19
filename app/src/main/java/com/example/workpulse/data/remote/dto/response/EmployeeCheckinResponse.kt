@@ -2,12 +2,15 @@ package com.example.workpulse.data.remote.dto.response
 
 import com.google.gson.annotations.SerializedName
 
-data class EmployeeCheckinResponse(
-
-    val message: String,
-
-    val success: Boolean
+data class PunchResponse(
+    val message : PunchMessage
 )
+
+data class PunchMessage(
+    val success : Boolean,
+    val checkin : EmployeeCheckinData
+)
+
 
 data class EmployeeCheckinResponses(
     @SerializedName("data")
