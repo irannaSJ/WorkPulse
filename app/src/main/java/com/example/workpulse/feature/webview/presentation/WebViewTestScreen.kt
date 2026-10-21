@@ -47,7 +47,8 @@ fun WebViewTestScreen(
 
         else -> {
             AppWebView(
-                url = "$baseUrl/dynamic-ui",
+//                url = "$baseUrl/dynamic-ui",
+                url = "$baseUrl/app/workpulse",
                 sid = sid!!,
                 onExit = onExit,
                 modifier = Modifier.fillMaxSize()
